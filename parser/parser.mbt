@@ -298,13 +298,20 @@ fn Parser::parse_math_expression(self : Parser) -> @core.MathExpr {
       Token::Dollar | Token::Eof | Token::Newline => break
       Token::Slash => {
         let _ = self.advance()
-        // Fraction separator: if previous item exists, next item is denominator
-        if items.length() > 0 {
-          let num = items.pop().unwrap()
-          let den = self.parse_math_atom()
-          items.push(@core.MathExpr::Frac(num, den))
-        } else {
-          items.push(@core.MathExpr::Op("/"))
+        items.push(@core.MathExpr::Op("/"))
+      }
+      Token::Text(s) => {
+        let _ = self.advance()
+        let words = split_math_tokens(s)
+        for w in words {
+          if w == "+" || w == "-" || w == "*" || w == "=" || w == "<" || w == ">" || w == "^" {
+            items.push(@core.MathExpr::Op(w))
+          } else if w.has_prefix("sqrt(") && w.has_suffix(")") {
+            let inner = w[5:w.length() - 1].to_owned()
+            items.push(@core.MathExpr::Sqrt(@core.MathExpr::Sym(inner)))
+          } else {
+            items.push(@core.MathExpr::Sym(w))
+          }
         }
       }
       _ => {
@@ -313,12 +320,44 @@ fn Parser::parse_math_expression(self : Parser) -> @core.MathExpr {
       }
     }
   }
-  if items.length() == 0 {
+  let mut i = 0
+  let resolved : Array[@core.MathExpr] = []
+  while i < items.length() {
+    if i + 2 < items.length() {
+      match items[i + 1] {
+        @core.MathExpr::Op("/") => {
+          let frac = @core.MathExpr::Frac(items[i], items[i + 2])
+          resolved.push(frac)
+          i = i + 3
+          continue
+        }
+        _ => ()
+      }
+    }
+    if i + 1 < items.length() {
+      match (items[i], items[i + 1]) {
+        (@core.MathExpr::Sym("sqrt"), @core.MathExpr::Group(inner_items)) => {
+          let inner = if inner_items.length() == 1 {
+            inner_items[0]
+          } else {
+            @core.MathExpr::Group(inner_items)
+          }
+          resolved.push(@core.MathExpr::Sqrt(inner))
+          i = i + 2
+          continue
+        }
+        _ => ()
+      }
+    }
+    resolved.push(items[i])
+    i = i + 1
+  }
+  if resolved.length() == 0 {
     @core.MathExpr::Sym("")
-  } else if items.length() == 1 {
-    items[0]
+  } else if resolved.length() == 1 {
+    resolved[0]
   } else {
-    @core.MathExpr::Group(items)
+    @core.MathExpr::Group(resolved)
   }
 }
 

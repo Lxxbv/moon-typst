@@ -41,7 +41,7 @@ pub fn Lexer::tokenize(self : Lexer) -> Array[Token] {
   let tokens : Array[Token] = []
   while self.pos < self.len {
     let c = self.peek()
-    if c == '\r' {
+    if c == '\r' || c == '\uFEFF' {
       let _ = self.advance()
       continue
     }

@@ -44,3 +44,12 @@ test "lexer code block and list items" {
   assert_eq(tokens[8], Token::HorizontalRule)
   assert_eq(tokens[9], Token::Eof)
 }
+
+test "lexer handles utf8 bom" {
+  let lexer = Lexer::new("\uFEFF= Heading with BOM")
+  let tokens = lexer.tokenize()
+  assert_eq(tokens[0], Token::HeadingPrefix(1))
+  assert_eq(tokens[1], Token::Text("Heading with BOM"))
+  assert_eq(tokens[2], Token::Eof)
+}
+

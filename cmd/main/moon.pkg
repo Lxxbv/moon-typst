@@ -1,0 +1,10 @@
+import {
+  "Lxxbv/moon_typst/core",
+  "Lxxbv/moon_typst/parser",
+  "Lxxbv/moon_typst/layout",
+  "Lxxbv/moon_typst/render",
+  "moonbitlang/core/env",
+  "moonbitlang/x/fs",
+}
+
+pkgtype(kind: "executable")

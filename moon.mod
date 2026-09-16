@@ -21,3 +21,7 @@ keywords = [
 description = "A lightweight Typst markup parser, layout engine, and SVG/HTML renderer written in pure MoonBit."
 
 preferred_target = "wasm-gc"
+
+import {
+  "moonbitlang/x@0.5.5",
+}

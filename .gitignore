@@ -2,6 +2,7 @@
 _build/
 target/
 .mooncakes/
+*.generated.mbti
 
 # System and temporary files
 .DS_Store

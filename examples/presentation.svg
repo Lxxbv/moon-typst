@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1375.8399999999997" viewBox="0 0 800 1375.8399999999997">
+  <style>
+    text { font-family: system-ui, -apple-system, sans-serif; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+  </style>
+  <rect width="100%" height="100%" fill="#ffffff"/>
+  <text x="48" y="96.48" font-size="28.8" fill="#1a1a1a" font-weight="bold">MoonBit Typographical Compiler</text>
+  <text x="488.63999999999976" y="96.48" font-size="28.8" fill="#1a1a1a" font-weight="bold"> </text>
+  <text x="48" y="139.68" font-size="28.8" fill="#1a1a1a" font-weight="bold"> Architecture &amp; Features</text>
+  <text x="48" y="189.68" font-size="22.4" fill="#1a1a1a" font-weight="bold">Slide 1</text>
+  <text x="119.68" y="189.68" font-size="22.4" fill="#1a1a1a" font-weight="bold"> </text>
+  <text x="126.4" y="189.68" font-size="22.4" fill="#1a1a1a" font-weight="bold"> Introduction to moon-typst</text>
+  <text x="48" y="213.36" font-size="16" fill="#1a1a1a" font-weight="bold">moon-typst</text>
+  <text x="133.6" y="213.36" font-size="16" fill="#1a1a1a"> brings modern typographical typesetting to the MoonBit ecosystem.</text>
+  <text x="64" y="249.36" font-size="16" fill="#0969da" font-weight="bold">• </text>
+  <text x="88.8" y="249.36" font-size="16" fill="#1a1a1a" font-weight="bold">Zero-FFI Pure MoonBit</text>
+  <text x="263.2" y="249.36" font-size="16" fill="#1a1a1a"> </text>
+  <text x="268" y="249.36" font-size="16" fill="#1a1a1a"> 100% portable across Native</text>
+  <text x="485.6" y="249.36" font-size="16" fill="#1a1a1a"> </text>
+  <text x="490.40000000000003" y="249.36" font-size="16" fill="#1a1a1a"> JS</text>
+  <text x="512.8000000000001" y="249.36" font-size="16" fill="#1a1a1a"> </text>
+  <text x="517.6" y="249.36" font-size="16" fill="#1a1a1a"> and WebAssembly targets</text>
+  <text x="64" y="277.36" font-size="16" fill="#0969da" font-weight="bold">• </text>
+  <text x="88.8" y="277.36" font-size="16" fill="#1a1a1a" font-weight="bold">Sub-millisecond Compilation</text>
+  <text x="304.8" y="277.36" font-size="16" fill="#1a1a1a"> </text>
+  <text x="48" y="301.36" font-size="16" fill="#1a1a1a"> Incremental layout engine built for interactive documents</text>
+  <text x="64" y="329.36" font-size="16" fill="#0969da" font-weight="bold">• </text>
+  <text x="88.8" y="329.36" font-size="16" fill="#1a1a1a" font-weight="bold">Multi-Target Rendering</text>
+  <text x="266.40000000000003" y="329.36" font-size="16" fill="#1a1a1a"> </text>
+  <text x="271.20000000000005" y="329.36" font-size="16" fill="#1a1a1a"> Seamless output to SVG</text>
+  <text x="448.80000000000007" y="329.36" font-size="16" fill="#1a1a1a"> </text>
+  <text x="453.6000000000001" y="329.36" font-size="16" fill="#1a1a1a"> semantic HTML5</text>
+  <text x="579.2" y="329.36" font-size="16" fill="#1a1a1a"> </text>
+  <text x="584" y="329.36" font-size="16" fill="#1a1a1a"> and standard PDF 1.4</text>
+  <text x="64" y="357.36" font-size="16" fill="#0969da" font-weight="bold">• </text>
+  <text x="88.8" y="357.36" font-size="16" fill="#1a1a1a" font-weight="bold">Rich Mathematical Layout</text>
+  <text x="280.8" y="357.36" font-size="16" fill="#1a1a1a"> </text>
+  <text x="285.6" y="357.36" font-size="16" fill="#1a1a1a"> First-class support for fractions</text>
+  <text x="549.6000000000001" y="357.36" font-size="16" fill="#1a1a1a"> </text>
+  <text x="554.4000000000001" y="357.36" font-size="16" fill="#1a1a1a"> square roots</text>
+  <text x="657.6" y="357.36" font-size="16" fill="#1a1a1a"> </text>
+  <text x="662.4" y="357.36" font-size="16" fill="#1a1a1a"> matrices</text>
+  <text x="735.1999999999999" y="357.36" font-size="16" fill="#1a1a1a"> </text>
+  <text x="48" y="381.36" font-size="16" fill="#1a1a1a"> and limits</text>
+  <text x="48" y="440.8" font-size="22.4" fill="#1a1a1a" font-weight="bold">Slide 2</text>
+  <text x="119.68" y="440.8" font-size="22.4" fill="#1a1a1a" font-weight="bold"> </text>
+  <text x="126.4" y="440.8" font-size="22.4" fill="#1a1a1a" font-weight="bold"> Mathematical Capabilities</text>
+  <text x="48" y="464.48" font-size="16" fill="#1a1a1a">Typesetting complex scientific formulas with pixel-perfect alignment</text>
+  <text x="584.0000000000005" y="464.48" font-size="16" fill="#1a1a1a"> </text>
+  <text x="80" y="515.2" font-size="19.2" fill="#24292f" font-style="italic">frac</text>
+  <text x="122.24000000000001" y="515.2" font-size="19.2" fill="#24292f" font-style="italic">alpha</text>
+  <text x="171.20000000000002" y="515.2" font-size="19.2" fill="#24292f"> + </text>
+  <text x="193.28000000000003" y="515.2" font-size="19.2" fill="#24292f" font-style="italic">beta</text>
+  <text x="231.68000000000004" y="515.2" font-size="19.2" fill="#24292f"> , </text>
+  <text x="249.92000000000004" y="515.2" font-size="19.2" fill="#24292f" font-style="italic">gamma</text>
+  <text x="312.32000000000005" y="515.2" font-size="19.2" fill="#24292f"> + </text>
+  <text x="334.40000000000003" y="515.2" font-size="19.2" fill="#24292f" font-style="italic">delta</text>
+  <text x="48" y="557.28" font-size="16" fill="#1a1a1a">Multivariate transformations with matrix layouts</text>
+  <text x="425.6000000000003" y="557.28" font-size="16" fill="#1a1a1a"> </text>
+  <line x1="80" y1="591.68" x2="80" y2="672.3199999999999" stroke="#24292f" stroke-width="1.5"/>
+  <text x="86" y="606.3679999999999" font-size="17.28" fill="#24292f" font-style="italic">1</text>
+  <text x="120.56" y="606.3679999999999" font-size="17.28" fill="#24292f" font-style="italic">0</text>
+  <text x="155.12" y="606.3679999999999" font-size="17.28" fill="#24292f" font-style="italic">0</text>
+  <text x="86" y="633.2479999999999" font-size="17.28" fill="#24292f" font-style="italic">0</text>
+  <text x="120.56" y="633.2479999999999" font-size="17.28" fill="#24292f" font-style="italic">1</text>
+  <text x="155.12" y="633.2479999999999" font-size="17.28" fill="#24292f" font-style="italic">0</text>
+  <text x="86" y="660.1279999999999" font-size="17.28" fill="#24292f" font-style="italic">0</text>
+  <text x="120.56" y="660.1279999999999" font-size="17.28" fill="#24292f" font-style="italic">0</text>
+  <text x="155.12" y="660.1279999999999" font-size="17.28" fill="#24292f" font-style="italic">1</text>
+  <line x1="195.68" y1="591.68" x2="195.68" y2="672.3199999999999" stroke="#24292f" stroke-width="1.5"/>
+  <text x="48" y="650.0799999999999" font-size="16" fill="#1a1a1a">State vectors in 3D projection</text>
+  <text x="276.80000000000007" y="650.0799999999999" font-size="16" fill="#1a1a1a"> </text>
+  <line x1="80" y1="684.4799999999999" x2="80" y2="765.1199999999999" stroke="#24292f" stroke-width="1.5"/>
+  <text x="86" y="699.1679999999999" font-size="17.28" fill="#24292f" font-style="italic">u</text>
+  <text x="86" y="726.0479999999999" font-size="17.28" fill="#24292f" font-style="italic">v</text>
+  <text x="86" y="752.9279999999999" font-size="17.28" fill="#24292f" font-style="italic">w</text>
+  <line x1="126.56" y1="684.4799999999999" x2="126.56" y2="765.1199999999999" stroke="#24292f" stroke-width="1.5"/>
+  <text x="48" y="766.3199999999998" font-size="22.4" fill="#1a1a1a" font-weight="bold">Slide 3</text>
+  <text x="119.68" y="766.3199999999998" font-size="22.4" fill="#1a1a1a" font-weight="bold"> </text>
+  <text x="126.4" y="766.3199999999998" font-size="22.4" fill="#1a1a1a" font-weight="bold"> Architectural Pipeline</text>
+  <text x="48" y="789.9999999999999" font-size="16" fill="#1a1a1a">The internal pipeline consists of four modular packages</text>
+  <text x="479.20000000000033" y="789.9999999999999" font-size="16" fill="#1a1a1a"> </text>
+  <text x="64" y="825.9999999999999" font-size="16" fill="#0969da" font-weight="bold">• </text>
+  <text x="88.8" y="825.9999999999999" font-size="16" fill="#1a1a1a" font-weight="bold">core</text>
+  <text x="124" y="825.9999999999999" font-size="16" fill="#1a1a1a"> </text>
+  <text x="128.8" y="825.9999999999999" font-size="16" fill="#1a1a1a"> Abstract syntax tree</text>
+  <text x="288.8" y="825.9999999999999" font-size="16" fill="#1a1a1a"> </text>
+  <text x="293.6" y="825.9999999999999" font-size="16" fill="#1a1a1a"> color representations</text>
+  <text x="466.4" y="825.9999999999999" font-size="16" fill="#1a1a1a"> </text>
+  <text x="471.2" y="825.9999999999999" font-size="16" fill="#1a1a1a"> and length unit conversions</text>
+  <text x="64" y="853.9999999999999" font-size="16" fill="#0969da" font-weight="bold">• </text>
+  <text x="88.8" y="853.9999999999999" font-size="16" fill="#1a1a1a" font-weight="bold">diag</text>
+  <text x="120.8" y="853.9999999999999" font-size="16" fill="#1a1a1a"> </text>
+  <text x="125.6" y="853.9999999999999" font-size="16" fill="#1a1a1a"> Source span tracking</text>
+  <text x="292" y="853.9999999999999" font-size="16" fill="#1a1a1a"> </text>
+  <text x="296.8" y="853.9999999999999" font-size="16" fill="#1a1a1a"> diagnostic error collection</text>
+  <text x="508.80000000000007" y="853.9999999999999" font-size="16" fill="#1a1a1a"> </text>
+  <text x="48" y="877.9999999999999" font-size="16" fill="#1a1a1a"> and colorized terminal reports</text>
+  <text x="64" y="905.9999999999999" font-size="16" fill="#0969da" font-weight="bold">• </text>
+  <text x="88.8" y="905.9999999999999" font-size="16" fill="#1a1a1a" font-weight="bold">eval</text>
+  <text x="120.8" y="905.9999999999999" font-size="16" fill="#1a1a1a"> </text>
+  <text x="125.6" y="905.9999999999999" font-size="16" fill="#1a1a1a"> Lexical scoping</text>
+  <text x="248.79999999999998" y="905.9999999999999" font-size="16" fill="#1a1a1a"> </text>
+  <text x="253.6" y="905.9999999999999" font-size="16" fill="#1a1a1a"> variable environments</text>
+  <text x="430.40000000000003" y="905.9999999999999" font-size="16" fill="#1a1a1a"> </text>
+  <text x="435.20000000000005" y="905.9999999999999" font-size="16" fill="#1a1a1a"> and cascading style rules</text>
+  <text x="64" y="933.9999999999999" font-size="16" fill="#0969da" font-weight="bold">• </text>
+  <text x="88.8" y="933.9999999999999" font-size="16" fill="#1a1a1a" font-weight="bold">parser</text>
+  <text x="141.6" y="933.9999999999999" font-size="16" fill="#1a1a1a"> </text>
+  <text x="146.4" y="933.9999999999999" font-size="16" fill="#1a1a1a"> Fast recursive descent lexer and token stream analyzer</text>
+  <text x="64" y="961.9999999999999" font-size="16" fill="#0969da" font-weight="bold">• </text>
+  <text x="88.8" y="961.9999999999999" font-size="16" fill="#1a1a1a" font-weight="bold">layout</text>
+  <text x="135.2" y="961.9999999999999" font-size="16" fill="#1a1a1a"> </text>
+  <text x="140" y="961.9999999999999" font-size="16" fill="#1a1a1a"> Spatial bounding box calculations</text>
+  <text x="397.6000000000001" y="961.9999999999999" font-size="16" fill="#1a1a1a"> </text>
+  <text x="402.4000000000001" y="961.9999999999999" font-size="16" fill="#1a1a1a"> text measurement</text>
+  <text x="542.4000000000001" y="961.9999999999999" font-size="16" fill="#1a1a1a"> </text>
+  <text x="547.2" y="961.9999999999999" font-size="16" fill="#1a1a1a"> and table layout</text>
+  <text x="64" y="989.9999999999999" font-size="16" fill="#0969da" font-weight="bold">• </text>
+  <text x="88.8" y="989.9999999999999" font-size="16" fill="#1a1a1a" font-weight="bold">render</text>
+  <text x="141.6" y="989.9999999999999" font-size="16" fill="#1a1a1a"> </text>
+  <text x="146.4" y="989.9999999999999" font-size="16" fill="#1a1a1a"> SVG vector emitter</text>
+  <text x="292.79999999999995" y="989.9999999999999" font-size="16" fill="#1a1a1a"> </text>
+  <text x="297.59999999999997" y="989.9999999999999" font-size="16" fill="#1a1a1a"> HTML5 document generator</text>
+  <text x="507.20000000000005" y="989.9999999999999" font-size="16" fill="#1a1a1a"> </text>
+  <text x="512" y="989.9999999999999" font-size="16" fill="#1a1a1a"> and PDF 1.4 binary serializer</text>
+  <text x="48" y="1049.4399999999998" font-size="22.4" fill="#1a1a1a" font-weight="bold">Slide 4</text>
+  <text x="119.68" y="1049.4399999999998" font-size="22.4" fill="#1a1a1a" font-weight="bold"> </text>
+  <text x="126.4" y="1049.4399999999998" font-size="22.4" fill="#1a1a1a" font-weight="bold"> Getting Started</text>
+  <text x="48" y="1073.1199999999997" font-size="16" fill="#1a1a1a">Compile any Typst document directly using the CLI</text>
+  <text x="430.4000000000003" y="1073.1199999999997" font-size="16" fill="#1a1a1a"> </text>
+  <rect x="48" y="1099.5199999999998" width="704" height="184.32" fill="#f4f4f6" rx="6"/>
+  <rect x="48" y="1099.5199999999998" width="704" height="184.32" fill="none" stroke="#e1e4e8" stroke-width="1"/>
+  <text x="64" y="1127.0799999999997" font-size="13.6" fill="#24292e" class="mono"># Render to vector SVG</text>
+  <text x="64" y="1146.1199999999997" font-size="13.6" fill="#24292e" class="mono">typst-render presentation.typ -o presentation.svg</text>
+  <text x="64" y="1165.1599999999996" font-size="13.6" fill="#24292e" class="mono"></text>
+  <text x="64" y="1184.1999999999996" font-size="13.6" fill="#24292e" class="mono"># Render to standard PDF 1.4</text>
+  <text x="64" y="1203.2399999999996" font-size="13.6" fill="#24292e" class="mono">typst-render presentation.typ -p -o presentation.pdf</text>
+  <text x="64" y="1222.2799999999995" font-size="13.6" fill="#24292e" class="mono"></text>
+  <text x="64" y="1241.3199999999995" font-size="13.6" fill="#24292e" class="mono"># Render to semantic HTML5</text>
+  <text x="64" y="1260.3599999999994" font-size="13.6" fill="#24292e" class="mono">typst-render presentation.typ --html -o presentation.html</text>
+  <text x="48" y="1309.4399999999996" font-size="16" fill="#1a1a1a">Empowering next-generation cloud and WebAssembly document authoring!</text>
+</svg>

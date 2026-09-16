@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1443.7599999999998" viewBox="0 0 800 1443.7599999999998">
+  <style>
+    text { font-family: system-ui, -apple-system, sans-serif; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+  </style>
+  <rect width="100%" height="100%" fill="#ffffff"/>
+  <text x="48" y="96.48" font-size="28.8" fill="#1a1a1a" font-weight="bold">Deep Typographical Layout and Vector Generation in MoonBit</text>
+  <text x="48" y="146.48" font-size="22.4" fill="#1a1a1a" font-weight="bold">Abstract</text>
+  <text x="48" y="170.16" font-size="16" fill="#1a1a1a">This paper presents the design and implementation of </text>
+  <text x="461.60000000000036" y="170.16" font-size="16" fill="#1a1a1a" font-weight="bold">moon-typst</text>
+  <text x="547.2000000000004" y="170.16" font-size="16" fill="#1a1a1a"> </text>
+  <text x="48" y="194.16" font-size="16" fill="#1a1a1a"> a zero-dependency typographical layout engine and multi-format vector compiler implemented in MoonBit. We demonstrate advanced geometric box allocation</text>
+  <text x="48" y="218.16" font-size="16" fill="#1a1a1a"> </text>
+  <text x="52.8" y="218.16" font-size="16" fill="#1a1a1a"> two-dimensional mathematical layout including matrices</text>
+  <text x="488.8000000000004" y="218.16" font-size="16" fill="#1a1a1a"> </text>
+  <text x="493.6000000000004" y="218.16" font-size="16" fill="#1a1a1a"> vectors</text>
+  <text x="556.8000000000004" y="218.16" font-size="16" fill="#1a1a1a"> </text>
+  <text x="561.6000000000004" y="218.16" font-size="16" fill="#1a1a1a"> and limits</text>
+  <text x="641.6000000000004" y="218.16" font-size="16" fill="#1a1a1a"> </text>
+  <text x="48" y="242.16" font-size="16" fill="#1a1a1a"> and high-fidelity output serialization to SVG</text>
+  <text x="387.2000000000002" y="242.16" font-size="16" fill="#1a1a1a"> </text>
+  <text x="392.0000000000002" y="242.16" font-size="16" fill="#1a1a1a"> HTML5</text>
+  <text x="444.80000000000024" y="242.16" font-size="16" fill="#1a1a1a"> </text>
+  <text x="449.60000000000025" y="242.16" font-size="16" fill="#1a1a1a"> and Adobe PDF 1.4.</text>
+  <text x="48" y="297.6" font-size="22.4" fill="#1a1a1a" font-weight="bold">1. Mathematical Kinetics and Tensor Formulation</text>
+  <text x="48" y="321.28000000000003" font-size="16" fill="#1a1a1a">Modern computational typesetting requires rigorous spatial bounding algorithms for complex mathematical formulas. Consider the linear transformation defined by the matrix operator</text>
+  <text x="48" y="345.28000000000003" font-size="16" fill="#1a1a1a"> </text>
+  <line x1="80" y1="379.68" x2="80" y2="433.44" stroke="#24292f" stroke-width="1.5"/>
+  <text x="86" y="394.368" font-size="17.28" fill="#24292f" font-style="italic">a</text>
+  <text x="120.56" y="394.368" font-size="17.28" fill="#24292f" font-style="italic">b</text>
+  <text x="86" y="421.248" font-size="17.28" fill="#24292f" font-style="italic">c</text>
+  <text x="120.56" y="421.248" font-size="17.28" fill="#24292f" font-style="italic">d</text>
+  <line x1="161.12" y1="379.68" x2="161.12" y2="433.44" stroke="#24292f" stroke-width="1.5"/>
+  <text x="48" y="438.08000000000004" font-size="16" fill="#1a1a1a">When projected into high-dimensional vector spaces</text>
+  <text x="450.4000000000003" y="438.08000000000004" font-size="16" fill="#1a1a1a"> </text>
+  <text x="48" y="462.08000000000004" font-size="16" fill="#1a1a1a"> state vectors satisfy the continuity condition</text>
+  <text x="396.0000000000003" y="462.08000000000004" font-size="16" fill="#1a1a1a"> </text>
+  <line x1="80" y1="496.48" x2="80" y2="738.4" stroke="#24292f" stroke-width="1.5"/>
+  <text x="86" y="511.168" font-size="17.28" fill="#24292f" font-style="italic">x</text>
+  <text x="86" y="538.048" font-size="17.28" fill="#24292f" font-style="italic"></text>
+  <text x="86" y="564.928" font-size="17.28" fill="#24292f" font-style="italic">1</text>
+  <text x="86" y="591.808" font-size="17.28" fill="#24292f" font-style="italic">x</text>
+  <text x="86" y="618.688" font-size="17.28" fill="#24292f" font-style="italic"></text>
+  <text x="86" y="645.568" font-size="17.28" fill="#24292f" font-style="italic">2</text>
+  <text x="86" y="672.448" font-size="17.28" fill="#24292f" font-style="italic">x</text>
+  <text x="86" y="699.328" font-size="17.28" fill="#24292f" font-style="italic"></text>
+  <text x="86" y="726.208" font-size="17.28" fill="#24292f" font-style="italic">3</text>
+  <line x1="126.56" y1="496.48" x2="126.56" y2="738.4" stroke="#24292f" stroke-width="1.5"/>
+  <text x="48" y="554.88" font-size="16" fill="#1a1a1a">The asymptotic energy dispersion across frequency bands is evaluated via the limit series</text>
+  <text x="743.1999999999998" y="554.88" font-size="16" fill="#1a1a1a"> </text>
+  <text x="80" y="605.6" font-size="19.2" fill="#24292f" font-style="italic">sum</text>
+  <text x="48" y="647.68" font-size="16" fill="#1a1a1a">With localized spectral estimation modulated by the accented field estimators </text>
+  <text x="648.4000000000002" y="637.1999999999999" font-size="11.2" fill="#24292f">^</text>
+  <text x="646.4000000000002" y="647.68" font-size="16" fill="#24292f" font-style="italic">theta</text>
+  <text x="684.0000000000002" y="647.68" font-size="16" fill="#1a1a1a"> and </text>
+  <text x="722.0000000000002" y="637.1999999999999" font-size="11.2" fill="#24292f">~</text>
+  <text x="720.0000000000002" y="647.68" font-size="16" fill="#24292f" font-style="italic">omega</text>
+  <text x="48" y="671.68" font-size="16" fill="#1a1a1a"> </text>
+  <text x="52.8" y="671.68" font-size="16" fill="#1a1a1a"> baseline coherence is strictly maintained.</text>
+  <text x="48" y="727.1199999999999" font-size="22.4" fill="#1a1a1a" font-weight="bold">2. Implementation in Pure MoonBit</text>
+  <text x="48" y="750.8" font-size="16" fill="#1a1a1a">The compiler architecture is built upon deterministic recursive descent with zero dynamic FFI calls</text>
+  <text x="48" y="774.8" font-size="16" fill="#1a1a1a"> </text>
+  <rect x="48" y="801.1999999999999" width="704" height="184.32" fill="#f4f4f6" rx="6"/>
+  <rect x="48" y="801.1999999999999" width="704" height="184.32" fill="none" stroke="#e1e4e8" stroke-width="1"/>
+  <text x="64" y="828.7599999999999" font-size="13.6" fill="#24292e" class="mono">// Geometric layout box dispatch in MoonBit</text>
+  <text x="64" y="847.7999999999998" font-size="13.6" fill="#24292e" class="mono">fn layout_element(ctx : StyleContext, box : LayoutBox) -&gt; Unit {</text>
+  <text x="64" y="866.8399999999998" font-size="13.6" fill="#24292e" class="mono">  let x = box.rect.x</text>
+  <text x="64" y="885.8799999999998" font-size="13.6" fill="#24292e" class="mono">  let y = box.rect.y</text>
+  <text x="64" y="904.9199999999997" font-size="13.6" fill="#24292e" class="mono">  let w = box.rect.w</text>
+  <text x="64" y="923.9599999999997" font-size="13.6" fill="#24292e" class="mono">  let h = box.rect.h</text>
+  <text x="64" y="942.9999999999997" font-size="13.6" fill="#24292e" class="mono">  // Compute baseline alignment and font metrics</text>
+  <text x="64" y="962.0399999999996" font-size="13.6" fill="#24292e" class="mono">}</text>
+  <text x="48" y="1034.56" font-size="22.4" fill="#1a1a1a" font-weight="bold">3. Multi-Target Rendering Pipelines</text>
+  <text x="48" y="1058.2399999999998" font-size="16" fill="#1a1a1a">The compilation pipeline provides deterministic generation across three distinct vector targets</text>
+  <text x="48" y="1082.2399999999998" font-size="16" fill="#1a1a1a"> </text>
+  <text x="64" y="1118.2399999999998" font-size="16" fill="#0969da" font-weight="bold">• </text>
+  <text x="88.8" y="1118.2399999999998" font-size="16" fill="#1a1a1a" font-weight="bold">SVG 1.1 Vector Graphics</text>
+  <text x="269.6" y="1118.2399999999998" font-size="16" fill="#1a1a1a"> </text>
+  <text x="48" y="1142.2399999999998" font-size="16" fill="#1a1a1a"> Scalable XML graphics with font family definitions and path outlines</text>
+  <text x="64" y="1170.2399999999998" font-size="16" fill="#0969da" font-weight="bold">• </text>
+  <text x="88.8" y="1170.2399999999998" font-size="16" fill="#1a1a1a" font-weight="bold">Adobe PDF 1.4 Binary Document</text>
+  <text x="322.4000000000001" y="1170.2399999999998" font-size="16" fill="#1a1a1a"> </text>
+  <text x="327.2000000000001" y="1170.2399999999998" font-size="16" fill="#1a1a1a"> Self-contained indirect objects</text>
+  <text x="574.4000000000002" y="1170.2399999999998" font-size="16" fill="#1a1a1a"> </text>
+  <text x="579.2000000000002" y="1170.2399999999998" font-size="16" fill="#1a1a1a"> xref tables</text>
+  <text x="670.4000000000001" y="1170.2399999999998" font-size="16" fill="#1a1a1a"> </text>
+  <text x="48" y="1194.2399999999998" font-size="16" fill="#1a1a1a"> and binary font dictionaries</text>
+  <text x="64" y="1222.2399999999998" font-size="16" fill="#0969da" font-weight="bold">• </text>
+  <text x="88.8" y="1222.2399999999998" font-size="16" fill="#1a1a1a" font-weight="bold">Semantic HTML5</text>
+  <text x="209.59999999999997" y="1222.2399999999998" font-size="16" fill="#1a1a1a"> </text>
+  <text x="48" y="1246.2399999999998" font-size="16" fill="#1a1a1a"> Clean document hierarchy with responsive styling and CSS grid compatibility</text>
+  <text x="48" y="1305.6799999999998" font-size="22.4" fill="#1a1a1a" font-weight="bold">4. Benchmark and Evaluation</text>
+  <text x="48" y="1329.3599999999997" font-size="16" fill="#1a1a1a">Micro-benchmarks executed across native</text>
+  <text x="374.40000000000026" y="1329.3599999999997" font-size="16" fill="#1a1a1a"> </text>
+  <text x="379.2000000000003" y="1329.3599999999997" font-size="16" fill="#1a1a1a"> JavaScript</text>
+  <text x="465.60000000000025" y="1329.3599999999997" font-size="16" fill="#1a1a1a"> </text>
+  <text x="48" y="1353.3599999999997" font-size="16" fill="#1a1a1a"> and WebAssembly backends show layout throughput exceeding 50</text>
+  <text x="545.6000000000006" y="1353.3599999999997" font-size="16" fill="#1a1a1a"> </text>
+  <text x="48" y="1377.3599999999997" font-size="16" fill="#1a1a1a">000 words per second with sub-millisecond cold start latencies.</text>
+</svg>

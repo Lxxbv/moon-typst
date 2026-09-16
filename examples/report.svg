@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1241.04" viewBox="0 0 800 1241.04">
+  <style>
+    text { font-family: system-ui, -apple-system, sans-serif; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+  </style>
+  <rect width="100%" height="100%" fill="#ffffff"/>
+  <text x="48" y="96.48" font-size="28.8" fill="#1a1a1a" font-weight="bold">Benchmark &amp; Performance Analysis: moon-typst</text>
+  <text x="48" y="146.48" font-size="22.4" fill="#1a1a1a" font-weight="bold">Document Metadata</text>
+  <text x="48" y="170.16" font-size="16" fill="#1a1a1a">Author: Infrastructure &amp; Tooling Working Group</text>
+  <text x="417.60000000000025" y="170.16" font-size="16" fill="#1a1a1a"> </text>
+  <text x="422.40000000000026" y="170.16" font-size="16" fill="#1a1a1a">Date: September 2026</text>
+  <text x="588.0000000000002" y="170.16" font-size="16" fill="#1a1a1a"> </text>
+  <text x="592.8000000000002" y="170.16" font-size="16" fill="#1a1a1a">Version: 1.0.0</text>
+  <line x1="48" y1="200.56" x2="752" y2="200.56" stroke="#d0d7de" stroke-width="1"/>
+  <text x="48" y="253.6" font-size="22.4" fill="#1a1a1a" font-weight="bold">Executive Summary</text>
+  <text x="48" y="277.28000000000003" font-size="16" fill="#1a1a1a">This report evaluates the parsing and rendering throughput of the </text>
+  <text x="556.8000000000005" y="277.28000000000003" font-size="16" fill="#1a1a1a" font-weight="bold">moon-typst</text>
+  <text x="48" y="301.28000000000003" font-size="16" fill="#1a1a1a"> typesetting engine across multiple execution targets: Native </text>
+  <rect x="515.6000000000005" y="285.68" width="51.52" height="20" fill="#f4f4f6" rx="3"/>
+  <text x="517.6000000000005" y="299.92" font-size="14.4" fill="#d73a49" class="mono">x86_64</text>
+  <text x="48" y="325.28000000000003" font-size="16" fill="#1a1a1a">, WebAssembly GC, and JavaScript.</text>
+  <text x="48" y="357.28000000000003" font-size="16" fill="#1a1a1a">The design goal of moon-typst is to eliminate heavy C</text>
+  <text x="454.4000000000004" y="357.28000000000003" font-size="16" fill="#1a1a1a">/</text>
+  <text x="48" y="381.28000000000003" font-size="16" fill="#1a1a1a">C++ runtimes and provide an embeddable, zero-dependency typesetting engine capable of sub-millisecond document compilation.</text>
+  <text x="48" y="436.72" font-size="22.4" fill="#1a1a1a" font-weight="bold">Implementation Architecture</text>
+  <text x="48" y="460.40000000000003" font-size="16" fill="#1a1a1a">The core pipeline is written in 100% pure MoonBit without external C FFI bindings:</text>
+  <rect x="48" y="486.8" width="704" height="127.19999999999999" fill="#f4f4f6" rx="6"/>
+  <rect x="48" y="486.8" width="704" height="127.19999999999999" fill="none" stroke="#e1e4e8" stroke-width="1"/>
+  <text x="64" y="514.36" font-size="13.6" fill="#24292e" class="mono">pub fn render_typst_to_svg(source : String) -&gt; String {</text>
+  <text x="64" y="533.4" font-size="13.6" fill="#24292e" class="mono">  let doc = @parser.parse_typst(source)</text>
+  <text x="64" y="552.4399999999999" font-size="13.6" fill="#24292e" class="mono">  let layout = @layout.compute_layout(doc, ctx)</text>
+  <text x="64" y="571.4799999999999" font-size="13.6" fill="#24292e" class="mono">  @render.render_to_svg(layout)</text>
+  <text x="64" y="590.5199999999999" font-size="13.6" fill="#24292e" class="mono">}</text>
+  <text x="48" y="639.6" font-size="16" fill="#1a1a1a">Key features of this pipeline include:</text>
+  <text x="64" y="675.6" font-size="16" fill="#0969da" font-weight="bold">1. </text>
+  <text x="87.2" y="675.6" font-size="16" fill="#1a1a1a">Deterministic memory allocation via MoonBit&apos;s compact heap layout</text>
+  <text x="64" y="703.6" font-size="16" fill="#0969da" font-weight="bold">2. </text>
+  <text x="87.2" y="703.6" font-size="16" fill="#1a1a1a">Pure functional AST node representation with structural pattern matching</text>
+  <text x="64" y="731.6" font-size="16" fill="#0969da" font-weight="bold">3. </text>
+  <text x="87.2" y="731.6" font-size="16" fill="#1a1a1a">Vectorized bounding box accumulation avoiding redundant traversal</text>
+  <line x1="48" y1="766" x2="752" y2="766" stroke="#d0d7de" stroke-width="1"/>
+  <text x="48" y="819.04" font-size="22.4" fill="#1a1a1a" font-weight="bold">Benchmark Results</text>
+  <text x="48" y="842.72" font-size="16" fill="#1a1a1a">The following table summarizes throughput metrics across 1,000 continuous compilation runs on standard hardware:</text>
+  <rect x="48" y="873.12" width="88" height="35.2" fill="none" stroke="#e1e4e8" stroke-width="1"/>
+  <text x="56" y="894.72" font-size="16" fill="#1a1a1a"> Target Runtime </text>
+  <rect x="136" y="873.12" width="88" height="35.2" fill="none" stroke="#e1e4e8" stroke-width="1"/>
+  <text x="144" y="894.72" font-size="16" fill="#1a1a1a"> Parse Time </text>
+  <rect x="224" y="873.12" width="88" height="35.2" fill="none" stroke="#e1e4e8" stroke-width="1"/>
+  <text x="232" y="894.72" font-size="16" fill="#1a1a1a"> Layout Time </text>
+  <rect x="312" y="873.12" width="88" height="35.2" fill="none" stroke="#e1e4e8" stroke-width="1"/>
+  <text x="320" y="894.72" font-size="16" fill="#1a1a1a"> Total Latency </text>
+  <rect x="400" y="873.12" width="88" height="35.2" fill="none" stroke="#e1e4e8" stroke-width="1"/>
+  <text x="408" y="894.72" font-size="16" fill="#1a1a1a"> Native </text>
+  <rect x="488" y="873.12" width="88" height="35.2" fill="none" stroke="#e1e4e8" stroke-width="1"/>
+  <rect x="494" y="879.12" width="51.52" height="20" fill="#f4f4f6" rx="3"/>
+  <text x="496" y="893.36" font-size="14.4" fill="#d73a49" class="mono">x86_64</text>
+  <rect x="576" y="873.12" width="88" height="35.2" fill="none" stroke="#e1e4e8" stroke-width="1"/>
+  <text x="584" y="894.72" font-size="16" fill="#1a1a1a">  </text>
+  <rect x="664" y="873.12" width="88" height="35.2" fill="none" stroke="#e1e4e8" stroke-width="1"/>
+  <text x="48" y="918.72" font-size="16" fill="#1a1a1a"> 0.32 ms    </text>
+  <rect x="48" y="908.32" width="88" height="35.2" fill="none" stroke="#e1e4e8" stroke-width="1"/>
+  <text x="56" y="929.9200000000001" font-size="16" fill="#1a1a1a"> 0.48 ms     </text>
+  <rect x="136" y="908.32" width="88" height="35.2" fill="none" stroke="#e1e4e8" stroke-width="1"/>
+  <text x="144" y="929.9200000000001" font-size="16" fill="#1a1a1a"> 0.80 ms       </text>
+  <rect x="224" y="908.32" width="88" height="35.2" fill="none" stroke="#e1e4e8" stroke-width="1"/>
+  <text x="232" y="929.9200000000001" font-size="16" fill="#1a1a1a"> Wasm-GC </text>
+  <rect x="312" y="908.32" width="88" height="35.2" fill="none" stroke="#e1e4e8" stroke-width="1"/>
+  <text x="320" y="929.9200000000001" font-size="16" fill="#1a1a1a">(</text>
+  <rect x="400" y="908.32" width="88" height="35.2" fill="none" stroke="#e1e4e8" stroke-width="1"/>
+  <text x="408" y="929.9200000000001" font-size="16" fill="#1a1a1a">V8</text>
+  <rect x="488" y="908.32" width="88" height="35.2" fill="none" stroke="#e1e4e8" stroke-width="1"/>
+  <text x="496" y="929.9200000000001" font-size="16" fill="#1a1a1a">)</text>
+  <rect x="576" y="908.32" width="88" height="35.2" fill="none" stroke="#e1e4e8" stroke-width="1"/>
+  <text x="584" y="929.9200000000001" font-size="16" fill="#1a1a1a">   </text>
+  <rect x="664" y="908.32" width="88" height="35.2" fill="none" stroke="#e1e4e8" stroke-width="1"/>
+  <text x="48" y="953.9200000000001" font-size="16" fill="#1a1a1a"> 0.54 ms    </text>
+  <rect x="48" y="943.52" width="88" height="35.2" fill="none" stroke="#e1e4e8" stroke-width="1"/>
+  <text x="56" y="965.12" font-size="16" fill="#1a1a1a"> 0.72 ms     </text>
+  <rect x="136" y="943.52" width="88" height="35.2" fill="none" stroke="#e1e4e8" stroke-width="1"/>
+  <text x="144" y="965.12" font-size="16" fill="#1a1a1a"> 1.26 ms       </text>
+  <rect x="224" y="943.52" width="88" height="35.2" fill="none" stroke="#e1e4e8" stroke-width="1"/>
+  <text x="232" y="965.12" font-size="16" fill="#1a1a1a"> Wasm-GC </text>
+  <rect x="312" y="943.52" width="88" height="35.2" fill="none" stroke="#e1e4e8" stroke-width="1"/>
+  <text x="320" y="965.12" font-size="16" fill="#1a1a1a">(</text>
+  <rect x="400" y="943.52" width="88" height="35.2" fill="none" stroke="#e1e4e8" stroke-width="1"/>
+  <text x="408" y="965.12" font-size="16" fill="#1a1a1a">Wasmtime</text>
+  <rect x="488" y="943.52" width="88" height="35.2" fill="none" stroke="#e1e4e8" stroke-width="1"/>
+  <text x="496" y="965.12" font-size="16" fill="#1a1a1a">)</text>
+  <rect x="576" y="943.52" width="88" height="35.2" fill="none" stroke="#e1e4e8" stroke-width="1"/>
+  <text x="584" y="965.12" font-size="16" fill="#1a1a1a"> </text>
+  <rect x="664" y="943.52" width="88" height="35.2" fill="none" stroke="#e1e4e8" stroke-width="1"/>
+  <text x="672" y="965.12" font-size="16" fill="#1a1a1a"> 0.49 ms </text>
+  <rect x="48" y="978.72" width="88" height="35.2" fill="none" stroke="#e1e4e8" stroke-width="1"/>
+  <text x="56" y="1000.32" font-size="16" fill="#1a1a1a"> 0.68 ms   </text>
+  <rect x="136" y="978.72" width="88" height="35.2" fill="none" stroke="#e1e4e8" stroke-width="1"/>
+  <text x="144" y="1000.32" font-size="16" fill="#1a1a1a"> 1.17 ms       </text>
+  <line x1="48" y1="1041.92" x2="752" y2="1041.92" stroke="#d0d7de" stroke-width="1"/>
+  <text x="48" y="1094.96" font-size="22.4" fill="#1a1a1a" font-weight="bold">Conclusion &amp; Recommendations</text>
+  <text x="48" y="1118.6399999999999" font-size="16" fill="#1a1a1a">The benchmark numbers confirm that moon-typst achieves industry-grade performance suitable for real-time collaborative editing and serverless document generation.</text>
+  <text x="48" y="1150.6399999999999" font-size="16" fill="#1a1a1a">We recommend standardizing on </text>
+  <rect x="296.4000000000001" y="1135.04" width="128.56000000000003" height="20" fill="#f4f4f6" rx="3"/>
+  <text x="298.4000000000001" y="1149.28" font-size="14.4" fill="#d73a49" class="mono">Lxxbv/moon_typst</text>
+  <text x="48" y="1174.6399999999999" font-size="16" fill="#1a1a1a"> for web-based previewers and IDE extensions.</text>
+</svg>

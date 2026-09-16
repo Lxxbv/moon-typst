@@ -149,6 +149,49 @@ pub fn Parser::parse(self : Parser) -> @core.Doc {
           }
         }
       }
+      Token::HashIdent(name) => {
+        let _ = self.advance()
+        if name == "pagebreak" {
+          if self.peek() == Token::LParen {
+            let _ = self.advance()
+            if self.peek() == Token::RParen {
+              let _ = self.advance()
+            }
+          }
+          doc.add_block(@core.Block::PageBreak)
+          self.skip_newlines()
+        } else if name == "rect" {
+          doc.add_block(
+            @core.Block::Shape(
+              @core.ShapeKind::Rect(
+                @core.Length::Pt(120.0),
+                @core.Length::Pt(60.0),
+                4.0,
+              ),
+              @core.ShapeStyle::default(),
+            ),
+          )
+          self.skip_newlines()
+        } else if name == "circle" {
+          doc.add_block(
+            @core.Block::Shape(
+              @core.ShapeKind::Circle(@core.Length::Pt(30.0)),
+              @core.ShapeStyle::default(),
+            ),
+          )
+          self.skip_newlines()
+        } else if name == "grid" {
+          doc.add_block(
+            @core.Block::Grid(
+              [@core.Length::Fr(1.0), @core.Length::Fr(1.0)],
+              [],
+            ),
+          )
+          self.skip_newlines()
+        } else {
+          self.skip_newlines()
+        }
+      }
       _ => {
         let p = self.parse_paragraph()
         doc.add_block(p)
@@ -367,6 +410,87 @@ fn Parser::parse_math_expression(self : Parser) -> @core.MathExpr {
           i = i + 2
           continue
         }
+        (@core.MathExpr::Sym("hat"), @core.MathExpr::Group(inner_items)) => {
+          let inner = if inner_items.length() == 1 {
+            inner_items[0]
+          } else {
+            @core.MathExpr::Group(inner_items)
+          }
+          resolved.push(@core.MathExpr::Accent(inner, "hat"))
+          i = i + 2
+          continue
+        }
+        (@core.MathExpr::Sym("tilde"), @core.MathExpr::Group(inner_items)) => {
+          let inner = if inner_items.length() == 1 {
+            inner_items[0]
+          } else {
+            @core.MathExpr::Group(inner_items)
+          }
+          resolved.push(@core.MathExpr::Accent(inner, "tilde"))
+          i = i + 2
+          continue
+        }
+        (@core.MathExpr::Sym("bar"), @core.MathExpr::Group(inner_items)) => {
+          let inner = if inner_items.length() == 1 {
+            inner_items[0]
+          } else {
+            @core.MathExpr::Group(inner_items)
+          }
+          resolved.push(@core.MathExpr::Accent(inner, "bar"))
+          i = i + 2
+          continue
+        }
+        (@core.MathExpr::Sym("dot"), @core.MathExpr::Group(inner_items)) => {
+          let inner = if inner_items.length() == 1 {
+            inner_items[0]
+          } else {
+            @core.MathExpr::Group(inner_items)
+          }
+          resolved.push(@core.MathExpr::Accent(inner, "dot"))
+          i = i + 2
+          continue
+        }
+        (@core.MathExpr::Sym("vec"), @core.MathExpr::Group(inner_items)) => {
+          let vec_elems : Array[@core.MathExpr] = []
+          for item in inner_items {
+            match item {
+              @core.MathExpr::Op(",") => ()
+              _ => vec_elems.push(item)
+            }
+          }
+          resolved.push(@core.MathExpr::Vec(vec_elems))
+          i = i + 2
+          continue
+        }
+        (@core.MathExpr::Sym("mat"), @core.MathExpr::Group(inner_items)) => {
+          let mut rows = 1
+          let mut cols_in_row = 0
+          let mut max_cols = 0
+          let mat_elems : Array[@core.MathExpr] = []
+          for item in inner_items {
+            match item {
+              @core.MathExpr::Op(";") => {
+                rows = rows + 1
+                if cols_in_row > max_cols {
+                  max_cols = cols_in_row
+                }
+                cols_in_row = 0
+              }
+              @core.MathExpr::Op(",") => ()
+              _ => {
+                mat_elems.push(item)
+                cols_in_row = cols_in_row + 1
+              }
+            }
+          }
+          if cols_in_row > max_cols {
+            max_cols = cols_in_row
+          }
+          let final_cols = if max_cols > 0 { max_cols } else { 1 }
+          resolved.push(@core.MathExpr::Matrix(rows, final_cols, mat_elems))
+          i = i + 2
+          continue
+        }
         _ => ()
       }
     }
@@ -385,10 +509,48 @@ fn Parser::parse_math_expression(self : Parser) -> @core.MathExpr {
 ///|
 fn Parser::parse_math_atom(self : Parser) -> @core.MathExpr {
   match self.peek() {
+    Token::Equal => {
+      let _ = self.advance()
+      @core.MathExpr::Op("=")
+    }
+    Token::Comma => {
+      let _ = self.advance()
+      @core.MathExpr::Op(",")
+    }
+    Token::Semicolon => {
+      let _ = self.advance()
+      @core.MathExpr::Op(";")
+    }
     Token::Text(s) => {
       let _ = self.advance()
       let trimmed = s.trim().to_owned()
-      if trimmed == "+" ||
+      if (trimmed == "mat" ||
+        trimmed == "vec" ||
+        trimmed == "hat" ||
+        trimmed == "tilde" ||
+        trimmed == "bar" ||
+        trimmed == "dot" ||
+        trimmed == "sqrt") &&
+        self.peek() == Token::LParen {
+        let _ = self.advance() // consume LParen
+        if trimmed == "mat" {
+          self.parse_matrix_paren_content()
+        } else if trimmed == "vec" {
+          self.parse_vec_paren_content()
+        } else if trimmed == "sqrt" {
+          let inner = self.parse_math_expression()
+          if self.peek() == Token::RParen {
+            let _ = self.advance()
+          }
+          @core.MathExpr::Sqrt(inner)
+        } else {
+          let inner = self.parse_math_expression()
+          if self.peek() == Token::RParen {
+            let _ = self.advance()
+          }
+          @core.MathExpr::Accent(inner, trimmed)
+        }
+      } else if trimmed == "+" ||
         trimmed == "-" ||
         trimmed == "*" ||
         trimmed == "=" ||
@@ -398,9 +560,6 @@ fn Parser::parse_math_atom(self : Parser) -> @core.MathExpr {
         trimmed == "<=" ||
         trimmed == ">=" {
         @core.MathExpr::Op(trimmed)
-      } else if trimmed.has_prefix("sqrt(") && trimmed.has_suffix(")") {
-        let inner_str = trimmed[5:trimmed.length() - 1].to_owned()
-        @core.MathExpr::Sqrt(@core.MathExpr::Sym(inner_str))
       } else {
         @core.MathExpr::Sym(trimmed)
       }
@@ -429,7 +588,11 @@ fn Parser::parse_math_atom(self : Parser) -> @core.MathExpr {
         }
       }
       let sub_parser = Parser::new(inner_tokens)
-      @core.MathExpr::Group([sub_parser.parse_math_expression()])
+      let parsed = sub_parser.parse_math_expression()
+      match parsed {
+        @core.MathExpr::Group(_) => parsed
+        _ => @core.MathExpr::Group([parsed])
+      }
     }
     _ => {
       let _ = self.advance()
@@ -472,3 +635,66 @@ fn Parser::parse_table(self : Parser) -> @core.Block {
   }
   @core.Block::Table(if max_cols == 0 { 1 } else { max_cols }, rows)
 }
+
+///|
+fn Parser::parse_matrix_paren_content(self : Parser) -> @core.MathExpr {
+  let elems : Array[@core.MathExpr] = []
+  let mut row_count = 1
+  let mut cols_in_cur_row = 0
+  let mut max_cols = 0
+  while self.pos < self.len {
+    match self.peek() {
+      Token::RParen | Token::Dollar | Token::Eof => {
+        if self.peek() == Token::RParen {
+          let _ = self.advance()
+        }
+        break
+      }
+      Token::Comma => {
+        let _ = self.advance()
+      }
+      Token::Semicolon => {
+        let _ = self.advance()
+        row_count = row_count + 1
+        if cols_in_cur_row > max_cols {
+          max_cols = cols_in_cur_row
+        }
+        cols_in_cur_row = 0
+      }
+      _ => {
+        let atom = self.parse_math_atom()
+        elems.push(atom)
+        cols_in_cur_row = cols_in_cur_row + 1
+      }
+    }
+  }
+  if cols_in_cur_row > max_cols {
+    max_cols = cols_in_cur_row
+  }
+  let col_count = if max_cols > 0 { max_cols } else { 1 }
+  @core.MathExpr::Matrix(row_count, col_count, elems)
+}
+
+///|
+fn Parser::parse_vec_paren_content(self : Parser) -> @core.MathExpr {
+  let elems : Array[@core.MathExpr] = []
+  while self.pos < self.len {
+    match self.peek() {
+      Token::RParen | Token::Dollar | Token::Eof => {
+        if self.peek() == Token::RParen {
+          let _ = self.advance()
+        }
+        break
+      }
+      Token::Comma => {
+        let _ = self.advance()
+      }
+      _ => {
+        let atom = self.parse_math_atom()
+        elems.push(atom)
+      }
+    }
+  }
+  @core.MathExpr::Vec(elems)
+}
+

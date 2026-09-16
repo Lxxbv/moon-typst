@@ -137,3 +137,77 @@ test "parse_typst math expressions" {
     _ => abort("expected MathBlock")
   }
 }
+
+///|
+test "parse_typst matrix and vector math" {
+  let src = "$ mat(1, 2; 3, 4) $\n$ vec(a, b) $"
+  let doc = parse_typst(src)
+  assert_eq(doc.blocks.length(), 2)
+
+  match doc.blocks[0] {
+    @core.Block::MathBlock(@core.MathExpr::Matrix(rows, cols, elems)) => {
+      assert_eq(rows, 2)
+      assert_eq(cols, 2)
+      assert_eq(elems.length(), 4)
+      assert_eq(elems[0], @core.MathExpr::Sym("1"))
+      assert_eq(elems[3], @core.MathExpr::Sym("4"))
+    }
+    _ => abort("expected 2x2 Matrix")
+  }
+
+  match doc.blocks[1] {
+    @core.Block::MathBlock(@core.MathExpr::Vec(elems)) => {
+      assert_eq(elems.length(), 2)
+      assert_eq(elems[0], @core.MathExpr::Sym("a"))
+      assert_eq(elems[1], @core.MathExpr::Sym("b"))
+    }
+    _ => abort("expected Vec")
+  }
+}
+
+///|
+test "parse_typst accents in math" {
+  let src = "$ hat(x) + bar(y) $"
+  let doc = parse_typst(src)
+  assert_eq(doc.blocks.length(), 1)
+  match doc.blocks[0] {
+    @core.Block::MathBlock(@core.MathExpr::Group(items)) => {
+      assert_eq(items.length(), 3)
+      assert_eq(
+        items[0],
+        @core.MathExpr::Accent(@core.MathExpr::Sym("x"), "hat"),
+      )
+      assert_eq(items[1], @core.MathExpr::Op("+"))
+      assert_eq(
+        items[2],
+        @core.MathExpr::Accent(@core.MathExpr::Sym("y"), "bar"),
+      )
+    }
+    _ => abort("expected accent group")
+  }
+}
+
+///|
+test "parse_typst hash blocks" {
+  let src = "#pagebreak()\n#rect\n#circle\n#grid"
+  let doc = parse_typst(src)
+  assert_eq(doc.blocks.length(), 4)
+
+  match doc.blocks[0] {
+    @core.Block::PageBreak => ()
+    _ => abort("expected PageBreak")
+  }
+  match doc.blocks[1] {
+    @core.Block::Shape(@core.ShapeKind::Rect(_, _, _), _) => ()
+    _ => abort("expected Rect Shape")
+  }
+  match doc.blocks[2] {
+    @core.Block::Shape(@core.ShapeKind::Circle(_), _) => ()
+    _ => abort("expected Circle Shape")
+  }
+  match doc.blocks[3] {
+    @core.Block::Grid(_, _) => ()
+    _ => abort("expected Grid")
+  }
+}
+

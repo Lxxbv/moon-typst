@@ -237,6 +237,51 @@ pub fn Lexer::tokenize(self : Lexer) -> Array[Token] {
       continue
     }
 
+    if c == '#' {
+      let _ = self.advance()
+      let id_buf = StringBuilder()
+      while self.pos < self.len {
+        let peek_c = self.peek()
+        let is_ident = (peek_c >= 'a' && peek_c <= 'z') ||
+          (peek_c >= 'A' && peek_c <= 'Z') ||
+          peek_c == '_' ||
+          (peek_c >= '0' && peek_c <= '9')
+        if is_ident {
+          id_buf.write_char(self.advance())
+        } else {
+          break
+        }
+      }
+      let ident_name = id_buf.to_string()
+      self.at_line_start = false
+      tokens.push(Token::HashIdent(ident_name))
+      continue
+    }
+    if c == ',' {
+      let _ = self.advance()
+      self.at_line_start = false
+      tokens.push(Token::Comma)
+      continue
+    }
+    if c == ':' {
+      let _ = self.advance()
+      self.at_line_start = false
+      tokens.push(Token::Colon)
+      continue
+    }
+    if c == ';' {
+      let _ = self.advance()
+      self.at_line_start = false
+      tokens.push(Token::Semicolon)
+      continue
+    }
+    if c == '=' {
+      let _ = self.advance()
+      self.at_line_start = false
+      tokens.push(Token::Equal)
+      continue
+    }
+
     // Escaped character: \c
     if c == '\\' && self.pos + 1 < self.len {
       let _ = self.advance()
@@ -264,7 +309,12 @@ pub fn Lexer::tokenize(self : Lexer) -> Array[Token] {
         next_c == '(' ||
         next_c == ')' ||
         next_c == '/' ||
-        next_c == '\\' {
+        next_c == '\\' ||
+        next_c == '#' ||
+        next_c == ',' ||
+        next_c == ':' ||
+        next_c == ';' ||
+        next_c == '=' {
         break
       }
       text_buf.write_char(self.advance())

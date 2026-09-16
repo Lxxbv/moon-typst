@@ -19,4 +19,9 @@ pub(all) enum Token {
   LParen // (
   RParen // )
   Slash // /
+  HashIdent(String) // #set, #rect, #grid, etc.
+  Comma // ,
+  Colon // :
+  Semicolon // ;
+  Equal // =
 } derive(Debug, Eq)

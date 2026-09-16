@@ -23,3 +23,24 @@ test "escape_xml functionality" {
   let escaped = escape_xml(raw)
   assert_eq(escaped, "Math: &lt; &amp; &gt; &quot; &apos;")
 }
+
+test "render_html output structure" {
+  let doc = @core.Doc::new()
+  doc.add_block(@core.Block::Heading(1, [@core.Inline::Text("Typst HTML Render")]))
+  doc.add_block(@core.Block::Paragraph([
+    @core.Inline::Text("Hello "),
+    @core.Inline::Bold([@core.Inline::Text("World")]),
+    @core.Inline::Text("!"),
+  ]))
+  doc.add_block(@core.Block::MathBlock(@core.MathExpr::Frac(@core.MathExpr::Sym("x"), @core.MathExpr::Sym("y"))))
+  doc.add_block(@core.Block::HorizontalRule)
+
+  let html = render_html(doc)
+  assert_eq(html.has_prefix("<!DOCTYPE html>"), true)
+  assert_eq(html.has_suffix("</html>\n"), true)
+  assert_eq(html.contains("<h1>Typst HTML Render</h1>"), true)
+  assert_eq(html.contains("<strong>World</strong>"), true)
+  assert_eq(html.contains("<div class=\"math-block\">"), true)
+  assert_eq(html.contains("<span class=\"frac\">"), true)
+  assert_eq(html.contains("<hr/>"), true)
+}

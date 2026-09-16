@@ -64,7 +64,15 @@ fn LayoutEngine::layout_block(self : LayoutEngine, block : @core.Block) -> Unit 
     @core.Block::MathBlock(expr) => self.layout_math_block(expr)
     @core.Block::List(ordered, items) => self.layout_list(ordered, items)
     @core.Block::Table(cols, rows) => self.layout_table(cols, rows)
+    @core.Block::Shape(shape, style) => self.layout_shape(shape, style)
+    @core.Block::Grid(cols, items) => self.layout_grid(cols, items)
+    @core.Block::FootnoteBlock(index, inlines) =>
+      self.layout_footnote_block(index, inlines)
+    @core.Block::Figure(body, caption) => self.layout_figure(body, caption)
+    @core.Block::AlignBlock(align, body) =>
+      self.layout_align_block(align, body)
     @core.Block::HorizontalRule => self.layout_horizontal_rule()
+    @core.Block::PageBreak => self.layout_page_break()
   }
 }
 
@@ -176,6 +184,30 @@ fn LayoutEngine::layout_inline_styled(
       )
       self.boxes.push(b)
       self.cur_x = self.cur_x + w
+    }
+    @core.Inline::FootnoteRef(idx) => {
+      let num_str = "[\{idx}]"
+      let small_size = font_size * 0.75
+      let w = measure_text_width(num_str, small_size)
+      let b = LayoutBox::new(
+        Rect::new(self.cur_x, self.cur_y - font_size * 0.25, w, small_size),
+        BoxKind::Text(num_str, small_size, "#0969da", "bold"),
+      )
+      self.boxes.push(b)
+      self.cur_x = self.cur_x + w
+    }
+    @core.Inline::StyledSpan(inners, custom_color, custom_size) => {
+      let use_color = match custom_color {
+        Some(c) => c.to_hex()
+        None => color
+      }
+      let use_size = match custom_size {
+        Some(s) => s
+        None => font_size
+      }
+      for inner in inners {
+        self.layout_inline_styled(inner, use_size, use_color, weight)
+      }
     }
     @core.Inline::LineBreak => {
       self.cur_y = self.cur_y + line_h
@@ -298,6 +330,14 @@ fn LayoutEngine::layout_inline_math(
         None => ()
       }
     }
+    @core.MathExpr::Matrix(rows, cols, elems) =>
+      self.layout_matrix(rows, cols, elems, font_size)
+    @core.MathExpr::Vec(elems) =>
+      self.layout_matrix(elems.length(), 1, elems, font_size)
+    @core.MathExpr::Accent(inner, acc) =>
+      self.layout_accent(inner, acc, font_size)
+    @core.MathExpr::Limits(op, lower, upper) =>
+      self.layout_limits(op, lower, upper, font_size)
   }
 }
 
@@ -476,3 +516,304 @@ fn LayoutEngine::layout_table(
   self.cur_y = self.cur_y + total_rows.to_double() * cell_h + 16.0
   self.cur_x = self.ctx.margin_x
 }
+
+///|
+fn LayoutEngine::layout_shape(
+  self : LayoutEngine,
+  shape : @core.ShapeKind,
+  style : @core.ShapeStyle,
+) -> Unit {
+  let fill_hex = match style.fill {
+    Some(c) => c.to_hex()
+    None => ""
+  }
+  let stroke_hex = match style.stroke {
+    Some(c) => c.to_hex()
+    None => ""
+  }
+  let stroke_w = style.stroke_width
+
+  match shape {
+    @core.ShapeKind::Rect(w_len, h_len, radius) => {
+      let w = w_len.to_pt(self.ctx.font_size, self.ctx.content_width())
+      let h = h_len.to_pt(self.ctx.font_size, self.ctx.content_width())
+      if fill_hex.length() > 0 {
+        let fill_box = LayoutBox::new(
+          Rect::new(self.cur_x, self.cur_y, w, h),
+          BoxKind::RectFill(w, h, fill_hex, radius),
+        )
+        self.boxes.push(fill_box)
+      }
+      if stroke_hex.length() > 0 {
+        let stroke_box = LayoutBox::new(
+          Rect::new(self.cur_x, self.cur_y, w, h),
+          BoxKind::RectStroke(w, h, stroke_hex, stroke_w),
+        )
+        self.boxes.push(stroke_box)
+      }
+      self.cur_y = self.cur_y + h + 12.0
+    }
+    @core.ShapeKind::Circle(r_len) => {
+      let r = r_len.to_pt(self.ctx.font_size, self.ctx.content_width())
+      let circle_box = LayoutBox::new(
+        Rect::new(self.cur_x, self.cur_y, r * 2.0, r * 2.0),
+        BoxKind::Circle(r, fill_hex, stroke_hex, stroke_w),
+      )
+      self.boxes.push(circle_box)
+      self.cur_y = self.cur_y + r * 2.0 + 12.0
+    }
+    @core.ShapeKind::Line(x1_l, y1_l, x2_l, y2_l) => {
+      let x1 = self.cur_x +
+        x1_l.to_pt(self.ctx.font_size, self.ctx.content_width())
+      let y1 = self.cur_y +
+        y1_l.to_pt(self.ctx.font_size, self.ctx.content_width())
+      let x2 = self.cur_x +
+        x2_l.to_pt(self.ctx.font_size, self.ctx.content_width())
+      let y2 = self.cur_y +
+        y2_l.to_pt(self.ctx.font_size, self.ctx.content_width())
+      let line_box = LayoutBox::new(
+        Rect::new(x1, y1, x2 - x1, y2 - y1),
+        BoxKind::Line(x1, y1, x2, y2, stroke_hex, stroke_w),
+      )
+      self.boxes.push(line_box)
+      self.cur_y = self.cur_y + 16.0
+    }
+    @core.ShapeKind::Polygon(_) => ()
+  }
+}
+
+///|
+fn LayoutEngine::layout_grid(
+  self : LayoutEngine,
+  cols : Array[@core.Length],
+  items : Array[@core.Block],
+) -> Unit {
+  self.cur_y = self.cur_y + 12.0
+  let num_cols = if cols.length() > 0 { cols.length() } else { 1 }
+  let total_w = self.ctx.content_width()
+  let col_w = total_w / num_cols.to_double()
+
+  for i, item in items {
+    let col_idx = i % num_cols
+    let item_x = self.ctx.margin_x + col_idx.to_double() * col_w
+    let orig_x = self.cur_x
+    self.cur_x = item_x
+    self.layout_block(item)
+    self.cur_x = orig_x
+  }
+  self.cur_y = self.cur_y + 16.0
+  self.cur_x = self.ctx.margin_x
+}
+
+///|
+fn LayoutEngine::layout_footnote_block(
+  self : LayoutEngine,
+  index : Int,
+  inlines : Array[@core.Inline],
+) -> Unit {
+  self.cur_y = self.cur_y + 8.0
+  let num_str = "[\{index}] "
+  let fn_size = self.ctx.font_size * 0.8
+  let w = measure_text_width(num_str, fn_size)
+  let b = LayoutBox::new(
+    Rect::new(self.cur_x, self.cur_y, w, fn_size),
+    BoxKind::Text(num_str, fn_size, "#57606a", "bold"),
+  )
+  self.boxes.push(b)
+  self.cur_x = self.cur_x + w
+
+  for inline in inlines {
+    self.layout_inline_styled(inline, fn_size, "#57606a", "normal")
+  }
+  self.cur_y = self.cur_y + fn_size * 1.4 + 4.0
+  self.cur_x = self.ctx.margin_x
+}
+
+///|
+fn LayoutEngine::layout_figure(
+  self : LayoutEngine,
+  body : @core.Block,
+  caption : Array[@core.Inline]?,
+) -> Unit {
+  self.cur_y = self.cur_y + 12.0
+  self.layout_block(body)
+  match caption {
+    Some(inlines) => {
+      self.cur_y = self.cur_y + 4.0
+      self.cur_x = self.ctx.margin_x + 24.0
+      let caption_size = self.ctx.font_size * 0.85
+      let label_box = LayoutBox::new(
+        Rect::new(self.cur_x, self.cur_y, 48.0, caption_size),
+        BoxKind::Text("Figure: ", caption_size, "#57606a", "bold"),
+      )
+      self.boxes.push(label_box)
+      self.cur_x = self.cur_x + 50.0
+
+      for inline in inlines {
+        self.layout_inline_styled(inline, caption_size, "#57606a", "italic")
+      }
+      self.cur_y = self.cur_y + caption_size * 1.5 + 8.0
+      self.cur_x = self.ctx.margin_x
+    }
+    None => ()
+  }
+}
+
+///|
+fn LayoutEngine::layout_align_block(
+  self : LayoutEngine,
+  align : @core.TextAlign,
+  body : @core.Block,
+) -> Unit {
+  let orig_x = self.cur_x
+  match align {
+    @core.TextAlign::Center => self.cur_x = self.ctx.margin_x + 48.0
+    @core.TextAlign::Right => self.cur_x = self.ctx.margin_x + 96.0
+    _ => ()
+  }
+  self.layout_block(body)
+  self.cur_x = orig_x
+}
+
+///|
+fn LayoutEngine::layout_page_break(self : LayoutEngine) -> Unit {
+  self.cur_y = self.cur_y + 24.0
+  let b = LayoutBox::new(
+    Rect::new(self.ctx.margin_x, self.cur_y, self.ctx.content_width(), 1.0),
+    BoxKind::Line(
+      self.ctx.margin_x,
+      self.cur_y,
+      self.ctx.margin_x + self.ctx.content_width(),
+      self.cur_y,
+      "#d0d7de",
+      1.0,
+    ),
+  )
+  self.boxes.push(b)
+  self.cur_y = self.cur_y + 24.0
+  self.cur_x = self.ctx.margin_x
+}
+
+///|
+fn LayoutEngine::layout_matrix(
+  self : LayoutEngine,
+  rows : Int,
+  cols : Int,
+  elems : Array[@core.MathExpr],
+  font_size : Double,
+) -> Unit {
+  let cell_w = font_size * 1.8
+  let cell_h = font_size * 1.4
+  let total_w = cols.to_double() * cell_w + 12.0
+  let total_h = rows.to_double() * cell_h
+
+  // Left bracket [
+  let lb = LayoutBox::new(
+    Rect::new(self.cur_x, self.cur_y, 4.0, total_h),
+    BoxKind::Line(
+      self.cur_x,
+      self.cur_y,
+      self.cur_x,
+      self.cur_y + total_h,
+      "#24292f",
+      1.5,
+    ),
+  )
+  self.boxes.push(lb)
+
+  // Layout matrix elements
+  for r = 0; r < rows; r = r + 1 {
+    for c = 0; c < cols; c = c + 1 {
+      let idx = r * cols + c
+      if idx < elems.length() {
+        let old_x = self.cur_x
+        let old_y = self.cur_y
+        self.cur_x = old_x + 6.0 + c.to_double() * cell_w
+        self.cur_y = old_y + r.to_double() * cell_h
+        self.layout_inline_math(elems[idx], font_size * 0.9)
+        self.cur_x = old_x
+        self.cur_y = old_y
+      }
+    }
+  }
+
+  // Right bracket ]
+  let rb_x = self.cur_x + total_w
+  let rb = LayoutBox::new(
+    Rect::new(rb_x, self.cur_y, 4.0, total_h),
+    BoxKind::Line(rb_x, self.cur_y, rb_x, self.cur_y + total_h, "#24292f", 1.5),
+  )
+  self.boxes.push(rb)
+  self.cur_x = rb_x + 8.0
+}
+
+///|
+fn LayoutEngine::layout_accent(
+  self : LayoutEngine,
+  inner : @core.MathExpr,
+  acc : String,
+  font_size : Double,
+) -> Unit {
+  let mark = match acc {
+    "hat" => "^"
+    "tilde" => "~"
+    "bar" => "-"
+    "dot" => "."
+    "vec" => "->"
+    _ => "^"
+  }
+  let old_y = self.cur_y
+  let old_x = self.cur_x
+  // Place accent above
+  self.cur_y = self.cur_y - font_size * 0.4
+  let mark_box = LayoutBox::new(
+    Rect::new(self.cur_x + 2.0, self.cur_y, font_size * 0.5, font_size * 0.5),
+    BoxKind::Text(mark, font_size * 0.7, "#24292f", "normal"),
+  )
+  self.boxes.push(mark_box)
+  self.cur_y = old_y
+  self.cur_x = old_x
+  self.layout_inline_math(inner, font_size)
+}
+
+///|
+fn LayoutEngine::layout_limits(
+  self : LayoutEngine,
+  op : @core.MathExpr,
+  lower : @core.MathExpr?,
+  upper : @core.MathExpr?,
+  font_size : Double,
+) -> Unit {
+  let old_y = self.cur_y
+  let old_x = self.cur_x
+
+  // Upper limit above op
+  match upper {
+    Some(up) => {
+      self.cur_y = self.cur_y - font_size * 0.45
+      self.layout_inline_math(up, font_size * 0.65)
+      self.cur_y = old_y
+      self.cur_x = old_x
+    }
+    None => ()
+  }
+
+  // Operator
+  self.layout_inline_math(op, font_size * 1.1)
+
+  // Lower limit below op
+  match lower {
+    Some(low) => {
+      let low_x = old_x
+      let low_y = self.cur_y + font_size * 0.45
+      let saved_x = self.cur_x
+      self.cur_x = low_x
+      self.cur_y = low_y
+      self.layout_inline_math(low, font_size * 0.65)
+      self.cur_y = old_y
+      self.cur_x = saved_x
+    }
+    None => ()
+  }
+}
+

@@ -83,6 +83,23 @@ fn render_svg_box(buf : StringBuilder, b : @layout.LayoutBox) -> Unit {
       buf.write_string(
         "  <line x1=\"\{x1}\" y1=\"\{y1}\" x2=\"\{x2}\" y2=\"\{y2}\" stroke=\"\{stroke}\" stroke-width=\"\{stroke_width}\"/>\n",
       )
+    @layout.BoxKind::Circle(r, fill, stroke, stroke_width) => {
+      let cx = b.rect.x + r
+      let cy = b.rect.y + r
+      let fill_attr = if fill.length() > 0 {
+        " fill=\"\{fill}\""
+      } else {
+        " fill=\"none\""
+      }
+      let stroke_attr = if stroke.length() > 0 {
+        " stroke=\"\{stroke}\" stroke-width=\"\{stroke_width}\""
+      } else {
+        ""
+      }
+      buf.write_string(
+        "  <circle cx=\"\{cx}\" cy=\"\{cy}\" r=\"\{r}\"\{fill_attr}\{stroke_attr}/>\n",
+      )
+    }
     @layout.BoxKind::Container(children) =>
       for child in children {
         render_svg_box(buf, child)

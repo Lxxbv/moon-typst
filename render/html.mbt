@@ -134,7 +134,85 @@ fn render_html_block(buf : StringBuilder, block : @core.Block) -> Unit {
       }
       buf.write_string("    </table>\n")
     }
+    @core.Block::Shape(shape, style) => {
+      let fill_hex = match style.fill {
+        Some(c) => c.to_hex()
+        None => "none"
+      }
+      let stroke_hex = match style.stroke {
+        Some(c) => c.to_hex()
+        None => "none"
+      }
+      match shape {
+        @core.ShapeKind::Rect(w, h, r) => {
+          let w_str = w.to_string()
+          let h_str = h.to_string()
+          buf.write_string(
+            "    <div style=\"width: \{w_str}; height: \{h_str}; background: \{fill_hex}; border: \{style.stroke_width}px solid \{stroke_hex}; border-radius: \{r}px; margin: 12px 0;\"></div>\n",
+          )
+        }
+        @core.ShapeKind::Circle(r) => {
+          let r_str = r.to_string()
+          buf.write_string(
+            "    <div style=\"width: calc(\{r_str} * 2); height: calc(\{r_str} * 2); background: \{fill_hex}; border: \{style.stroke_width}px solid \{stroke_hex}; border-radius: 50%; margin: 12px 0;\"></div>\n",
+          )
+        }
+        _ => ()
+      }
+    }
+    @core.Block::Grid(cols, items) => {
+      let col_count = if cols.length() > 0 { cols.length() } else { 1 }
+      buf.write_string(
+        "    <div style=\"display: grid; grid-template-columns: repeat(\{col_count}, 1fr); gap: 16px; margin: 16px 0;\">\n",
+      )
+      for item in items {
+        buf.write_string("      <div>\n")
+        render_html_block(buf, item)
+        buf.write_string("      </div>\n")
+      }
+      buf.write_string("    </div>\n")
+    }
+    @core.Block::FootnoteBlock(idx, inlines) => {
+      buf.write_string(
+        "    <div class=\"footnote\" id=\"fn-\{idx}\" style=\"font-size: 85%; color: #57606a; margin: 6px 0;\">",
+      )
+      buf.write_string("<sup>[\{idx}]</sup> ")
+      render_html_inlines(buf, inlines)
+      buf.write_string("</div>\n")
+    }
+    @core.Block::Figure(body, caption) => {
+      buf.write_string(
+        "    <figure style=\"margin: 16px 0; text-align: center;\">\n",
+      )
+      render_html_block(buf, body)
+      match caption {
+        Some(inlines) => {
+          buf.write_string(
+            "      <figcaption style=\"font-size: 85%; color: #57606a; font-style: italic; margin-top: 8px;\">Figure: ",
+          )
+          render_html_inlines(buf, inlines)
+          buf.write_string("</figcaption>\n")
+        }
+        None => ()
+      }
+      buf.write_string("    </figure>\n")
+    }
+    @core.Block::AlignBlock(align, body) => {
+      let align_str = match align {
+        @core.TextAlign::Center => "center"
+        @core.TextAlign::Right => "right"
+        @core.TextAlign::Justify => "justify"
+        _ => "left"
+      }
+      buf.write_string("    <div style=\"text-align: \{align_str};\">\n")
+      render_html_block(buf, body)
+      buf.write_string("    </div>\n")
+    }
     @core.Block::HorizontalRule => buf.write_string("    <hr/>\n")
+    @core.Block::PageBreak =>
+      buf.write_string(
+        "    <div style=\"page-break-after: always; height: 1px; border-bottom: 1px dashed #d0d7de; margin: 24px 0;\"></div>\n",
+      )
   }
 }
 
@@ -180,6 +258,22 @@ fn render_single_html_inline(
       buf.write_string("<a href=\"\{escape_xml(url)}\">")
       buf.write_string(escape_xml(display))
       buf.write_string("</a>")
+    }
+    @core.Inline::FootnoteRef(idx) =>
+      buf.write_string("<sup><a href=\"#fn-\{idx}\">[\{idx}]</a></sup>")
+    @core.Inline::StyledSpan(inners, custom_color, custom_size) => {
+      let mut style_str = ""
+      match custom_color {
+        Some(c) => style_str = style_str + "color: " + c.to_hex() + "; "
+        None => ()
+      }
+      match custom_size {
+        Some(s) => style_str = style_str + "font-size: " + s.to_string() + "px; "
+        None => ()
+      }
+      buf.write_string("<span style=\"\{style_str}\">")
+      render_html_inlines(buf, inners)
+      buf.write_string("</span>")
     }
     @core.Inline::LineBreak => buf.write_string("<br/>")
   }
@@ -231,5 +325,67 @@ fn render_html_math(buf : StringBuilder, expr : @core.MathExpr) -> Unit {
       for item in items {
         render_html_math(buf, item)
       }
+    @core.MathExpr::Matrix(rows, cols, elems) => {
+      buf.write_string(
+        "<span class=\"matrix-wrapper\" style=\"display: inline-flex; align-items: center; border-left: 2px solid #1f2328; border-right: 2px solid #1f2328; padding: 0 4px; margin: 0 4px;\"><table style=\"border-collapse: collapse; margin: 0;\">",
+      )
+      for r = 0; r < rows; r = r + 1 {
+        buf.write_string("<tr>")
+        for c = 0; c < cols; c = c + 1 {
+          let idx = r * cols + c
+          buf.write_string(
+            "<td style=\"border: none; padding: 2px 6px; text-align: center;\">",
+          )
+          if idx < elems.length() {
+            render_html_math(buf, elems[idx])
+          }
+          buf.write_string("</td>")
+        }
+        buf.write_string("</tr>")
+      }
+      buf.write_string("</table></span>")
+    }
+    @core.MathExpr::Vec(elems) =>
+      render_html_math(buf, @core.MathExpr::Matrix(elems.length(), 1, elems))
+    @core.MathExpr::Accent(inner, acc) => {
+      let sym = match acc {
+        "hat" => "^"
+        "tilde" => "~"
+        "bar" => "&#772;"
+        "dot" => "&#775;"
+        "vec" => "&#8407;"
+        _ => "^"
+      }
+      buf.write_string(
+        "<span style=\"position: relative; display: inline-block;\">",
+      )
+      render_html_math(buf, inner)
+      buf.write_string(
+        "<span style=\"position: absolute; top: -0.6em; left: 50%; transform: translateX(-50%); font-size: 0.8em;\">\{sym}</span></span>",
+      )
+    }
+    @core.MathExpr::Limits(op, lower, upper) => {
+      buf.write_string(
+        "<span style=\"display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center;\">",
+      )
+      match upper {
+        Some(up) => {
+          buf.write_string("<span style=\"font-size: 0.7em;\">")
+          render_html_math(buf, up)
+          buf.write_string("</span>")
+        }
+        None => ()
+      }
+      render_html_math(buf, op)
+      match lower {
+        Some(low) => {
+          buf.write_string("<span style=\"font-size: 0.7em;\">")
+          render_html_math(buf, low)
+          buf.write_string("</span>")
+        }
+        None => ()
+      }
+      buf.write_string("</span>")
+    }
   }
 }

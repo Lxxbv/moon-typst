@@ -1,0 +1,13 @@
+# MoonBit build artifacts
+_build/
+target/
+.mooncakes/
+
+# System and temporary files
+.DS_Store
+Thumbs.db
+*.swp
+*.bak
+*~
+.vscode/
+.idea/

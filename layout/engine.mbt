@@ -9,7 +9,7 @@ pub struct LayoutEngine {
 
 ///|
 pub fn LayoutEngine::new(ctx : @core.StyleContext) -> LayoutEngine {
-  { ctx, cur_x: ctx.margin_x, cur_y: ctx.margin_y, boxes: [] }
+  { ctx, cur_x: ctx.margin_x, cur_y: ctx.margin_y, boxes: [], }
 }
 
 ///|
@@ -52,7 +52,7 @@ pub fn LayoutEngine::layout_doc(
   } else {
     self.ctx.page_height
   }
-  { width: self.ctx.page_width, height: final_height, boxes: self.boxes }
+  { width: self.ctx.page_width, height: final_height, boxes: self.boxes, }
 }
 
 ///|
@@ -69,8 +69,7 @@ fn LayoutEngine::layout_block(self : LayoutEngine, block : @core.Block) -> Unit 
     @core.Block::FootnoteBlock(index, inlines) =>
       self.layout_footnote_block(index, inlines)
     @core.Block::Figure(body, caption) => self.layout_figure(body, caption)
-    @core.Block::AlignBlock(align, body) =>
-      self.layout_align_block(align, body)
+    @core.Block::AlignBlock(align, body) => self.layout_align_block(align, body)
     @core.Block::HorizontalRule => self.layout_horizontal_rule()
     @core.Block::PageBreak => self.layout_page_break()
   }
@@ -816,4 +815,3 @@ fn LayoutEngine::layout_limits(
     None => ()
   }
 }
-

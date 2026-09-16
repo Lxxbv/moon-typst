@@ -6,7 +6,7 @@ pub(all) struct Scope {
 
 ///|
 pub fn Scope::new() -> Scope {
-  { bindings: [] }
+  { bindings: [], }
 }
 
 ///|
@@ -41,7 +41,7 @@ pub(all) struct Evaluator {
 ///|
 pub fn Evaluator::new(
   style : @core.StyleContext,
-  reporter : @diag.DiagnosticReporter
+  reporter : @diag.DiagnosticReporter,
 ) -> Evaluator {
   let root = Scope::new()
   // Preset default constants
@@ -58,7 +58,7 @@ pub fn Evaluator::new(
   root.set("black", Val::Color(@core.Color::Named("black")))
   root.set("white", Val::Color(@core.Color::Named("white")))
   root.set("gray", Val::Color(@core.Color::Named("gray")))
-  { scopes: [root], style, reporter }
+  { scopes: [root], style, reporter, }
 }
 
 ///|
@@ -99,7 +99,7 @@ pub fn Evaluator::lookup_var(self : Evaluator, name : String) -> Val? {
 pub fn Evaluator::apply_set_rule(
   self : Evaluator,
   target : String,
-  args : Array[(String, Val)]
+  args : Array[(String, Val)],
 ) -> Unit {
   match target {
     "text" =>
@@ -119,12 +119,12 @@ pub fn Evaluator::apply_set_rule(
             }
           "fill" =>
             match pair.1.as_color() {
-              Some(c) => self.style = { ..self.style, text_color: c.to_hex() }
+              Some(c) => self.style = { ..self.style, text_color: c.to_hex(), }
               None => ()
             }
           "font" =>
             match pair.1.as_str() {
-              Some(f) => self.style = { ..self.style, font_family: f }
+              Some(f) => self.style = { ..self.style, font_family: f, }
               None => ()
             }
           _ => ()
@@ -135,7 +135,7 @@ pub fn Evaluator::apply_set_rule(
         match pair.0 {
           "columns" =>
             match pair.1.as_int() {
-              Some(c) => self.style = { ..self.style, columns: c }
+              Some(c) => self.style = { ..self.style, columns: c, }
               None => ()
             }
           "gap" =>
@@ -154,7 +154,7 @@ pub fn Evaluator::apply_set_rule(
             match pair.1.as_length() {
               Some(l) => {
                 let m = l.to_pt(self.style.font_size, self.style.page_width)
-                self.style = { ..self.style, margin_x: m, margin_y: m }
+                self.style = { ..self.style, margin_x: m, margin_y: m, }
               }
               None => ()
             }
@@ -190,17 +190,20 @@ pub fn Evaluator::apply_set_rule(
                   text_align: @core.TextAlign::Justify,
                 }
               Some(false) =>
-                self.style = { ..self.style, text_align: @core.TextAlign::Left }
+                self.style = {
+                  ..self.style,
+                  text_align: @core.TextAlign::Left,
+                }
               None => ()
             }
           "align" =>
             match pair.1.as_align() {
-              Some(a) => self.style = { ..self.style, text_align: a }
+              Some(a) => self.style = { ..self.style, text_align: a, }
               None => ()
             }
           "leading" =>
             match pair.1.as_double() {
-              Some(d) => self.style = { ..self.style, line_height: d }
+              Some(d) => self.style = { ..self.style, line_height: d, }
               None => ()
             }
           _ => ()

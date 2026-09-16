@@ -182,10 +182,7 @@ pub fn Parser::parse(self : Parser) -> @core.Doc {
           self.skip_newlines()
         } else if name == "grid" {
           doc.add_block(
-            @core.Block::Grid(
-              [@core.Length::Fr(1.0), @core.Length::Fr(1.0)],
-              [],
-            ),
+            @core.Block::Grid([@core.Length::Fr(1.0), @core.Length::Fr(1.0)], []),
           )
           self.skip_newlines()
         } else {
@@ -524,13 +521,15 @@ fn Parser::parse_math_atom(self : Parser) -> @core.MathExpr {
     Token::Text(s) => {
       let _ = self.advance()
       let trimmed = s.trim().to_owned()
-      if (trimmed == "mat" ||
-        trimmed == "vec" ||
-        trimmed == "hat" ||
-        trimmed == "tilde" ||
-        trimmed == "bar" ||
-        trimmed == "dot" ||
-        trimmed == "sqrt") &&
+      if (
+          trimmed == "mat" ||
+          trimmed == "vec" ||
+          trimmed == "hat" ||
+          trimmed == "tilde" ||
+          trimmed == "bar" ||
+          trimmed == "dot" ||
+          trimmed == "sqrt"
+        ) &&
         self.peek() == Token::LParen {
         let _ = self.advance() // consume LParen
         if trimmed == "mat" {
@@ -697,4 +696,3 @@ fn Parser::parse_vec_paren_content(self : Parser) -> @core.MathExpr {
   }
   @core.MathExpr::Vec(elems)
 }
-

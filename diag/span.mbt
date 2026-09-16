@@ -7,12 +7,12 @@ pub(all) struct Pos {
 
 ///|
 pub fn Pos::new(line : Int, col : Int) -> Pos {
-  { line, col }
+  { line, col, }
 }
 
 ///|
 pub fn Pos::default() -> Pos {
-  { line: 1, col: 1 }
+  { line: 1, col: 1, }
 }
 
 ///|
@@ -33,19 +33,19 @@ pub(all) struct Span {
 
 ///|
 pub fn Span::new(start : Pos, end : Pos) -> Span {
-  { start, end }
+  { start, end, }
 }
 
 ///|
 pub fn Span::point(line : Int, col : Int) -> Span {
   let p = Pos::new(line, col)
-  { start: p, end: p }
+  { start: p, end: p, }
 }
 
 ///|
 pub fn Span::empty() -> Span {
   let p = Pos::default()
-  { start: p, end: p }
+  { start: p, end: p, }
 }
 
 ///|
@@ -55,12 +55,8 @@ pub fn Span::merge(self : Span, other : Span) -> Span {
   } else {
     other.start
   }
-  let end = if self.end.compare(other.end) >= 0 {
-    self.end
-  } else {
-    other.end
-  }
-  { start, end }
+  let end = if self.end.compare(other.end) >= 0 { self.end } else { other.end }
+  { start, end, }
 }
 
 ///|

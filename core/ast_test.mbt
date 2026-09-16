@@ -1,3 +1,4 @@
+///|
 test "ast construction and basic doc structure" {
   let doc = Doc::new()
   doc.add_block(
@@ -9,9 +10,7 @@ test "ast construction and basic doc structure" {
   doc.add_block(
     Block::Paragraph([
       Inline::Text("A simple formula: "),
-      Inline::InlineMath(
-        MathExpr::Frac(MathExpr::Sym("a"), MathExpr::Sym("b")),
-      ),
+      Inline::InlineMath(MathExpr::Frac(MathExpr::Sym("a"), MathExpr::Sym("b"))),
     ]),
   )
 
@@ -22,6 +21,7 @@ test "ast construction and basic doc structure" {
   assert_eq(ctx.column_width(), 704.0)
 }
 
+///|
 test "core length conversion to points" {
   let pt_len = Length::Pt(10.0)
   let mm_len = Length::Mm(25.4)
@@ -34,6 +34,7 @@ test "core length conversion to points" {
   assert_eq(pct_len.to_pt(16.0, 700.0), 350.0)
 }
 
+///|
 test "core color formatting and normalization" {
   let c1 = Color::Rgb(255, 0, 128, 1.0)
   assert_eq(c1.to_hex(), "#ff0080")
@@ -50,6 +51,7 @@ test "core color formatting and normalization" {
   assert_eq(c3.to_hex(), "#808080")
 }
 
+///|
 test "core advanced math and shape ast nodes" {
   let matrix = MathExpr::Matrix(2, 2, [
     MathExpr::Sym("1"),
@@ -69,10 +71,10 @@ test "core advanced math and shape ast nodes" {
     ShapeKind::Rect(Length::Pt(100.0), Length::Pt(50.0), 4.0),
     ShapeStyle::default(),
   )
-  let grid_block = Block::Grid(
-    [Length::Fr(1.0), Length::Fr(2.0)],
-    [rect_shape, Block::Paragraph([Inline::Text("Cell 2")])],
-  )
+  let grid_block = Block::Grid([Length::Fr(1.0), Length::Fr(2.0)], [
+    rect_shape,
+    Block::Paragraph([Inline::Text("Cell 2")]),
+  ])
 
   let doc = Doc::new()
   doc.add_block(Block::MathBlock(matrix))
@@ -84,6 +86,7 @@ test "core advanced math and shape ast nodes" {
   assert_eq(doc.blocks.length(), 5)
 }
 
+///|
 test "core multi-column layout width calculation" {
   let ctx : StyleContext = {
     page_width: 800.0,

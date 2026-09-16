@@ -9,7 +9,7 @@ pub(all) struct Rect {
 
 ///|
 pub fn Rect::new(x : Double, y : Double, w : Double, h : Double) -> Rect {
-  { x, y, w, h }
+  { x, y, w, h, }
 }
 
 ///|
@@ -30,7 +30,7 @@ pub(all) struct LayoutBox {
 
 ///|
 pub fn LayoutBox::new(rect : Rect, kind : BoxKind) -> LayoutBox {
-  { rect, kind }
+  { rect, kind, }
 }
 
 ///|
@@ -42,7 +42,7 @@ pub(all) struct PageLayout {
 
 ///|
 pub fn PageLayout::new(width : Double, height : Double) -> PageLayout {
-  { width, height, boxes: [] }
+  { width, height, boxes: [], }
 }
 
 ///|
@@ -58,10 +58,10 @@ pub(all) struct DocumentLayout {
 
 ///|
 pub fn DocumentLayout::new() -> DocumentLayout {
-  { pages: [] }
+  { pages: [], }
 }
 
 ///|
 pub fn DocumentLayout::single_page(page : PageLayout) -> DocumentLayout {
-  { pages: [page] }
+  { pages: [page], }
 }

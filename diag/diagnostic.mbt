@@ -29,17 +29,17 @@ pub(all) struct Diagnostic {
 
 ///|
 pub fn Diagnostic::error(msg : String, span : Span) -> Diagnostic {
-  { severity: Severity::Error, message: msg, span, hint: None, code: None }
+  { severity: Severity::Error, message: msg, span, hint: None, code: None, }
 }
 
 ///|
 pub fn Diagnostic::warning(msg : String, span : Span) -> Diagnostic {
-  { severity: Severity::Warning, message: msg, span, hint: None, code: None }
+  { severity: Severity::Warning, message: msg, span, hint: None, code: None, }
 }
 
 ///|
 pub fn Diagnostic::hint(msg : String, span : Span) -> Diagnostic {
-  { severity: Severity::Hint, message: msg, span, hint: None, code: None }
+  { severity: Severity::Hint, message: msg, span, hint: None, code: None, }
 }
 
 ///|
@@ -76,7 +76,7 @@ pub(all) struct DiagnosticReporter {
 ///|
 pub fn DiagnosticReporter::new(
   filename : String,
-  source : String
+  source : String,
 ) -> DiagnosticReporter {
   let lines : Array[String] = []
   let mut start = 0
@@ -99,13 +99,13 @@ pub fn DiagnosticReporter::new(
     }
     lines.push(source[start:end].to_owned())
   }
-  { filename, source, lines, diagnostics: [] }
+  { filename, source, lines, diagnostics: [], }
 }
 
 ///|
 pub fn DiagnosticReporter::add(
   self : DiagnosticReporter,
-  d : Diagnostic
+  d : Diagnostic,
 ) -> Unit {
   self.diagnostics.push(d)
 }
@@ -156,7 +156,7 @@ fn repeat_char(c : Char, count : Int) -> String {
 pub fn DiagnosticReporter::format_diagnostic(
   self : DiagnosticReporter,
   d : Diagnostic,
-  use_color : Bool
+  use_color : Bool,
 ) -> String {
   let sb = StringBuilder()
 
@@ -256,7 +256,7 @@ pub fn DiagnosticReporter::format_diagnostic(
 /// Formats all collected diagnostics
 pub fn DiagnosticReporter::render_all(
   self : DiagnosticReporter,
-  use_color : Bool
+  use_color : Bool,
 ) -> String {
   let sb = StringBuilder()
   for d in self.diagnostics {

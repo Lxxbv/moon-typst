@@ -1,3 +1,4 @@
+///|
 test "diag span merging and ordering" {
   let p1 = Pos::new(1, 5)
   let p2 = Pos::new(1, 10)
@@ -15,6 +16,7 @@ test "diag span merging and ordering" {
   assert_eq(merged.to_string(), "1:5-2:3")
 }
 
+///|
 test "diagnostic reporter formats errors with snippets" {
   let src =
     #|= Title
@@ -39,6 +41,7 @@ test "diagnostic reporter formats errors with snippets" {
   assert_eq(formatted.contains("= hint: add a matching '*'"), true)
 }
 
+///|
 test "diagnostic reporter warnings and hints" {
   let src = "let x = 1\nlet y = 2"
   let reporter = DiagnosticReporter::new("main.typ", src)

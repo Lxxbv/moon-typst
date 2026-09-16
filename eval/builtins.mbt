@@ -1,6 +1,5 @@
 ///|
 /// Built-in function evaluation and layout element factories
-
 fn get_named_arg(named : Array[(String, Val)], key : String) -> Val? {
   for pair in named {
     if pair.0 == key {
@@ -15,7 +14,7 @@ fn get_named_arg(named : Array[(String, Val)], key : String) -> Val? {
 pub fn eval_builtin(
   name : String,
   pos_args : Array[Val],
-  named_args : Array[(String, Val)]
+  named_args : Array[(String, Val)],
 ) -> Val {
   match name {
     "rect" => {
@@ -171,8 +170,7 @@ pub fn eval_builtin(
       for arg in pos_args {
         match arg {
           Val::BlockContent(b) => items.push(b)
-          Val::InlineContent(inl) =>
-            items.push(@core.Block::Paragraph([inl]))
+          Val::InlineContent(inl) => items.push(@core.Block::Paragraph([inl]))
           Val::Str(s) =>
             items.push(@core.Block::Paragraph([@core.Inline::Text(s)]))
           _ => ()

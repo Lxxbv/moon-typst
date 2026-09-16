@@ -210,4 +210,3 @@ test "parse_typst hash blocks" {
     _ => abort("expected Grid")
   }
 }
-

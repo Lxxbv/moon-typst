@@ -268,7 +268,8 @@ fn render_single_html_inline(
         None => ()
       }
       match custom_size {
-        Some(s) => style_str = style_str + "font-size: " + s.to_string() + "px; "
+        Some(s) =>
+          style_str = style_str + "font-size: " + s.to_string() + "px; "
         None => ()
       }
       buf.write_string("<span style=\"\{style_str}\">")

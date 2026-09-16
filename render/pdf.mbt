@@ -31,7 +31,7 @@ pub struct PdfWriter {
 
 ///|
 pub fn PdfWriter::new() -> PdfWriter {
-  { buf: StringBuilder(), offsets: [], byte_count: 0 }
+  { buf: StringBuilder(), offsets: [], byte_count: 0, }
 }
 
 ///|
@@ -383,7 +383,9 @@ fn encode_page_stream(sb : StringBuilder, page : @layout.PageLayout) -> Unit {
         }
 
         // 4 cubic Bézier curve segments constructing the circle
-        sb.write_string((cx + radius).to_string() + " " + cy.to_string() + " m\n")
+        sb.write_string(
+          (cx + radius).to_string() + " " + cy.to_string() + " m\n",
+        )
         sb.write_string(
           (cx + radius).to_string() +
           " " +

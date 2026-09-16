@@ -93,7 +93,7 @@ pub(all) struct Doc {
 ///|
 /// Constructor for empty document
 pub fn Doc::new() -> Doc {
-  { blocks: [] }
+  { blocks: [], }
 }
 
 ///|

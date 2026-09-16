@@ -14,7 +14,7 @@ pub(all) enum Length {
 pub fn Length::to_pt(
   self : Length,
   em_size : Double,
-  container_width : Double
+  container_width : Double,
 ) -> Double {
   match self {
     Length::Pt(v) => v

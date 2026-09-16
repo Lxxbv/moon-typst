@@ -1,3 +1,4 @@
+///|
 test "eval values and conversions" {
   let v_int = Val::Int(42)
   let v_float = Val::Float(3.14)
@@ -16,6 +17,7 @@ test "eval values and conversions" {
   assert_eq(v_align.as_align(), Some(@core.TextAlign::Center))
 }
 
+///|
 test "eval scopes and variable lookup" {
   let style = @core.StyleContext::default()
   let reporter = @diag.DiagnosticReporter::new("test.typ", "")
@@ -32,6 +34,7 @@ test "eval scopes and variable lookup" {
   assert_eq(eval.lookup_var("author"), Some(Val::Str("Alice")))
 }
 
+///|
 test "eval apply set rules for text and page" {
   let style = @core.StyleContext::default()
   let reporter = @diag.DiagnosticReporter::new("test.typ", "")
@@ -58,16 +61,13 @@ test "eval apply set rules for text and page" {
   assert_eq(eval.style.column_gap, 30.0)
 }
 
+///|
 test "eval builtins: rect, circle, rgb, luma" {
-  let rect_val = eval_builtin(
-    "rect",
-    [],
-    [
-      ("width", Val::Length(@core.Length::Pt(120.0))),
-      ("height", Val::Length(@core.Length::Pt(80.0))),
-      ("radius", Val::Float(4.0)),
-    ],
-  )
+  let rect_val = eval_builtin("rect", [], [
+    ("width", Val::Length(@core.Length::Pt(120.0))),
+    ("height", Val::Length(@core.Length::Pt(80.0))),
+    ("radius", Val::Float(4.0)),
+  ])
   match rect_val {
     Val::BlockContent(@core.Block::Shape(@core.ShapeKind::Rect(w, h, r), _)) => {
       assert_eq(w, @core.Length::Pt(120.0))
@@ -93,10 +93,7 @@ test "eval builtins: rect, circle, rgb, luma" {
     [Val::Int(10), Val::Int(20), Val::Int(30)],
     [],
   )
-  assert_eq(
-    rgb_val.as_color(),
-    Some(@core.Color::Rgb(10, 20, 30, 1.0)),
-  )
+  assert_eq(rgb_val.as_color(), Some(@core.Color::Rgb(10, 20, 30, 1.0)))
 
   let luma_val = eval_builtin("luma", [Val::Int(200)], [])
   assert_eq(luma_val.as_color(), Some(@core.Color::Luma(200)))

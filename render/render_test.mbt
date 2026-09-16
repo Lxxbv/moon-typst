@@ -83,7 +83,7 @@ test "render_pdf output structure" {
       @layout.BoxKind::Circle(20.0, "#ff0000", "#333333", 1.5),
     ),
   ]
-  let page : @layout.PageLayout = { width: 595.0, height: 842.0, boxes }
+  let page : @layout.PageLayout = { width: 595.0, height: 842.0, boxes, }
   let pdf = render_pdf(page)
 
   assert_eq(pdf.has_prefix("%PDF-1.4"), true)
@@ -119,7 +119,7 @@ test "render_pdf_document multi-page structure" {
       ),
     ],
   }
-  let doc : @layout.DocumentLayout = { pages: [page1, page2] }
+  let doc : @layout.DocumentLayout = { pages: [page1, page2], }
   let pdf = render_pdf_document(doc)
 
   assert_eq(pdf.has_prefix("%PDF-1.4"), true)
@@ -128,4 +128,3 @@ test "render_pdf_document multi-page structure" {
   assert_eq(pdf.contains("(Page Two Content) Tj"), true)
   assert_eq(pdf.contains("%%EOF"), true)
 }
-

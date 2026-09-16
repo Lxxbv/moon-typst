@@ -51,12 +51,7 @@ pub fn Color::to_hex(self : Color) -> String {
 pub fn Color::to_normalized(self : Color) -> (Double, Double, Double, Double) {
   match self {
     Color::Rgb(r, g, b, a) =>
-      (
-        r.to_double() / 255.0,
-        g.to_double() / 255.0,
-        b.to_double() / 255.0,
-        a,
-      )
+      (r.to_double() / 255.0, g.to_double() / 255.0, b.to_double() / 255.0, a)
     Color::Luma(v) => {
       let d = v.to_double() / 255.0
       (d, d, d, 1.0)

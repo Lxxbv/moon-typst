@@ -25,7 +25,9 @@ fn print_help() -> Unit {
 
 ///|
 fn print_version() -> Unit {
-  println("moon-typst v0.2.0 (MoonBit Typst Compiler & Multi-Target Vector Engine)")
+  println(
+    "moon-typst v0.2.0 (MoonBit Typst Compiler & Multi-Target Vector Engine)",
+  )
 }
 
 ///|
@@ -167,7 +169,9 @@ fn main {
 
   println("[moon-typst] Compiling: \{input_path}")
   let doc = @parser.parse_typst(content)
-  println("[moon-typst] Abstract Syntax Tree: \{doc.blocks.length()} root blocks")
+  println(
+    "[moon-typst] Abstract Syntax Tree: \{doc.blocks.length()} root blocks",
+  )
 
   match format {
     OutputFormat::Html => {
@@ -189,7 +193,9 @@ fn main {
       println(
         "[moon-typst] Layout computed: \{page.boxes.length()} boxes (Page size: \{page.width}x\{page.height} pt)",
       )
-      println("[moon-typst] Serializing PDF xref tables, streams, and font dicts...")
+      println(
+        "[moon-typst] Serializing PDF xref tables, streams, and font dicts...",
+      )
       let pdf_content = @render.render_pdf(page)
       try {
         @fs.write_string_to_file(target_output, pdf_content)
@@ -209,7 +215,9 @@ fn main {
       println(
         "[moon-typst] Layout computed: \{page.boxes.length()} boxes (ViewBox: 0 0 \{page.width} \{page.height})",
       )
-      println("[moon-typst] Serializing vector paths, text nodes, and styles...")
+      println(
+        "[moon-typst] Serializing vector paths, text nodes, and styles...",
+      )
       let svg_content = @render.render_svg(page)
       try {
         @fs.write_string_to_file(target_output, svg_content)
@@ -228,4 +236,3 @@ fn main {
     println(reporter.render_all(use_color))
   }
 }
-

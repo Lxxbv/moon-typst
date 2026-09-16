@@ -35,6 +35,11 @@ jobs:
         run: |
           moon version --all
 
+      - name: Update Registry and Install Dependencies
+        run: |
+          moon update
+          moon install
+
       - name: MoonBit Check (Deny Warnings)
         run: |
           moon check --deny-warn

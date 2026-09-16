@@ -12,3 +12,8 @@ Thumbs.db
 *~
 .vscode/
 .idea/
+
+# Local non-repo submission documents
+项目申报书.md
+*申报书*.md
+

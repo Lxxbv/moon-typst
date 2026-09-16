@@ -1,6 +1,5 @@
 ///|
 /// Typst Token definitions for lexical analysis
-
 pub(all) enum Token {
   Eof
   Newline

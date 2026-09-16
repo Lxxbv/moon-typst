@@ -1,3 +1,4 @@
+///|
 test "doc construction and block manipulation" {
   let doc = Doc::new()
   assert_eq(doc.blocks.length(), 0)
@@ -17,9 +18,14 @@ test "doc construction and block manipulation" {
   assert_eq(doc.blocks.length(), 2)
 }
 
+///|
 test "math expression AST" {
   let frac = MathExpr::Frac(MathExpr::Sym("a"), MathExpr::Sym("b"))
-  let subsup = MathExpr::SubSup(MathExpr::Sym("x"), None, Some(MathExpr::Sym("2")))
+  let subsup = MathExpr::SubSup(
+    MathExpr::Sym("x"),
+    None,
+    Some(MathExpr::Sym("2")),
+  )
   let expr = MathExpr::Group([frac, MathExpr::Op("+"), subsup])
   let block = Block::MathBlock(expr)
   match block {
@@ -28,6 +34,7 @@ test "math expression AST" {
   }
 }
 
+///|
 test "style context calculations" {
   let ctx = StyleContext::default()
   assert_eq(ctx.page_width, 800.0)

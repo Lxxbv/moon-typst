@@ -1,3 +1,4 @@
+///|
 test "lexer headings and basic text" {
   let lexer = Lexer::new("= Title\n== Section\nText line.")
   let tokens = lexer.tokenize()
@@ -11,6 +12,7 @@ test "lexer headings and basic text" {
   assert_eq(tokens[7], Token::Eof)
 }
 
+///|
 test "lexer inline styles and math" {
   let lexer = Lexer::new("*bold* and _italic_ and `code` with $x + y$")
   let tokens = lexer.tokenize()
@@ -30,6 +32,7 @@ test "lexer inline styles and math" {
   assert_eq(tokens[13], Token::Eof)
 }
 
+///|
 test "lexer code block and list items" {
   let lexer = Lexer::new("```moonbit\nlet x = 1\n```\n- item 1\n+ item 2\n---")
   let tokens = lexer.tokenize()
@@ -45,6 +48,7 @@ test "lexer code block and list items" {
   assert_eq(tokens[9], Token::Eof)
 }
 
+///|
 test "lexer handles utf8 bom" {
   let lexer = Lexer::new("\uFEFF= Heading with BOM")
   let tokens = lexer.tokenize()
@@ -52,4 +56,3 @@ test "lexer handles utf8 bom" {
   assert_eq(tokens[1], Token::Text("Heading with BOM"))
   assert_eq(tokens[2], Token::Eof)
 }
-

@@ -15,7 +15,7 @@ keywords = [
   "layout",
   "svg",
   "html",
-  "renderer"
+  "renderer",
 ]
 
 description = "A lightweight Typst markup parser, layout engine, and SVG/HTML renderer written in pure MoonBit."

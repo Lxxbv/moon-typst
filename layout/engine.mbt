@@ -1,6 +1,5 @@
 ///|
 /// Layout Engine calculating geometric positions and box structures for Typst documents
-
 pub struct LayoutEngine {
   ctx : @core.StyleContext
   mut cur_x : Double
@@ -8,13 +7,9 @@ pub struct LayoutEngine {
   boxes : Array[LayoutBox]
 }
 
+///|
 pub fn LayoutEngine::new(ctx : @core.StyleContext) -> LayoutEngine {
-  {
-    ctx,
-    cur_x: ctx.margin_x,
-    cur_y: ctx.margin_y,
-    boxes: [],
-  }
+  { ctx, cur_x: ctx.margin_x, cur_y: ctx.margin_y, boxes: [] }
 }
 
 ///|
@@ -28,7 +23,11 @@ pub fn measure_text_width(text : String, font_size : Double) -> Double {
       total = total + font_size * 1.0 // CJK and wide characters
     } else if code == 32 {
       total = total + font_size * 0.3 // space
-    } else if code == 105 || code == 108 || code == 116 || code == 46 || code == 44 {
+    } else if code == 105 ||
+      code == 108 ||
+      code == 116 ||
+      code == 46 ||
+      code == 44 {
       total = total + font_size * 0.35 // narrow letters i, l, t, ., ,
     } else if code == 109 || code == 119 || code == 77 || code == 87 {
       total = total + font_size * 0.8 // wide letters m, w, M, W
@@ -41,7 +40,10 @@ pub fn measure_text_width(text : String, font_size : Double) -> Double {
 
 ///|
 /// Main layout computation entrypoint
-pub fn LayoutEngine::layout_doc(self : LayoutEngine, doc : @core.Doc) -> PageLayout {
+pub fn LayoutEngine::layout_doc(
+  self : LayoutEngine,
+  doc : @core.Doc,
+) -> PageLayout {
   for block in doc.blocks {
     self.layout_block(block)
   }
@@ -50,13 +52,10 @@ pub fn LayoutEngine::layout_doc(self : LayoutEngine, doc : @core.Doc) -> PageLay
   } else {
     self.ctx.page_height
   }
-  {
-    width: self.ctx.page_width,
-    height: final_height,
-    boxes: self.boxes,
-  }
+  { width: self.ctx.page_width, height: final_height, boxes: self.boxes }
 }
 
+///|
 fn LayoutEngine::layout_block(self : LayoutEngine, block : @core.Block) -> Unit {
   match block {
     @core.Block::Heading(level, inlines) => self.layout_heading(level, inlines)
@@ -69,10 +68,11 @@ fn LayoutEngine::layout_block(self : LayoutEngine, block : @core.Block) -> Unit 
   }
 }
 
+///|
 fn LayoutEngine::layout_heading(
   self : LayoutEngine,
   level : Int,
-  inlines : Array[@core.Inline]
+  inlines : Array[@core.Inline],
 ) -> Unit {
   let scale = match level {
     1 => 1.8
@@ -97,9 +97,10 @@ fn LayoutEngine::layout_heading(
   self.cur_x = self.ctx.margin_x
 }
 
+///|
 fn LayoutEngine::layout_paragraph(
   self : LayoutEngine,
-  inlines : Array[@core.Inline]
+  inlines : Array[@core.Inline],
 ) -> Unit {
   self.cur_x = self.ctx.margin_x
   let font_size = self.ctx.font_size
@@ -113,12 +114,13 @@ fn LayoutEngine::layout_paragraph(
   self.cur_x = self.ctx.margin_x
 }
 
+///|
 fn LayoutEngine::layout_inline_styled(
   self : LayoutEngine,
   inline : @core.Inline,
   font_size : Double,
   color : String,
-  weight : String
+  weight : String,
 ) -> Unit {
   let max_x = self.ctx.page_width - self.ctx.margin_x
   let line_h = font_size * self.ctx.line_height
@@ -137,16 +139,14 @@ fn LayoutEngine::layout_inline_styled(
       self.boxes.push(b)
       self.cur_x = self.cur_x + w
     }
-    @core.Inline::Bold(inners) => {
+    @core.Inline::Bold(inners) =>
       for inner in inners {
         self.layout_inline_styled(inner, font_size, color, "bold")
       }
-    }
-    @core.Inline::Italic(inners) => {
+    @core.Inline::Italic(inners) =>
       for inner in inners {
         self.layout_inline_styled(inner, font_size, color, "italic")
       }
-    }
     @core.Inline::Code(code) => {
       let w = measure_text_width(code, font_size * 0.9)
       if self.cur_x + w > max_x && self.cur_x > self.ctx.margin_x {
@@ -166,9 +166,7 @@ fn LayoutEngine::layout_inline_styled(
       self.boxes.push(b)
       self.cur_x = self.cur_x + w + 4.0
     }
-    @core.Inline::InlineMath(expr) => {
-      self.layout_inline_math(expr, font_size)
-    }
+    @core.Inline::InlineMath(expr) => self.layout_inline_math(expr, font_size)
     @core.Inline::Link(url, text) => {
       let display = if text.length() > 0 { text } else { url }
       let w = measure_text_width(display, font_size)
@@ -186,10 +184,11 @@ fn LayoutEngine::layout_inline_styled(
   }
 }
 
+///|
 fn LayoutEngine::layout_inline_math(
   self : LayoutEngine,
   expr : @core.MathExpr,
-  font_size : Double
+  font_size : Double,
 ) -> Unit {
   match expr {
     @core.MathExpr::Sym(s) => {
@@ -227,20 +226,37 @@ fn LayoutEngine::layout_inline_math(
       // Fraction bar
       let bar = LayoutBox::new(
         Rect::new(self.cur_x, self.cur_y + font_size * 0.5, max_w, 1.0),
-        BoxKind::Line(self.cur_x, self.cur_y + font_size * 0.5, self.cur_x + max_w, self.cur_y + font_size * 0.5, "#24292f", 1.0),
+        BoxKind::Line(
+          self.cur_x,
+          self.cur_y + font_size * 0.5,
+          self.cur_x + max_w,
+          self.cur_y + font_size * 0.5,
+          "#24292f",
+          1.0,
+        ),
       )
       self.boxes.push(bar)
 
       // Numerator
       let nb = LayoutBox::new(
-        Rect::new(self.cur_x + (max_w - nw) / 2.0, self.cur_y - font_size * 0.4, nw, font_size * 0.8),
+        Rect::new(
+          self.cur_x + (max_w - nw) / 2.0,
+          self.cur_y - font_size * 0.4,
+          nw,
+          font_size * 0.8,
+        ),
         BoxKind::Text(num_str, font_size * 0.8, "#24292f", "italic"),
       )
       self.boxes.push(nb)
 
       // Denominator
       let db = LayoutBox::new(
-        Rect::new(self.cur_x + (max_w - dw) / 2.0, self.cur_y + font_size * 0.7, dw, font_size * 0.8),
+        Rect::new(
+          self.cur_x + (max_w - dw) / 2.0,
+          self.cur_y + font_size * 0.7,
+          dw,
+          font_size * 0.8,
+        ),
         BoxKind::Text(den_str, font_size * 0.8, "#24292f", "italic"),
       )
       self.boxes.push(db)
@@ -257,11 +273,10 @@ fn LayoutEngine::layout_inline_math(
       self.cur_x = self.cur_x + sym_w
       self.layout_inline_math(inner, font_size)
     }
-    @core.MathExpr::Group(items) => {
+    @core.MathExpr::Group(items) =>
       for item in items {
         self.layout_inline_math(item, font_size)
       }
-    }
     @core.MathExpr::SubSup(base, sub, sup) => {
       self.layout_inline_math(base, font_size)
       match sub {
@@ -286,9 +301,10 @@ fn LayoutEngine::layout_inline_math(
   }
 }
 
+///|
 fn LayoutEngine::layout_math_block(
   self : LayoutEngine,
-  expr : @core.MathExpr
+  expr : @core.MathExpr,
 ) -> Unit {
   self.cur_y = self.cur_y + 16.0
   self.cur_x = self.ctx.margin_x + 32.0 // centered/indented block
@@ -298,10 +314,11 @@ fn LayoutEngine::layout_math_block(
   self.cur_x = self.ctx.margin_x
 }
 
+///|
 fn LayoutEngine::layout_code_block(
   self : LayoutEngine,
   _lang : String,
-  code : String
+  code : String,
 ) -> Unit {
   self.cur_y = self.cur_y + 8.0
   let padding = 16.0
@@ -324,7 +341,7 @@ fn LayoutEngine::layout_code_block(
     lines.push(buf.to_string())
   }
 
-  let block_h = padding * 2.0 + (lines.length().to_double()) * line_h
+  let block_h = padding * 2.0 + lines.length().to_double() * line_h
   let block_w = self.ctx.content_width()
 
   // Background box
@@ -345,7 +362,12 @@ fn LayoutEngine::layout_code_block(
   let mut text_y = self.cur_y + padding
   for line in lines {
     let b = LayoutBox::new(
-      Rect::new(self.ctx.margin_x + padding, text_y, block_w - padding * 2.0, font_size),
+      Rect::new(
+        self.ctx.margin_x + padding,
+        text_y,
+        block_w - padding * 2.0,
+        font_size,
+      ),
       BoxKind::Text(line, font_size, "#24292e", "monospace"),
     )
     self.boxes.push(b)
@@ -356,10 +378,11 @@ fn LayoutEngine::layout_code_block(
   self.cur_x = self.ctx.margin_x
 }
 
+///|
 fn LayoutEngine::layout_list(
   self : LayoutEngine,
   ordered : Bool,
-  items : Array[Array[@core.Inline]]
+  items : Array[Array[@core.Inline]],
 ) -> Unit {
   self.cur_y = self.cur_y + 4.0
   let font_size = self.ctx.font_size
@@ -377,7 +400,12 @@ fn LayoutEngine::layout_list(
     self.cur_x = self.cur_x + bullet_w + 4.0
 
     for inline in item {
-      self.layout_inline_styled(inline, font_size, self.ctx.text_color, "normal")
+      self.layout_inline_styled(
+        inline,
+        font_size,
+        self.ctx.text_color,
+        "normal",
+      )
     }
     self.cur_y = self.cur_y + line_h + 4.0
   }
@@ -385,22 +413,31 @@ fn LayoutEngine::layout_list(
   self.cur_x = self.ctx.margin_x
 }
 
+///|
 fn LayoutEngine::layout_horizontal_rule(self : LayoutEngine) -> Unit {
   self.cur_y = self.cur_y + 12.0
   let line_w = self.ctx.content_width()
   let b = LayoutBox::new(
     Rect::new(self.ctx.margin_x, self.cur_y, line_w, 1.0),
-    BoxKind::Line(self.ctx.margin_x, self.cur_y, self.ctx.margin_x + line_w, self.cur_y, "#d0d7de", 1.0),
+    BoxKind::Line(
+      self.ctx.margin_x,
+      self.cur_y,
+      self.ctx.margin_x + line_w,
+      self.cur_y,
+      "#d0d7de",
+      1.0,
+    ),
   )
   self.boxes.push(b)
   self.cur_y = self.cur_y + 16.0
   self.cur_x = self.ctx.margin_x
 }
 
+///|
 fn LayoutEngine::layout_table(
   self : LayoutEngine,
   cols : Int,
-  cells : Array[Array[@core.Inline]]
+  cells : Array[Array[@core.Inline]],
 ) -> Unit {
   self.cur_y = self.cur_y + 12.0
   let table_w = self.ctx.content_width()
@@ -425,7 +462,12 @@ fn LayoutEngine::layout_table(
     let orig_y = self.cur_y
     self.cur_y = cell_y + 8.0
     for inline in cell {
-      self.layout_inline_styled(inline, self.ctx.font_size, self.ctx.text_color, "normal")
+      self.layout_inline_styled(
+        inline,
+        self.ctx.font_size,
+        self.ctx.text_color,
+        "normal",
+      )
     }
     self.cur_y = orig_y
   }

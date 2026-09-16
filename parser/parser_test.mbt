@@ -1,3 +1,4 @@
+///|
 test "parse_typst full document" {
   let src =
     #|= Introduction
@@ -42,7 +43,8 @@ test "parse_typst full document" {
 
   // Block 2: Heading 2
   match doc.blocks[2] {
-    @core.Block::Heading(2, [@core.Inline::Text("Mathematical Formulation")]) => ()
+    @core.Block::Heading(2, [@core.Inline::Text("Mathematical Formulation")]) =>
+      ()
     _ => abort("expected heading 2")
   }
 
@@ -94,6 +96,7 @@ test "parse_typst full document" {
   }
 }
 
+///|
 test "parse_typst edge cases: unclosed markup and empty lines" {
   let src = "*unclosed bold and _unclosed italic\n\nJust text."
   let doc = parse_typst(src)
@@ -103,17 +106,21 @@ test "parse_typst edge cases: unclosed markup and empty lines" {
   assert_eq(empty_doc.blocks.length(), 0)
 }
 
+///|
 test "parse_typst math expressions" {
   let src = "$ a / b = sqrt(c) $"
   let doc = parse_typst(src)
   assert_eq(doc.blocks.length(), 1)
   match doc.blocks[0] {
-    @core.Block::MathBlock(expr) => {
+    @core.Block::MathBlock(expr) =>
       match expr {
         @core.MathExpr::Group(items) => {
           assert_eq(items.length(), 3)
           match items[0] {
-            @core.MathExpr::Frac(@core.MathExpr::Sym("a"), @core.MathExpr::Sym("b")) => ()
+            @core.MathExpr::Frac(
+              @core.MathExpr::Sym("a"),
+              @core.MathExpr::Sym("b")
+            ) => ()
             _ => abort("expected Frac")
           }
           match items[1] {
@@ -127,7 +134,6 @@ test "parse_typst math expressions" {
         }
         _ => abort("expected Group in MathBlock")
       }
-    }
     _ => abort("expected MathBlock")
   }
 }

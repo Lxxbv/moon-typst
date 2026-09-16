@@ -1,16 +1,17 @@
 ///|
 /// Recursive descent parser for Typst document markup
-
 pub struct Parser {
   tokens : Array[Token]
   len : Int
   mut pos : Int
 }
 
+///|
 pub fn Parser::new(tokens : Array[Token]) -> Parser {
   { tokens, len: tokens.length(), pos: 0 }
 }
 
+///|
 fn Parser::peek(self : Parser) -> Token {
   if self.pos < self.len {
     self.tokens[self.pos]
@@ -19,6 +20,7 @@ fn Parser::peek(self : Parser) -> Token {
   }
 }
 
+///|
 fn Parser::peek_at(self : Parser, offset : Int) -> Token {
   let idx = self.pos + offset
   if idx < self.len {
@@ -28,12 +30,14 @@ fn Parser::peek_at(self : Parser, offset : Int) -> Token {
   }
 }
 
+///|
 fn Parser::advance(self : Parser) -> Token {
   let t = self.peek()
   self.pos = self.pos + 1
   t
 }
 
+///|
 fn Parser::skip_newlines(self : Parser) -> Unit {
   while self.pos < self.len {
     match self.peek() {
@@ -90,7 +94,8 @@ pub fn Parser::parse(self : Parser) -> @core.Doc {
               let inlines = self.parse_line_inlines()
               items.push(inlines)
               // If followed by single newline and another DashItem, continue
-              if self.peek() == Token::Newline && self.peek_at(1) == Token::DashItem {
+              if self.peek() == Token::Newline &&
+                self.peek_at(1) == Token::DashItem {
                 let _ = self.advance()
               } else {
                 break
@@ -110,7 +115,8 @@ pub fn Parser::parse(self : Parser) -> @core.Doc {
               let _ = self.advance()
               let inlines = self.parse_line_inlines()
               items.push(inlines)
-              if self.peek() == Token::Newline && self.peek_at(1) == Token::PlusItem {
+              if self.peek() == Token::Newline &&
+                self.peek_at(1) == Token::PlusItem {
                 let _ = self.advance()
               } else {
                 break
@@ -153,6 +159,7 @@ pub fn Parser::parse(self : Parser) -> @core.Doc {
   doc
 }
 
+///|
 fn Parser::parse_line_inlines(self : Parser) -> Array[@core.Inline] {
   let inlines : Array[@core.Inline] = []
   while self.pos < self.len {
@@ -167,6 +174,7 @@ fn Parser::parse_line_inlines(self : Parser) -> Array[@core.Inline] {
   inlines
 }
 
+///|
 fn Parser::parse_single_inline(self : Parser) -> @core.Inline {
   match self.peek() {
     Token::Star => {
@@ -246,6 +254,7 @@ fn Parser::parse_single_inline(self : Parser) -> @core.Inline {
   }
 }
 
+///|
 fn Parser::parse_paragraph(self : Parser) -> @core.Block {
   let inlines : Array[@core.Inline] = []
   while self.pos < self.len {
@@ -258,7 +267,11 @@ fn Parser::parse_paragraph(self : Parser) -> @core.Block {
         }
         // Next line might be a block element (Heading, List, CodeBlock, etc.)
         match self.peek_at(1) {
-          Token::HeadingPrefix(_) | Token::DashItem | Token::PlusItem | Token::HorizontalRule | Token::RawBlock(_, _) => break
+          Token::HeadingPrefix(_)
+          | Token::DashItem
+          | Token::PlusItem
+          | Token::HorizontalRule
+          | Token::RawBlock(_, _) => break
           _ => {
             let _ = self.advance()
             inlines.push(@core.Inline::Text(" "))
@@ -274,6 +287,7 @@ fn Parser::parse_paragraph(self : Parser) -> @core.Block {
   @core.Block::Paragraph(inlines)
 }
 
+///|
 fn Parser::try_parse_math_block(self : Parser) -> @core.Block? {
   // If current token is Dollar, check if this line is a standalone math block
   // Save position for backtracking
@@ -291,6 +305,7 @@ fn Parser::try_parse_math_block(self : Parser) -> @core.Block? {
   None
 }
 
+///|
 fn Parser::parse_math_expression(self : Parser) -> @core.MathExpr {
   let items : Array[@core.MathExpr] = []
   while self.pos < self.len {
@@ -304,7 +319,13 @@ fn Parser::parse_math_expression(self : Parser) -> @core.MathExpr {
         let _ = self.advance()
         let words = split_math_tokens(s)
         for w in words {
-          if w == "+" || w == "-" || w == "*" || w == "=" || w == "<" || w == ">" || w == "^" {
+          if w == "+" ||
+            w == "-" ||
+            w == "*" ||
+            w == "=" ||
+            w == "<" ||
+            w == ">" ||
+            w == "^" {
             items.push(@core.MathExpr::Op(w))
           } else if w.has_prefix("sqrt(") && w.has_suffix(")") {
             let inner = w[5:w.length() - 1].to_owned()
@@ -361,14 +382,21 @@ fn Parser::parse_math_expression(self : Parser) -> @core.MathExpr {
   }
 }
 
+///|
 fn Parser::parse_math_atom(self : Parser) -> @core.MathExpr {
   match self.peek() {
     Token::Text(s) => {
       let _ = self.advance()
       let trimmed = s.trim().to_owned()
-      if trimmed == "+" || trimmed == "-" || trimmed == "*" || trimmed == "=" ||
-         trimmed == "<" || trimmed == ">" || trimmed == "!=" || trimmed == "<=" ||
-         trimmed == ">=" {
+      if trimmed == "+" ||
+        trimmed == "-" ||
+        trimmed == "*" ||
+        trimmed == "=" ||
+        trimmed == "<" ||
+        trimmed == ">" ||
+        trimmed == "!=" ||
+        trimmed == "<=" ||
+        trimmed == ">=" {
         @core.MathExpr::Op(trimmed)
       } else if trimmed.has_prefix("sqrt(") && trimmed.has_suffix(")") {
         let inner_str = trimmed[5:trimmed.length() - 1].to_owned()
@@ -410,6 +438,7 @@ fn Parser::parse_math_atom(self : Parser) -> @core.MathExpr {
   }
 }
 
+///|
 fn Parser::parse_table(self : Parser) -> @core.Block {
   let rows : Array[Array[@core.Inline]] = []
   let mut max_cols = 0

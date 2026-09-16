@@ -1,6 +1,5 @@
 ///|
 /// Typst Lexer implementation
-
 pub struct Lexer {
   input : String
   len : Int
@@ -8,10 +7,12 @@ pub struct Lexer {
   mut at_line_start : Bool
 }
 
+///|
 pub fn Lexer::new(input : String) -> Lexer {
   { input, len: input.length(), pos: 0, at_line_start: true }
 }
 
+///|
 fn Lexer::peek(self : Lexer) -> Char {
   if self.pos < self.len {
     self.input[self.pos].to_int().unsafe_to_char()
@@ -20,6 +21,7 @@ fn Lexer::peek(self : Lexer) -> Char {
   }
 }
 
+///|
 fn Lexer::peek_at(self : Lexer, offset : Int) -> Char {
   let idx = self.pos + offset
   if idx < self.len {
@@ -29,6 +31,7 @@ fn Lexer::peek_at(self : Lexer, offset : Int) -> Char {
   }
 }
 
+///|
 fn Lexer::advance(self : Lexer) -> Char {
   let c = self.peek()
   self.pos = self.pos + 1
@@ -70,7 +73,8 @@ pub fn Lexer::tokenize(self : Lexer) -> Array[Token] {
           level = level + 1
         }
         if self.pos < self.len && (self.peek() == ' ' || self.peek() == '\t') {
-          while self.pos < self.len && (self.peek() == ' ' || self.peek() == '\t') {
+          while self.pos < self.len &&
+                (self.peek() == ' ' || self.peek() == '\t') {
             let _ = self.advance()
           }
           self.at_line_start = false
@@ -142,7 +146,9 @@ pub fn Lexer::tokenize(self : Lexer) -> Array[Token] {
       // Read code content until closing ```
       let code_buf = StringBuilder()
       while self.pos < self.len {
-        if self.peek() == '`' && self.peek_at(1) == '`' && self.peek_at(2) == '`' {
+        if self.peek() == '`' &&
+          self.peek_at(1) == '`' &&
+          self.peek_at(2) == '`' {
           let _ = self.advance()
           let _ = self.advance()
           let _ = self.advance()
@@ -151,7 +157,12 @@ pub fn Lexer::tokenize(self : Lexer) -> Array[Token] {
         code_buf.write_char(self.advance())
       }
       self.at_line_start = false
-      tokens.push(Token::RawBlock(lang_buf.to_string().trim().to_owned(), code_buf.to_string()))
+      tokens.push(
+        Token::RawBlock(
+          lang_buf.to_string().trim().to_owned(),
+          code_buf.to_string(),
+        ),
+      )
       continue
     }
 
@@ -241,10 +252,19 @@ pub fn Lexer::tokenize(self : Lexer) -> Array[Token] {
     let text_buf = StringBuilder()
     while self.pos < self.len {
       let next_c = self.peek()
-      if next_c == '\n' || next_c == '\r' || next_c == '*' || next_c == '_' ||
-         next_c == '`' || next_c == '$' || next_c == '|' || next_c == '[' ||
-         next_c == ']' || next_c == '(' || next_c == ')' || next_c == '/' ||
-         next_c == '\\' {
+      if next_c == '\n' ||
+        next_c == '\r' ||
+        next_c == '*' ||
+        next_c == '_' ||
+        next_c == '`' ||
+        next_c == '$' ||
+        next_c == '|' ||
+        next_c == '[' ||
+        next_c == ']' ||
+        next_c == '(' ||
+        next_c == ')' ||
+        next_c == '/' ||
+        next_c == '\\' {
         break
       }
       text_buf.write_char(self.advance())

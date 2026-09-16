@@ -1,6 +1,5 @@
 ///|
 /// Command Line Interface for moon-typst compiler and renderer
-
 fn print_help() -> Unit {
   let help_text =
     #|moon-typst: High-performance Typst markup parser and renderer in MoonBit
@@ -21,10 +20,12 @@ fn print_help() -> Unit {
   println(help_text)
 }
 
+///|
 fn print_version() -> Unit {
   println("moon-typst v0.1.0 (MoonBit Typst Engine)")
 }
 
+///|
 fn main {
   let args = @env.args()
   if args.length() <= 1 {
@@ -95,18 +96,14 @@ fn main {
     } else {
       input_path + ".html"
     }
+  } else if input_path.has_suffix(".typ") {
+    input_path[0:input_path.length() - 4].to_owned() + ".svg"
   } else {
-    if input_path.has_suffix(".typ") {
-      input_path[0:input_path.length() - 4].to_owned() + ".svg"
-    } else {
-      input_path + ".svg"
-    }
+    input_path + ".svg"
   }
 
   // Read input file
-  let content = try {
-    @fs.read_file_to_string(input_path)
-  } catch {
+  let content = @fs.read_file_to_string(input_path) catch {
     @fs.IOError(err) => {
       println("Error reading file: \{err}")
       return

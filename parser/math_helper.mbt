@@ -15,8 +15,14 @@ fn split_math_tokens(s : String) -> Array[String] {
       i = i + 1
       continue
     }
-    if c == '+' || c == '-' || c == '*' || c == '=' || c == '<' || c == '>' ||
-       c == '^' || c == ',' {
+    if c == '+' ||
+      c == '-' ||
+      c == '*' ||
+      c == '=' ||
+      c == '<' ||
+      c == '>' ||
+      c == '^' ||
+      c == ',' {
       if buf.to_string().length() > 0 {
         result.push(buf.to_string())
         buf.reset()

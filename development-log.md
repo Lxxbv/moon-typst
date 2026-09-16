@@ -58,7 +58,10 @@
 10. `904cacf` - `feat(cmd): build typst-render command line interface with CLI arguments`
 11. `c013548` - `feat(examples): provide realistic demo suite (paper, resume, technical report)`
 12. `526c1ad` - `ci: add GitHub Actions workflow and format codebase with moon fmt`
-13. `docs: finalize bilingual README with usage guide, benchmarks, and API reference`
+13. `a611446` - `docs: finalize bilingual README with usage guide, benchmarks, and API reference`
+14. `87a211d` - `ci: streamline multi-OS CI matrix and enforce trailing comma struct format`
+15. `275a472` - `ci: run moon update and moon install before checking and building`
+16. `docs: synchronize final commit log across documentation`
 
 ---
 

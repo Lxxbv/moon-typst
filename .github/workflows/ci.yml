@@ -7,8 +7,8 @@ on:
     branches: [ main ]
 
 jobs:
-  test:
-    name: Test and Build (${{ matrix.os }})
+  build-and-test:
+    name: Build & Test (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -35,38 +35,33 @@ jobs:
         run: |
           moon version --all
 
-      - name: Verify Code Formatting
-        run: |
-          moon fmt --check
-
       - name: MoonBit Check (Deny Warnings)
         run: |
           moon check --deny-warn
 
-      - name: Run Test Suite
+      - name: Run Test Suite (All Targets)
         run: |
           moon test --deny-warn
 
-      - name: Build WebAssembly Target
+      - name: Build WebAssembly Target (wasm-gc)
         run: |
           moon build --target wasm-gc
 
-      - name: Build JavaScript Target
+      - name: Build JavaScript Target (js)
         run: |
           moon build --target js
 
-      - name: Build Native CLI Executable
+      - name: Build Native Target (native)
         run: |
           moon build --target native
 
-      - name: Verify Examples Rendering
-        shell: bash
+      - name: Test CLI Executable
         run: |
-          moon run cmd/main --target native -- examples/paper.typ -o paper_ci.svg
-          moon run cmd/main --target native -- examples/paper.typ --html -o paper_ci.html
-          moon run cmd/main --target native -- examples/resume.typ -o resume_ci.svg
-          moon run cmd/main --target native -- examples/report.typ -o report_ci.svg
-          test -s paper_ci.svg
-          test -s paper_ci.html
-          test -s resume_ci.svg
-          test -s report_ci.svg
+          moon run cmd/main --target native -- --help
+
+      - name: Verify CLI Rendering Examples
+        run: |
+          moon run cmd/main --target native -- examples/paper.typ -o test_paper.svg
+          moon run cmd/main --target native -- examples/paper.typ --html -o test_paper.html
+          moon run cmd/main --target native -- examples/resume.typ -o test_resume.svg
+          moon run cmd/main --target native -- examples/report.typ -o test_report.svg

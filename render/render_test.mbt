@@ -10,7 +10,7 @@ test "render_svg output structure" {
       @layout.BoxKind::Line(48.0, 90.0, 752.0, 90.0, "#cccccc", 1.0),
     ),
   ]
-  let page : @layout.PageLayout = { width: 800.0, height: 1100.0, boxes }
+  let page : @layout.PageLayout = { width: 800.0, height: 1100.0, boxes, }
   let svg = render_svg(page)
 
   assert_eq(svg.has_prefix("<svg xmlns="), true)

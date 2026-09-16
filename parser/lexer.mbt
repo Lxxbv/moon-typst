@@ -9,7 +9,7 @@ pub struct Lexer {
 
 ///|
 pub fn Lexer::new(input : String) -> Lexer {
-  { input, len: input.length(), pos: 0, at_line_start: true }
+  { input, len: input.length(), pos: 0, at_line_start: true, }
 }
 
 ///|

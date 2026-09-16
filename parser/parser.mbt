@@ -8,7 +8,7 @@ pub struct Parser {
 
 ///|
 pub fn Parser::new(tokens : Array[Token]) -> Parser {
-  { tokens, len: tokens.length(), pos: 0 }
+  { tokens, len: tokens.length(), pos: 0, }
 }
 
 ///|

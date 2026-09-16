@@ -1,0 +1,46 @@
+test "lexer headings and basic text" {
+  let lexer = Lexer::new("= Title\n== Section\nText line.")
+  let tokens = lexer.tokenize()
+  assert_eq(tokens[0], Token::HeadingPrefix(1))
+  assert_eq(tokens[1], Token::Text("Title"))
+  assert_eq(tokens[2], Token::Newline)
+  assert_eq(tokens[3], Token::HeadingPrefix(2))
+  assert_eq(tokens[4], Token::Text("Section"))
+  assert_eq(tokens[5], Token::Newline)
+  assert_eq(tokens[6], Token::Text("Text line."))
+  assert_eq(tokens[7], Token::Eof)
+}
+
+test "lexer inline styles and math" {
+  let lexer = Lexer::new("*bold* and _italic_ and `code` with $x + y$")
+  let tokens = lexer.tokenize()
+  assert_eq(tokens[0], Token::Star)
+  assert_eq(tokens[1], Token::Text("bold"))
+  assert_eq(tokens[2], Token::Star)
+  assert_eq(tokens[3], Token::Text(" and "))
+  assert_eq(tokens[4], Token::Underscore)
+  assert_eq(tokens[5], Token::Text("italic"))
+  assert_eq(tokens[6], Token::Underscore)
+  assert_eq(tokens[7], Token::Text(" and "))
+  assert_eq(tokens[8], Token::InlineCode("code"))
+  assert_eq(tokens[9], Token::Text(" with "))
+  assert_eq(tokens[10], Token::Dollar)
+  assert_eq(tokens[11], Token::Text("x + y"))
+  assert_eq(tokens[12], Token::Dollar)
+  assert_eq(tokens[13], Token::Eof)
+}
+
+test "lexer code block and list items" {
+  let lexer = Lexer::new("```moonbit\nlet x = 1\n```\n- item 1\n+ item 2\n---")
+  let tokens = lexer.tokenize()
+  assert_eq(tokens[0], Token::RawBlock("moonbit", "let x = 1\n"))
+  assert_eq(tokens[1], Token::Newline)
+  assert_eq(tokens[2], Token::DashItem)
+  assert_eq(tokens[3], Token::Text("item 1"))
+  assert_eq(tokens[4], Token::Newline)
+  assert_eq(tokens[5], Token::PlusItem)
+  assert_eq(tokens[6], Token::Text("item 2"))
+  assert_eq(tokens[7], Token::Newline)
+  assert_eq(tokens[8], Token::HorizontalRule)
+  assert_eq(tokens[9], Token::Eof)
+}

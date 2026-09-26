@@ -67,6 +67,22 @@ pub(all) enum Inline {
 } derive(Debug, Eq)
 
 ///|
+/// Alignment of cells in a table column.
+pub(all) enum TableAlignment {
+  Left
+  Center
+  Right
+} derive(Debug, Eq)
+
+///|
+/// Table rows contain cells; each cell contains its inline content.
+pub(all) struct TableData {
+  rows : Array[Array[Array[Inline]]]
+  header_rows : Int
+  alignments : Array[TableAlignment]
+} derive(Debug, Eq)
+
+///|
 /// Block-level document elements
 pub(all) enum Block {
   Heading(Int, Array[Inline]) // level (1-6), content
@@ -74,7 +90,7 @@ pub(all) enum Block {
   List(Bool, Array[Array[Inline]]) // is_ordered, items
   CodeBlock(String, String) // language, code_content
   MathBlock(MathExpr)
-  Table(Int, Array[Array[Inline]]) // column_count, cells
+  Table(TableData)
   Shape(ShapeKind, ShapeStyle)
   Grid(Array[Length], Array[Block]) // column tracks, cell items
   FootnoteBlock(Int, Array[Inline]) // footnote definition

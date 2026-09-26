@@ -63,7 +63,7 @@ fn LayoutEngine::layout_block(self : LayoutEngine, block : @core.Block) -> Unit 
     @core.Block::CodeBlock(lang, code) => self.layout_code_block(lang, code)
     @core.Block::MathBlock(expr) => self.layout_math_block(expr)
     @core.Block::List(ordered, items) => self.layout_list(ordered, items)
-    @core.Block::Table(cols, rows) => self.layout_table(cols, rows)
+    @core.Block::Table(table) => self.layout_table(table)
     @core.Block::Shape(shape, style) => self.layout_shape(shape, style)
     @core.Block::Grid(cols, items) => self.layout_grid(cols, items)
     @core.Block::FootnoteBlock(index, inlines) =>
@@ -475,43 +475,46 @@ fn LayoutEngine::layout_horizontal_rule(self : LayoutEngine) -> Unit {
 ///|
 fn LayoutEngine::layout_table(
   self : LayoutEngine,
-  cols : Int,
-  cells : Array[Array[@core.Inline]],
+  table : @core.TableData,
 ) -> Unit {
   self.cur_y = self.cur_y + 12.0
   let table_w = self.ctx.content_width()
+  let cols = table.alignments.length()
+  if cols == 0 {
+    return
+  }
   let col_w = table_w / cols.to_double()
   let cell_h = self.ctx.font_size * 2.2
 
-  for i, cell in cells {
-    let col_idx = i % cols
-    let row_idx = i / cols
-    let cell_x = self.ctx.margin_x + col_idx.to_double() * col_w
-    let cell_y = self.cur_y + row_idx.to_double() * cell_h
+  for row_idx, row in table.rows {
+    for col_idx, cell in row {
+      let cell_x = self.ctx.margin_x + col_idx.to_double() * col_w
+      let cell_y = self.cur_y + row_idx.to_double() * cell_h
 
-    // Cell border
-    let stroke = LayoutBox::new(
-      Rect::new(cell_x, cell_y, col_w, cell_h),
-      BoxKind::RectStroke(col_w, cell_h, "#e1e4e8", 1.0),
-    )
-    self.boxes.push(stroke)
-
-    // Cell content
-    self.cur_x = cell_x + 8.0
-    let orig_y = self.cur_y
-    self.cur_y = cell_y + 8.0
-    for inline in cell {
-      self.layout_inline_styled(
-        inline,
-        self.ctx.font_size,
-        self.ctx.text_color,
-        "normal",
+      // Cell border
+      let stroke = LayoutBox::new(
+        Rect::new(cell_x, cell_y, col_w, cell_h),
+        BoxKind::RectStroke(col_w, cell_h, "#e1e4e8", 1.0),
       )
+      self.boxes.push(stroke)
+
+      // Cell content
+      self.cur_x = cell_x + 8.0
+      let orig_y = self.cur_y
+      self.cur_y = cell_y + 8.0
+      for inline in cell {
+        self.layout_inline_styled(
+          inline,
+          self.ctx.font_size,
+          self.ctx.text_color,
+          "normal",
+        )
+      }
+      self.cur_y = orig_y
     }
-    self.cur_y = orig_y
   }
 
-  let total_rows = (cells.length() + cols - 1) / cols
+  let total_rows = table.rows.length()
   self.cur_y = self.cur_y + total_rows.to_double() * cell_h + 16.0
   self.cur_x = self.ctx.margin_x
 }

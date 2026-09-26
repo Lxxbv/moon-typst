@@ -117,18 +117,14 @@ fn render_html_block(buf : StringBuilder, block : @core.Block) -> Unit {
       }
       buf.write_string("    </\{tag}>\n")
     }
-    @core.Block::Table(cols, cells) => {
+    @core.Block::Table(table) => {
       buf.write_string("    <table>\n")
-      let total = cells.length()
-      let mut i = 0
-      while i < total {
+      for row in table.rows {
         buf.write_string("      <tr>\n")
-        let row_end = if i + cols < total { i + cols } else { total }
-        while i < row_end {
+        for cell in row {
           buf.write_string("        <td>")
-          render_html_inlines(buf, cells[i])
+          render_html_inlines(buf, cell)
           buf.write_string("</td>\n")
-          i = i + 1
         }
         buf.write_string("      </tr>\n")
       }

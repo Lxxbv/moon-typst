@@ -190,8 +190,11 @@ pub fn Parser::parse(self : Parser) -> @core.Doc {
         }
       }
       _ => {
-        let p = self.parse_paragraph()
-        doc.add_block(p)
+        if self.line_has_pipe(self.pos) {
+          doc.add_block(self.parse_table())
+        } else {
+          doc.add_block(self.parse_paragraph())
+        }
         self.skip_newlines()
       }
     }
@@ -313,6 +316,9 @@ fn Parser::parse_paragraph(self : Parser) -> @core.Block {
           | Token::HorizontalRule
           | Token::RawBlock(_, _) => break
           _ => {
+            if self.line_has_pipe(self.pos + 1) {
+              break
+            }
             let _ = self.advance()
             inlines.push(@core.Inline::Text(" "))
           }
@@ -602,37 +608,180 @@ fn Parser::parse_math_atom(self : Parser) -> @core.MathExpr {
 
 ///|
 fn Parser::parse_table(self : Parser) -> @core.Block {
-  let rows : Array[Array[@core.Inline]] = []
+  let rows : Array[Array[Array[@core.Inline]]] = []
+  let mut separator : Array[@core.TableAlignment]? = None
   let mut max_cols = 0
-  while self.pos < self.len {
-    if self.peek() != Token::Bar {
-      break
-    }
-    let _ = self.advance() // consume starting |
-    let mut cols_in_row = 0
-    while self.pos < self.len {
-      match self.peek() {
-        Token::Newline | Token::Eof => {
-          if self.peek() == Token::Newline {
-            let _ = self.advance()
-          }
-          break
+  while self.line_has_pipe(self.pos) {
+    let row = self.parse_table_row()
+    if rows.length() == 1 &&
+      separator is None &&
+      row.length() == rows[0].length() {
+      match table_separator_alignments(row) {
+        Some(alignments) => {
+          separator = Some(alignments)
+          continue
         }
-        Token::Bar => {
-          let _ = self.advance()
-        }
-        _ => {
-          let inline = self.parse_single_inline()
-          cols_in_row = cols_in_row + 1
-          rows.push([inline])
-        }
+        None => ()
       }
     }
-    if cols_in_row > max_cols {
-      max_cols = cols_in_row
+    if row.length() > max_cols {
+      max_cols = row.length()
+    }
+    rows.push(row)
+  }
+  match separator {
+    Some(alignments) =>
+      if alignments.length() > max_cols {
+        max_cols = alignments.length()
+      }
+    None => ()
+  }
+  let alignments : Array[@core.TableAlignment] = []
+  for i = 0; i < max_cols; i = i + 1 {
+    match separator {
+      Some(markers) if i < markers.length() => alignments.push(markers[i])
+      _ => alignments.push(@core.TableAlignment::Left)
     }
   }
-  @core.Block::Table(if max_cols == 0 { 1 } else { max_cols }, rows)
+  for row in rows {
+    while row.length() < max_cols {
+      row.push([])
+    }
+  }
+  @core.Block::Table({
+    rows,
+    header_rows: if separator is Some(_) {
+      1
+    } else {
+      0
+    },
+    alignments,
+  })
+}
+
+///|
+fn Parser::line_has_pipe(self : Parser, start : Int) -> Bool {
+  let mut i = start
+  while i < self.len {
+    match self.tokens[i] {
+      Token::Bar => return true
+      Token::Newline | Token::Eof => return false
+      _ => i = i + 1
+    }
+  }
+  false
+}
+
+///|
+fn Parser::parse_table_row(self : Parser) -> Array[Array[@core.Inline]] {
+  let row : Array[Array[@core.Inline]] = []
+  let mut cell : Array[@core.Inline] = []
+  let mut first = true
+  let mut ended_with_bar = false
+  while self.pos < self.len {
+    match self.peek() {
+      Token::Newline | Token::Eof => break
+      Token::Bar => {
+        let _ = self.advance()
+        if first {
+          first = false
+        } else {
+          row.push(trim_table_cell(cell))
+        }
+        cell = []
+        ended_with_bar = true
+      }
+      Token::Colon => {
+        let _ = self.advance()
+        cell.push(@core.Inline::Text(":"))
+        first = false
+        ended_with_bar = false
+      }
+      Token::HorizontalRule => {
+        let _ = self.advance()
+        cell.push(@core.Inline::Text("---"))
+        first = false
+        ended_with_bar = false
+      }
+      _ => {
+        cell.push(self.parse_single_inline())
+        first = false
+        ended_with_bar = false
+      }
+    }
+  }
+  if !ended_with_bar || row.length() == 0 {
+    row.push(trim_table_cell(cell))
+  }
+  if self.peek() == Token::Newline {
+    let _ = self.advance()
+  }
+  row
+}
+
+///|
+fn trim_table_cell(cell : Array[@core.Inline]) -> Array[@core.Inline] {
+  let result : Array[@core.Inline] = []
+  for i, inline in cell {
+    match inline {
+      @core.Inline::Text(s) if i == 0 || i == cell.length() - 1 => {
+        let trimmed = if i == 0 && i == cell.length() - 1 {
+          s.trim().to_owned()
+        } else if i == 0 {
+          s.trim_start().to_owned()
+        } else {
+          s.trim_end().to_owned()
+        }
+        if trimmed.length() > 0 {
+          result.push(@core.Inline::Text(trimmed))
+        }
+      }
+      _ => result.push(inline)
+    }
+  }
+  result
+}
+
+///|
+fn table_separator_alignments(
+  row : Array[Array[@core.Inline]],
+) -> Array[@core.TableAlignment]? {
+  let alignments : Array[@core.TableAlignment] = []
+  for cell in row {
+    let builder = StringBuilder()
+    for inline in cell {
+      match inline {
+        @core.Inline::Text(s) => builder.write_string(s)
+        _ => return None
+      }
+    }
+    let marker = builder.to_string().trim().to_owned()
+    if marker.length() == 0 {
+      return None
+    }
+    let left = marker[0] == ':'
+    let right = marker[marker.length() - 1] == ':'
+    let start = if left { 1 } else { 0 }
+    let stop = if right { marker.length() - 1 } else { marker.length() }
+    if stop <= start {
+      return None
+    }
+    for i = start; i < stop; i = i + 1 {
+      if marker[i] != '-' {
+        return None
+      }
+    }
+    alignments.push(
+      if left && right {
+        @core.TableAlignment::Center
+      } else if right {
+        @core.TableAlignment::Right
+      } else {
+        @core.TableAlignment::Left
+      },
+    )
+  }
+  Some(alignments)
 }
 
 ///|

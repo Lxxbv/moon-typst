@@ -666,6 +666,22 @@ fn Parser::line_has_pipe(self : Parser, start : Int) -> Bool {
     match self.tokens[i] {
       Token::Bar => return true
       Token::Newline | Token::Eof => return false
+      Token::Dollar | Token::Star | Token::Underscore => {
+        let marker = self.tokens[i]
+        let mut end = i + 1
+        while end < self.len {
+          match self.tokens[end] {
+            Token::Newline | Token::Eof => break
+            token if token == marker => break
+            _ => end = end + 1
+          }
+        }
+        if end < self.len && self.tokens[end] == marker {
+          i = end + 1
+        } else {
+          i = i + 1
+        }
+      }
       _ => i = i + 1
     }
   }

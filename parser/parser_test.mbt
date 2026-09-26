@@ -348,3 +348,78 @@ test "table accepts mixed outside pipes and an unbordered separator" {
     _ => abort("expected table")
   }
 }
+
+///|
+test "pipe inside inline math remains a paragraph" {
+  let doc = parse_typst("text $a|b$")
+  assert_eq(doc.blocks.length(), 1)
+  match doc.blocks[0] {
+    @core.Block::Paragraph(
+      [@core.Inline::Text("text "), @core.Inline::InlineMath(_)]
+    ) => ()
+    _ => abort("expected paragraph with inline math")
+  }
+}
+
+///|
+test "pipe inside bold remains a paragraph" {
+  let doc = parse_typst("text *a|b*")
+  assert_eq(doc.blocks.length(), 1)
+  match doc.blocks[0] {
+    @core.Block::Paragraph(
+      [
+        @core.Inline::Text("text "),
+        @core.Inline::Bold(
+          [
+            @core.Inline::Text("a"),
+            @core.Inline::Text("|"),
+            @core.Inline::Text("b"),
+          ]
+        ),
+      ]
+    ) => ()
+    _ => abort("expected paragraph with bold")
+  }
+}
+
+///|
+test "pipe inside italic remains a paragraph" {
+  let doc = parse_typst("text _a|b_")
+  assert_eq(doc.blocks.length(), 1)
+  match doc.blocks[0] {
+    @core.Block::Paragraph(
+      [
+        @core.Inline::Text("text "),
+        @core.Inline::Italic(
+          [
+            @core.Inline::Text("a"),
+            @core.Inline::Text("|"),
+            @core.Inline::Text("b"),
+          ]
+        ),
+      ]
+    ) => ()
+    _ => abort("expected paragraph with italic")
+  }
+}
+
+///|
+test "pipe after inline span remains a table delimiter" {
+  let doc = parse_typst("*a|b* | Beta\nOne | Two")
+  assert_eq(doc.blocks.length(), 1)
+  match doc.blocks[0] {
+    @core.Block::Table(table) => {
+      assert_eq(table.rows.length(), 2)
+      assert_eq(table.rows[0].length(), 2)
+      assert_eq(table.rows[0][0], [
+        @core.Inline::Bold([
+          @core.Inline::Text("a"),
+          @core.Inline::Text("|"),
+          @core.Inline::Text("b"),
+        ]),
+      ])
+      assert_eq(table.rows[0][1], [@core.Inline::Text("Beta")])
+    }
+    _ => abort("expected unbordered table")
+  }
+}

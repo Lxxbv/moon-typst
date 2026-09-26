@@ -559,13 +559,19 @@ fn LayoutEngine::align_table_line(
     @core.TableAlignment::Right => available - line_w
   }
   for i = flow.line_start; i < self.boxes.length(); i = i + 1 {
-    let box = self.boxes[i]
-    let rect = box.rect
-    self.boxes[i] = LayoutBox::new(
-      Rect::new(rect.x + shift, rect.y, rect.w, rect.h),
-      box.kind,
-    )
+    self.boxes[i] = translate_table_box(self.boxes[i], shift, 0.0)
   }
+}
+
+///|
+fn translate_table_box(box : LayoutBox, dx : Double, dy : Double) -> LayoutBox {
+  let rect = box.rect
+  let kind = match box.kind {
+    BoxKind::Line(x1, y1, x2, y2, color, width) =>
+      BoxKind::Line(x1 + dx, y1 + dy, x2 + dx, y2 + dy, color, width)
+    other => other
+  }
+  LayoutBox::new(Rect::new(rect.x + dx, rect.y + dy, rect.w, rect.h), kind)
 }
 
 ///|
@@ -696,13 +702,70 @@ fn LayoutEngine::layout_table_inline(
     }
     @core.Inline::LineBreak => self.next_table_line(flow)
     @core.Inline::InlineMath(expr) =>
-      self.layout_table_inline(
-        flow,
-        @core.Inline::Text(table_math_text(expr)),
-        size,
-        color,
-        "italic",
-      )
+      self.layout_table_math(flow, expr, size, color)
+  }
+}
+
+///|
+fn LayoutEngine::layout_table_math(
+  self : LayoutEngine,
+  flow : TableCellFlow,
+  expr : @core.MathExpr,
+  size : Double,
+  color : String,
+) -> Unit {
+  let probe = LayoutEngine::new(self.ctx)
+  probe.cur_x = 0.0
+  probe.cur_y = 0.0
+  probe.layout_inline_math(expr, size)
+  if probe.boxes.length() == 0 {
+    return
+  }
+  let mut min_x = probe.boxes[0].rect.x
+  let mut min_y = probe.boxes[0].rect.y
+  let mut max_x = probe.boxes[0].rect.x + probe.boxes[0].rect.w
+  let mut max_y = probe.boxes[0].rect.y + probe.boxes[0].rect.h
+  for box in probe.boxes {
+    let rect = box.rect
+    if rect.x < min_x {
+      min_x = rect.x
+    }
+    if rect.y < min_y {
+      min_y = rect.y
+    }
+    if rect.x + rect.w > max_x {
+      max_x = rect.x + rect.w
+    }
+    if rect.y + rect.h > max_y {
+      max_y = rect.y + rect.h
+    }
+  }
+  let advance = if probe.cur_x > max_x {
+    probe.cur_x - min_x
+  } else {
+    max_x - min_x
+  }
+  if advance > flow.max_x - flow.x0 {
+    self.layout_table_inline(
+      flow,
+      @core.Inline::Text(table_math_text(expr)),
+      size,
+      color,
+      "italic",
+    )
+    return
+  }
+  if flow.x + advance > flow.max_x && flow.x > flow.x0 {
+    self.next_table_line(flow)
+  }
+  let dx = flow.x - min_x
+  let dy = flow.y - min_y
+  for box in probe.boxes {
+    self.boxes.push(translate_table_box(box, dx, dy))
+  }
+  flow.x = flow.x + advance
+  if max_y + dy > flow.bottom {
+    flow.bottom = max_y + dy
   }
 }
 

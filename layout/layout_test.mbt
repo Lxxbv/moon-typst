@@ -225,3 +225,55 @@ test "oversized table glyph fits the padded cell width" {
   assert_eq(glyph.w > 0.0, true)
   assert_eq(glyph.x + glyph.w <= cell.x + cell.w - 8.0, true)
 }
+
+///|
+test "fitting table fraction retains numerator bar and denominator" {
+  let doc = @core.Doc::new()
+  doc.add_block(
+    @core.Block::Table({
+      rows: [
+        [
+          [
+            @core.Inline::InlineMath(
+              @core.MathExpr::Frac(
+                @core.MathExpr::Sym("a"),
+                @core.MathExpr::Sym("b"),
+              ),
+            ),
+          ],
+          [@core.Inline::Text("neighbor")],
+        ],
+      ],
+      header_rows: 0,
+      alignments: [@core.TableAlignment::Left, @core.TableAlignment::Left],
+    }),
+  )
+  let page = LayoutEngine::new(@core.StyleContext::default()).layout_doc(doc)
+  let mut cell = Rect::new(0.0, 0.0, 0.0, 0.0)
+  let mut numerator = Rect::new(0.0, 0.0, 0.0, 0.0)
+  let mut denominator = Rect::new(0.0, 0.0, 0.0, 0.0)
+  let mut bar = Rect::new(0.0, 0.0, 0.0, 0.0)
+  for box in page.boxes {
+    match box.kind {
+      BoxKind::RectStroke(_, _, _, _) => if cell.w == 0.0 { cell = box.rect }
+      BoxKind::Line(_, _, _, _, _, _) => bar = box.rect
+      BoxKind::Text(text, _, _, _) => {
+        if text == "a" {
+          numerator = box.rect
+        }
+        if text == "b" {
+          denominator = box.rect
+        }
+      }
+      _ => ()
+    }
+  }
+  assert_eq(bar.w > 0.0, true)
+  assert_eq(numerator.y < bar.y && bar.y < denominator.y, true)
+  assert_eq(numerator.y >= cell.y + 8.0, true)
+  assert_eq(denominator.y + denominator.h <= cell.y + cell.h - 8.0, true)
+  assert_eq(
+    bar.x >= cell.x + 8.0 && bar.x + bar.w <= cell.x + cell.w - 8.0,
+    true,
+  )
+}

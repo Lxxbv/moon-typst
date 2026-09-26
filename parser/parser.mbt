@@ -135,7 +135,7 @@ pub fn Parser::parse(self : Parser) -> @core.Doc {
       }
       // Check for standalone math block on line: $ math $
       Token::Dollar =>
-        if self.line_has_pipe(self.pos) {
+        if self.line_starts_table(self.pos) {
           doc.add_block(self.parse_table())
           self.skip_newlines()
         } else {
@@ -194,7 +194,7 @@ pub fn Parser::parse(self : Parser) -> @core.Doc {
         }
       }
       _ => {
-        if self.line_has_pipe(self.pos) {
+        if self.line_starts_table(self.pos) {
           doc.add_block(self.parse_table())
         } else {
           doc.add_block(self.parse_paragraph())
@@ -320,7 +320,7 @@ fn Parser::parse_paragraph(self : Parser) -> @core.Block {
           | Token::HorizontalRule
           | Token::RawBlock(_, _) => break
           _ => {
-            if self.line_has_pipe(self.pos + 1) {
+            if self.line_starts_table(self.pos + 1) {
               break
             }
             let _ = self.advance()
@@ -665,11 +665,20 @@ fn Parser::parse_table(self : Parser) -> @core.Block {
 
 ///|
 fn Parser::line_has_pipe(self : Parser, start : Int) -> Bool {
+  self.line_pipe_count(start) > 0
+}
+
+///|
+fn Parser::line_pipe_count(self : Parser, start : Int) -> Int {
+  let mut count = 0
   let mut i = start
   while i < self.len {
     match self.tokens[i] {
-      Token::Bar => return true
-      Token::Newline | Token::Eof => return false
+      Token::Bar => {
+        count += 1
+        i += 1
+      }
+      Token::Newline | Token::Eof => return count
       Token::Dollar | Token::Star | Token::Underscore => {
         let marker = self.tokens[i]
         let mut end = i + 1
@@ -689,7 +698,73 @@ fn Parser::line_has_pipe(self : Parser, start : Int) -> Bool {
       _ => i = i + 1
     }
   }
+  count
+}
+
+///|
+fn Parser::line_starts_table(self : Parser, start : Int) -> Bool {
+  let pipes = self.line_pipe_count(start)
+  if pipes == 0 {
+    return false
+  }
+  if self.line_starts_with_outer_pipe(start) {
+    return true
+  }
+  let current_width = pipes +
+    1 -
+    (if self.line_ends_with_outer_pipe(start) { 1 } else { 0 })
+  if current_width < 2 {
+    return false
+  }
+  let mut next = start
+  while next < self.len &&
+        self.tokens[next] != Token::Newline &&
+        self.tokens[next] != Token::Eof {
+    next += 1
+  }
+  if next >= self.len || self.tokens[next] == Token::Eof {
+    return false
+  }
+  next += 1
+  let next_pipes = self.line_pipe_count(next)
+  if next_pipes == 0 {
+    return false
+  }
+  let next_width = next_pipes +
+    1 -
+    (if self.line_starts_with_outer_pipe(next) { 1 } else { 0 }) -
+    (if self.line_ends_with_outer_pipe(next) { 1 } else { 0 })
+  current_width == next_width
+}
+
+///|
+fn Parser::line_starts_with_outer_pipe(self : Parser, start : Int) -> Bool {
+  let mut i = start
+  while i < self.len {
+    match self.tokens[i] {
+      Token::Newline | Token::Eof => return false
+      Token::Text(s) if s.trim().length() == 0 => i += 1
+      token => return token == Token::Bar
+    }
+  }
   false
+}
+
+///|
+fn Parser::line_ends_with_outer_pipe(self : Parser, start : Int) -> Bool {
+  let mut i = start
+  let mut last_is_pipe = false
+  while i < self.len {
+    match self.tokens[i] {
+      Token::Newline | Token::Eof => return last_is_pipe
+      Token::Text(s) if s.trim().length() == 0 => i += 1
+      token => {
+        last_is_pipe = token == Token::Bar
+        i += 1
+      }
+    }
+  }
+  last_is_pipe
 }
 
 ///|

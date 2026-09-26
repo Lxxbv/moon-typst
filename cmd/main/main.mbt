@@ -200,7 +200,7 @@ fn main {
       try {
         @fs.write_string_to_file(target_output, pdf_content)
         println(
-          "[moon-typst] Successfully generated: \{target_output} (\{pdf_content.length()} bytes)",
+          "[moon-typst] Successfully generated: \{target_output} (\{@unicode.to_utf8_bytes(pdf_content).length()} bytes)",
         )
       } catch {
         @fs.IOError(err) =>
@@ -222,7 +222,7 @@ fn main {
       try {
         @fs.write_string_to_file(target_output, svg_content)
         println(
-          "[moon-typst] Successfully generated: \{target_output} (\{svg_content.length()} bytes)",
+          "[moon-typst] Successfully generated: \{target_output} (\{@unicode.to_utf8_bytes(svg_content).length()} bytes)",
         )
       } catch {
         @fs.IOError(err) =>

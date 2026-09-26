@@ -271,6 +271,28 @@ test "unbordered pipe table leaves following prose as paragraph" {
 }
 
 ///|
+test "single unbordered pipe line remains prose" {
+  let doc = parse_typst(
+    "Systems & Compiler Engineer | alex@example.com | GitHub",
+  )
+  assert_eq(doc.blocks.length(), 1)
+  match doc.blocks[0] {
+    @core.Block::Paragraph(_) => ()
+    _ => abort("expected a prose paragraph")
+  }
+}
+
+///|
+test "one-row unbordered pipe content remains prose" {
+  let doc = parse_typst("Alpha | Beta")
+  assert_eq(doc.blocks.length(), 1)
+  match doc.blocks[0] {
+    @core.Block::Paragraph(_) => ()
+    _ => abort("expected an unbordered single line to remain prose")
+  }
+}
+
+///|
 test "table separator records header and column alignment" {
   let doc = parse_typst(
     "| Left | Middle | Right | Plain |\n| :--- | :---: | ---: | --- |\n| a | b | c | d |",

@@ -102,7 +102,7 @@ flowchart LR
 
 ### 管道表格语法
 
-每行用竖线分隔单元格。首行后紧跟分隔行时，首行作为表头；冒号控制列对齐（`:---` 左对齐，`:---:` 居中，`---:` 右对齐）。行首和行尾的竖线可省略，短行会补为空单元格。
+每行用竖线分隔单元格。首行后紧跟分隔行时，首行作为表头；冒号控制列对齐（`:---` 左对齐，`:---:` 居中，`---:` 右对齐）。行首和行尾的竖线可省略，短行会补为空单元格。为避免把带竖线的普通句子识别成表格，无外框表格需至少有两行连续且列数相同的数据，或使用表头分隔行；单行表格请保留外侧竖线。
 
 ```typst
 | Target | Status | Notes |
@@ -239,7 +239,7 @@ moon bench benchmarks --target js --release --deny-warn
   - Fractions, square roots, sub/superscript.
   - Multi-dimensional matrices (`mat(1, 2; 3, 4)`), column vectors (`vec(x, y)`).
   - Accented characters (`hat(x)`, `tilde(y)`, `dot`, `bar`) and limit operators (`sum`, `int`).
-- **Pipe Tables**: Pipe-delimited rows with optional outer pipes; a separator after the first row marks the header, and colons select left/center/right alignment. Short rows are padded. Escaped pipes, merged cells, nested tables, and pagination are not supported.
+- **Pipe Tables**: Pipe-delimited rows with optional outer pipes; a separator after the first row marks the header, and colons select left/center/right alignment. Short rows are padded. Unbordered tables need at least two consecutive rows with matching column counts, or a header separator; use outer pipes for a single-row table. Escaped pipes, merged cells, nested tables, and pagination are not supported.
 - **Scripting & Evaluation Engine (`eval`)**:
   - Variable scopes, constant evaluation, and cascading `#set` rules (`text`, `page`).
 - **Rich Terminal Diagnostics (`diag`)**:

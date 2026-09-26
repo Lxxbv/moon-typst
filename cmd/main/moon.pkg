@@ -7,6 +7,7 @@ import {
   "Lxxbv/moon_typst/eval",
   "moonbitlang/core/env",
   "moonbitlang/x/fs",
+  "moonbitlang/x/unicode",
 }
 
 pkgtype(kind: "executable")

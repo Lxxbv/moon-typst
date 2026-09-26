@@ -1,126 +1,120 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1334.8000000000002" viewBox="0 0 800 1334.8000000000002">
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1306.8000000000002" viewBox="0 0 800 1306.8000000000002">
   <style>
     text { font-family: system-ui, -apple-system, sans-serif; }
     .mono { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
   </style>
   <rect width="100%" height="100%" fill="#ffffff"/>
   <text x="48" y="96.48" font-size="28.8" fill="#1a1a1a" font-weight="bold">Alex Chen</text>
-  <text x="56" y="143.04" font-size="16" fill="#1a1a1a">Systems</text>
-  <text x="118.39999999999999" y="143.04" font-size="16" fill="#1a1a1a"> </text>
-  <text x="123.19999999999999" y="143.04" font-size="16" fill="#1a1a1a">&amp;</text>
-  <text x="132" y="143.04" font-size="16" fill="#1a1a1a"> </text>
-  <text x="136.8" y="143.04" font-size="16" fill="#1a1a1a">Compiler</text>
-  <text x="204.8" y="143.04" font-size="16" fill="#1a1a1a"> </text>
-  <text x="56" y="167.04" font-size="16" fill="#1a1a1a">Engineer</text>
-  <text x="290.66666666666663" y="143.04" font-size="16" fill="#1a1a1a">chen.alex@example.com</text>
-  <text x="525.3333333333333" y="143.04" font-size="16" fill="#1a1a1a">[</text>
-  <text x="534.1333333333332" y="143.04" font-size="16" fill="#1a1a1a">GitHub</text>
-  <text x="580.5333333333332" y="143.04" font-size="16" fill="#1a1a1a">]</text>
-  <text x="589.3333333333331" y="143.04" font-size="16" fill="#1a1a1a">(</text>
-  <text x="598.1333333333331" y="143.04" font-size="16" fill="#1a1a1a">https</text>
-  <text x="635.7333333333331" y="143.04" font-size="16" fill="#1a1a1a">:</text>
-  <text x="644.5333333333331" y="143.04" font-size="16" fill="#1a1a1a">/</text>
-  <text x="653.333333333333" y="143.04" font-size="16" fill="#1a1a1a">/</text>
-  <text x="525.3333333333333" y="167.04" font-size="16" fill="#1a1a1a">github.com</text>
-  <text x="607.7333333333332" y="167.04" font-size="16" fill="#1a1a1a">/</text>
-  <text x="616.5333333333332" y="167.04" font-size="16" fill="#1a1a1a">alexchen</text>
-  <text x="683.7333333333331" y="167.04" font-size="16" fill="#1a1a1a">)</text>
-  <rect x="48" y="121.44" width="234.66666666666666" height="56" fill="none" stroke="#e1e4e8" stroke-width="1"/>
-  <rect x="282.66666666666663" y="121.44" width="234.66666666666666" height="56" fill="none" stroke="#e1e4e8" stroke-width="1"/>
-  <rect x="517.3333333333333" y="121.44" width="234.66666666666666" height="56" fill="none" stroke="#e1e4e8" stroke-width="1"/>
-  <line x1="48" y1="205.44" x2="752" y2="205.44" stroke="#d0d7de" stroke-width="1"/>
-  <text x="48" y="258.48" font-size="22.4" fill="#1a1a1a" font-weight="bold">Summary</text>
-  <text x="48" y="282.16" font-size="16" fill="#1a1a1a">Systems software engineer focused on programming language runtimes</text>
-  <text x="598.4000000000003" y="282.16" font-size="16" fill="#1a1a1a"> </text>
-  <text x="48" y="306.16" font-size="16" fill="#1a1a1a"> WebAssembly toolchains</text>
-  <text x="237.60000000000002" y="306.16" font-size="16" fill="#1a1a1a"> </text>
-  <text x="48" y="330.16" font-size="16" fill="#1a1a1a"> and document layout. Experienced building MoonBit tools for parsing</text>
-  <text x="576.8000000000005" y="330.16" font-size="16" fill="#1a1a1a"> </text>
-  <text x="581.6000000000005" y="330.16" font-size="16" fill="#1a1a1a"> layout</text>
-  <text x="632.8000000000005" y="330.16" font-size="16" fill="#1a1a1a"> </text>
-  <text x="48" y="354.16" font-size="16" fill="#1a1a1a"> and vector output.</text>
-  <line x1="48" y1="384.56" x2="752" y2="384.56" stroke="#d0d7de" stroke-width="1"/>
-  <text x="48" y="437.6" font-size="22.4" fill="#1a1a1a" font-weight="bold">Technical Competencies</text>
+  <text x="48" y="123.03999999999999" font-size="16" fill="#1a1a1a">Systems &amp; Compiler Engineer </text>
+  <text x="273.6000000000001" y="123.03999999999999" font-size="16" fill="#1a1a1a">|</text>
+  <text x="282.4000000000001" y="123.03999999999999" font-size="16" fill="#1a1a1a"> chen.alex@example.com </text>
+  <text x="472.0000000000001" y="123.03999999999999" font-size="16" fill="#1a1a1a">|</text>
+  <text x="480.8000000000001" y="123.03999999999999" font-size="16" fill="#1a1a1a"> </text>
+  <text x="485.60000000000014" y="123.03999999999999" font-size="16" fill="#1a1a1a">[</text>
+  <text x="494.40000000000015" y="123.03999999999999" font-size="16" fill="#1a1a1a">GitHub</text>
+  <text x="540.8000000000002" y="123.03999999999999" font-size="16" fill="#1a1a1a">]</text>
+  <text x="549.6000000000001" y="123.03999999999999" font-size="16" fill="#1a1a1a">(</text>
+  <text x="558.4000000000001" y="123.03999999999999" font-size="16" fill="#1a1a1a">https</text>
+  <text x="596.0000000000001" y="123.03999999999999" font-size="16" fill="#1a1a1a"> </text>
+  <text x="600.8000000000001" y="123.03999999999999" font-size="16" fill="#1a1a1a">/</text>
+  <text x="609.6" y="123.03999999999999" font-size="16" fill="#1a1a1a">/</text>
+  <text x="618.4" y="123.03999999999999" font-size="16" fill="#1a1a1a">github.com</text>
+  <text x="700.8" y="123.03999999999999" font-size="16" fill="#1a1a1a">/</text>
+  <text x="48" y="147.04" font-size="16" fill="#1a1a1a">alexchen</text>
+  <text x="115.19999999999999" y="147.04" font-size="16" fill="#1a1a1a">)</text>
+  <line x1="48" y1="177.44" x2="752" y2="177.44" stroke="#d0d7de" stroke-width="1"/>
+  <text x="48" y="230.48" font-size="22.4" fill="#1a1a1a" font-weight="bold">Summary</text>
+  <text x="48" y="254.16" font-size="16" fill="#1a1a1a">Systems software engineer focused on programming language runtimes</text>
+  <text x="598.4000000000003" y="254.16" font-size="16" fill="#1a1a1a"> </text>
+  <text x="48" y="278.16" font-size="16" fill="#1a1a1a"> WebAssembly toolchains</text>
+  <text x="237.60000000000002" y="278.16" font-size="16" fill="#1a1a1a"> </text>
+  <text x="48" y="302.16" font-size="16" fill="#1a1a1a"> and document layout. Experienced building MoonBit tools for parsing</text>
+  <text x="576.8000000000005" y="302.16" font-size="16" fill="#1a1a1a"> </text>
+  <text x="581.6000000000005" y="302.16" font-size="16" fill="#1a1a1a"> layout</text>
+  <text x="632.8000000000005" y="302.16" font-size="16" fill="#1a1a1a"> </text>
+  <text x="48" y="326.16" font-size="16" fill="#1a1a1a"> and vector output.</text>
+  <line x1="48" y1="356.56" x2="752" y2="356.56" stroke="#d0d7de" stroke-width="1"/>
+  <text x="48" y="409.6" font-size="22.4" fill="#1a1a1a" font-weight="bold">Technical Competencies</text>
+  <text x="64" y="437.28000000000003" font-size="16" fill="#0969da" font-weight="bold">• </text>
+  <text x="88.8" y="437.28000000000003" font-size="16" fill="#1a1a1a" font-weight="bold">Languages</text>
+  <text x="168" y="437.28000000000003" font-size="16" fill="#1a1a1a"> </text>
+  <text x="172.8" y="437.28000000000003" font-size="16" fill="#1a1a1a"> MoonBit</text>
+  <text x="236.8" y="437.28000000000003" font-size="16" fill="#1a1a1a"> </text>
+  <text x="241.60000000000002" y="437.28000000000003" font-size="16" fill="#1a1a1a"> Rust</text>
+  <text x="278.40000000000003" y="437.28000000000003" font-size="16" fill="#1a1a1a"> </text>
+  <text x="283.20000000000005" y="437.28000000000003" font-size="16" fill="#1a1a1a"> C++</text>
+  <text x="314.40000000000003" y="437.28000000000003" font-size="16" fill="#1a1a1a"> </text>
+  <text x="319.20000000000005" y="437.28000000000003" font-size="16" fill="#1a1a1a"> Go</text>
+  <text x="341.6" y="437.28000000000003" font-size="16" fill="#1a1a1a"> </text>
+  <text x="346.40000000000003" y="437.28000000000003" font-size="16" fill="#1a1a1a"> TypeScript</text>
   <text x="64" y="465.28000000000003" font-size="16" fill="#0969da" font-weight="bold">• </text>
-  <text x="88.8" y="465.28000000000003" font-size="16" fill="#1a1a1a" font-weight="bold">Languages</text>
-  <text x="168" y="465.28000000000003" font-size="16" fill="#1a1a1a"> </text>
-  <text x="172.8" y="465.28000000000003" font-size="16" fill="#1a1a1a"> MoonBit</text>
-  <text x="236.8" y="465.28000000000003" font-size="16" fill="#1a1a1a"> </text>
-  <text x="241.60000000000002" y="465.28000000000003" font-size="16" fill="#1a1a1a"> Rust</text>
-  <text x="278.40000000000003" y="465.28000000000003" font-size="16" fill="#1a1a1a"> </text>
-  <text x="283.20000000000005" y="465.28000000000003" font-size="16" fill="#1a1a1a"> C++</text>
-  <text x="314.40000000000003" y="465.28000000000003" font-size="16" fill="#1a1a1a"> </text>
-  <text x="319.20000000000005" y="465.28000000000003" font-size="16" fill="#1a1a1a"> Go</text>
-  <text x="341.6" y="465.28000000000003" font-size="16" fill="#1a1a1a"> </text>
-  <text x="346.40000000000003" y="465.28000000000003" font-size="16" fill="#1a1a1a"> TypeScript</text>
+  <text x="88.8" y="465.28000000000003" font-size="16" fill="#1a1a1a" font-weight="bold">Systems</text>
+  <text x="151.2" y="465.28000000000003" font-size="16" fill="#1a1a1a"> </text>
+  <text x="156" y="465.28000000000003" font-size="16" fill="#1a1a1a"> WebAssembly </text>
+  <text x="267.2" y="465.28000000000003" font-size="16" fill="#1a1a1a">(</text>
+  <text x="276" y="465.28000000000003" font-size="16" fill="#1a1a1a">Wasm-GC</text>
+  <text x="345.6" y="465.28000000000003" font-size="16" fill="#1a1a1a">)</text>
+  <text x="354.40000000000003" y="465.28000000000003" font-size="16" fill="#1a1a1a"> </text>
+  <text x="359.20000000000005" y="465.28000000000003" font-size="16" fill="#1a1a1a"> LLVM</text>
+  <text x="403.20000000000005" y="465.28000000000003" font-size="16" fill="#1a1a1a"> </text>
+  <text x="408.00000000000006" y="465.28000000000003" font-size="16" fill="#1a1a1a"> Memory Management</text>
+  <text x="571.2" y="465.28000000000003" font-size="16" fill="#1a1a1a"> </text>
+  <text x="576" y="465.28000000000003" font-size="16" fill="#1a1a1a"> Operating Systems</text>
   <text x="64" y="493.28000000000003" font-size="16" fill="#0969da" font-weight="bold">• </text>
-  <text x="88.8" y="493.28000000000003" font-size="16" fill="#1a1a1a" font-weight="bold">Systems</text>
+  <text x="88.8" y="493.28000000000003" font-size="16" fill="#1a1a1a" font-weight="bold">Domains</text>
   <text x="151.2" y="493.28000000000003" font-size="16" fill="#1a1a1a"> </text>
-  <text x="156" y="493.28000000000003" font-size="16" fill="#1a1a1a"> WebAssembly </text>
-  <text x="267.2" y="493.28000000000003" font-size="16" fill="#1a1a1a">(</text>
-  <text x="276" y="493.28000000000003" font-size="16" fill="#1a1a1a">Wasm-GC</text>
-  <text x="345.6" y="493.28000000000003" font-size="16" fill="#1a1a1a">)</text>
-  <text x="354.40000000000003" y="493.28000000000003" font-size="16" fill="#1a1a1a"> </text>
-  <text x="359.20000000000005" y="493.28000000000003" font-size="16" fill="#1a1a1a"> LLVM</text>
-  <text x="403.20000000000005" y="493.28000000000003" font-size="16" fill="#1a1a1a"> </text>
-  <text x="408.00000000000006" y="493.28000000000003" font-size="16" fill="#1a1a1a"> Memory Management</text>
-  <text x="571.2" y="493.28000000000003" font-size="16" fill="#1a1a1a"> </text>
-  <text x="576" y="493.28000000000003" font-size="16" fill="#1a1a1a"> Operating Systems</text>
-  <text x="64" y="521.28" font-size="16" fill="#0969da" font-weight="bold">• </text>
-  <text x="88.8" y="521.28" font-size="16" fill="#1a1a1a" font-weight="bold">Domains</text>
-  <text x="151.2" y="521.28" font-size="16" fill="#1a1a1a"> </text>
-  <text x="156" y="521.28" font-size="16" fill="#1a1a1a"> Document Layout Engines</text>
-  <text x="349.6" y="521.28" font-size="16" fill="#1a1a1a"> </text>
-  <text x="354.40000000000003" y="521.28" font-size="16" fill="#1a1a1a"> Lexical Analysis</text>
-  <text x="483.20000000000005" y="521.28" font-size="16" fill="#1a1a1a"> </text>
-  <text x="488.00000000000006" y="521.28" font-size="16" fill="#1a1a1a"> Vector Graphics </text>
-  <text x="619.2" y="521.28" font-size="16" fill="#1a1a1a">(</text>
-  <text x="628" y="521.28" font-size="16" fill="#1a1a1a">SVG</text>
-  <text x="654.4" y="521.28" font-size="16" fill="#1a1a1a">/</text>
-  <text x="663.1999999999999" y="521.28" font-size="16" fill="#1a1a1a">PDF</text>
-  <text x="689.5999999999999" y="521.28" font-size="16" fill="#1a1a1a">)</text>
-  <text x="698.3999999999999" y="521.28" font-size="16" fill="#1a1a1a"> </text>
-  <text x="48" y="545.2800000000001" font-size="16" fill="#1a1a1a"> Cloud Infrastructure</text>
-  <line x1="48" y1="579.6800000000001" x2="752" y2="579.6800000000001" stroke="#d0d7de" stroke-width="1"/>
-  <text x="48" y="632.72" font-size="22.4" fill="#1a1a1a" font-weight="bold">Professional Experience</text>
-  <text x="48" y="673.1200000000001" font-size="19.2" fill="#1a1a1a" font-weight="bold">Senior Compiler Engineer - TypeStack Labs</text>
-  <text x="48" y="695.3600000000001" font-size="16" fill="#1a1a1a">2024 - Present</text>
-  <text x="64" y="731.3600000000001" font-size="16" fill="#0969da" font-weight="bold">• </text>
-  <text x="88.8" y="731.3600000000001" font-size="16" fill="#1a1a1a">Architected a document engine in MoonBit with separate parsing</text>
-  <text x="576.0000000000005" y="731.3600000000001" font-size="16" fill="#1a1a1a"> </text>
-  <text x="580.8000000000004" y="731.3600000000001" font-size="16" fill="#1a1a1a"> layout</text>
-  <text x="632.0000000000005" y="731.3600000000001" font-size="16" fill="#1a1a1a"> </text>
-  <text x="48" y="755.3600000000001" font-size="16" fill="#1a1a1a"> and multi-format rendering stages.</text>
+  <text x="156" y="493.28000000000003" font-size="16" fill="#1a1a1a"> Document Layout Engines</text>
+  <text x="349.6" y="493.28000000000003" font-size="16" fill="#1a1a1a"> </text>
+  <text x="354.40000000000003" y="493.28000000000003" font-size="16" fill="#1a1a1a"> Lexical Analysis</text>
+  <text x="483.20000000000005" y="493.28000000000003" font-size="16" fill="#1a1a1a"> </text>
+  <text x="488.00000000000006" y="493.28000000000003" font-size="16" fill="#1a1a1a"> Vector Graphics </text>
+  <text x="619.2" y="493.28000000000003" font-size="16" fill="#1a1a1a">(</text>
+  <text x="628" y="493.28000000000003" font-size="16" fill="#1a1a1a">SVG</text>
+  <text x="654.4" y="493.28000000000003" font-size="16" fill="#1a1a1a">/</text>
+  <text x="663.1999999999999" y="493.28000000000003" font-size="16" fill="#1a1a1a">PDF</text>
+  <text x="689.5999999999999" y="493.28000000000003" font-size="16" fill="#1a1a1a">)</text>
+  <text x="698.3999999999999" y="493.28000000000003" font-size="16" fill="#1a1a1a"> </text>
+  <text x="48" y="517.28" font-size="16" fill="#1a1a1a"> Cloud Infrastructure</text>
+  <line x1="48" y1="551.6800000000001" x2="752" y2="551.6800000000001" stroke="#d0d7de" stroke-width="1"/>
+  <text x="48" y="604.72" font-size="22.4" fill="#1a1a1a" font-weight="bold">Professional Experience</text>
+  <text x="48" y="645.1200000000001" font-size="19.2" fill="#1a1a1a" font-weight="bold">Senior Compiler Engineer - TypeStack Labs</text>
+  <text x="48" y="667.3600000000001" font-size="16" fill="#1a1a1a">2024 - Present</text>
+  <text x="64" y="703.3600000000001" font-size="16" fill="#0969da" font-weight="bold">• </text>
+  <text x="88.8" y="703.3600000000001" font-size="16" fill="#1a1a1a">Architected a document engine in MoonBit with separate parsing</text>
+  <text x="576.0000000000005" y="703.3600000000001" font-size="16" fill="#1a1a1a"> </text>
+  <text x="580.8000000000004" y="703.3600000000001" font-size="16" fill="#1a1a1a"> layout</text>
+  <text x="632.0000000000005" y="703.3600000000001" font-size="16" fill="#1a1a1a"> </text>
+  <text x="48" y="727.3600000000001" font-size="16" fill="#1a1a1a"> and multi-format rendering stages.</text>
+  <text x="64" y="755.3600000000001" font-size="16" fill="#0969da" font-weight="bold">• </text>
+  <text x="88.8" y="755.3600000000001" font-size="16" fill="#1a1a1a">Designed AST data structures and interfaces linking parsing and rendering modules.</text>
   <text x="64" y="783.3600000000001" font-size="16" fill="#0969da" font-weight="bold">• </text>
-  <text x="88.8" y="783.3600000000001" font-size="16" fill="#1a1a1a">Designed AST data structures and interfaces linking parsing and rendering modules.</text>
-  <text x="64" y="811.3600000000001" font-size="16" fill="#0969da" font-weight="bold">• </text>
-  <text x="48" y="835.3600000000001" font-size="16" fill="#1a1a1a">Implemented high-fidelity SVG path generation for complex mathematical formulas and tables.</text>
-  <text x="48" y="888.0800000000002" font-size="19.2" fill="#1a1a1a" font-weight="bold">Systems Software Engineer - WasmCore Technologies</text>
-  <text x="48" y="910.3200000000002" font-size="16" fill="#1a1a1a">2022 - 2024</text>
+  <text x="48" y="807.3600000000001" font-size="16" fill="#1a1a1a">Implemented high-fidelity SVG path generation for complex mathematical formulas and tables.</text>
+  <text x="48" y="860.0800000000002" font-size="19.2" fill="#1a1a1a" font-weight="bold">Systems Software Engineer - WasmCore Technologies</text>
+  <text x="48" y="882.3200000000002" font-size="16" fill="#1a1a1a">2022 - 2024</text>
+  <text x="64" y="918.3200000000002" font-size="16" fill="#0969da" font-weight="bold">• </text>
+  <text x="88.8" y="918.3200000000002" font-size="16" fill="#1a1a1a">Built cross-platform CLI toolchains targeting Linux</text>
+  <text x="483.2000000000004" y="918.3200000000002" font-size="16" fill="#1a1a1a"> </text>
+  <text x="488.0000000000004" y="918.3200000000002" font-size="16" fill="#1a1a1a"> macOS</text>
+  <text x="540.8000000000004" y="918.3200000000002" font-size="16" fill="#1a1a1a"> </text>
+  <text x="545.6000000000004" y="918.3200000000002" font-size="16" fill="#1a1a1a"> and Windows.</text>
   <text x="64" y="946.3200000000002" font-size="16" fill="#0969da" font-weight="bold">• </text>
-  <text x="88.8" y="946.3200000000002" font-size="16" fill="#1a1a1a">Built cross-platform CLI toolchains targeting Linux</text>
-  <text x="483.2000000000004" y="946.3200000000002" font-size="16" fill="#1a1a1a"> </text>
-  <text x="488.0000000000004" y="946.3200000000002" font-size="16" fill="#1a1a1a"> macOS</text>
-  <text x="540.8000000000004" y="946.3200000000002" font-size="16" fill="#1a1a1a"> </text>
-  <text x="545.6000000000004" y="946.3200000000002" font-size="16" fill="#1a1a1a"> and Windows.</text>
+  <text x="88.8" y="946.3200000000002" font-size="16" fill="#1a1a1a">Contributed to WASI filesystem runtime improvements and memory virtualization.</text>
   <text x="64" y="974.3200000000002" font-size="16" fill="#0969da" font-weight="bold">• </text>
-  <text x="88.8" y="974.3200000000002" font-size="16" fill="#1a1a1a">Contributed to WASI filesystem runtime improvements and memory virtualization.</text>
-  <text x="64" y="1002.3200000000002" font-size="16" fill="#0969da" font-weight="bold">• </text>
-  <text x="48" y="1026.3200000000002" font-size="16" fill="#1a1a1a">Mentored junior engineers on deterministic memory safety and test-driven architecture.</text>
-  <line x1="48" y1="1060.7200000000003" x2="752" y2="1060.7200000000003" stroke="#d0d7de" stroke-width="1"/>
-  <text x="48" y="1113.7600000000002" font-size="22.4" fill="#1a1a1a" font-weight="bold">Education</text>
-  <text x="48" y="1154.16" font-size="19.2" fill="#1a1a1a" font-weight="bold">B.S. in Computer Science - Tsinghua University</text>
-  <text x="48" y="1176.4" font-size="16" fill="#1a1a1a">2018 - 2022</text>
+  <text x="48" y="998.3200000000002" font-size="16" fill="#1a1a1a">Mentored junior engineers on deterministic memory safety and test-driven architecture.</text>
+  <line x1="48" y1="1032.7200000000003" x2="752" y2="1032.7200000000003" stroke="#d0d7de" stroke-width="1"/>
+  <text x="48" y="1085.7600000000002" font-size="22.4" fill="#1a1a1a" font-weight="bold">Education</text>
+  <text x="48" y="1126.16" font-size="19.2" fill="#1a1a1a" font-weight="bold">B.S. in Computer Science - Tsinghua University</text>
+  <text x="48" y="1148.4" font-size="16" fill="#1a1a1a">2018 - 2022</text>
+  <text x="64" y="1184.4" font-size="16" fill="#0969da" font-weight="bold">• </text>
+  <text x="88.8" y="1184.4" font-size="16" fill="#1a1a1a">Graduated with Academic Honors</text>
   <text x="64" y="1212.4" font-size="16" fill="#0969da" font-weight="bold">• </text>
-  <text x="88.8" y="1212.4" font-size="16" fill="#1a1a1a">Graduated with Academic Honors</text>
-  <text x="64" y="1240.4" font-size="16" fill="#0969da" font-weight="bold">• </text>
-  <text x="88.8" y="1240.4" font-size="16" fill="#1a1a1a">Coursework</text>
-  <text x="180.79999999999998" y="1240.4" font-size="16" fill="#1a1a1a"> </text>
-  <text x="185.6" y="1240.4" font-size="16" fill="#1a1a1a"> Advanced Compilers</text>
-  <text x="342.4" y="1240.4" font-size="16" fill="#1a1a1a"> </text>
-  <text x="347.2" y="1240.4" font-size="16" fill="#1a1a1a"> Operating Systems</text>
-  <text x="492" y="1240.4" font-size="16" fill="#1a1a1a"> </text>
-  <text x="496.8" y="1240.4" font-size="16" fill="#1a1a1a"> Computer Architecture</text>
-  <text x="673.6" y="1240.4" font-size="16" fill="#1a1a1a"> </text>
-  <text x="48" y="1264.4" font-size="16" fill="#1a1a1a"> Vector Calculus</text>
+  <text x="88.8" y="1212.4" font-size="16" fill="#1a1a1a">Coursework</text>
+  <text x="180.79999999999998" y="1212.4" font-size="16" fill="#1a1a1a"> </text>
+  <text x="185.6" y="1212.4" font-size="16" fill="#1a1a1a"> Advanced Compilers</text>
+  <text x="342.4" y="1212.4" font-size="16" fill="#1a1a1a"> </text>
+  <text x="347.2" y="1212.4" font-size="16" fill="#1a1a1a"> Operating Systems</text>
+  <text x="492" y="1212.4" font-size="16" fill="#1a1a1a"> </text>
+  <text x="496.8" y="1212.4" font-size="16" fill="#1a1a1a"> Computer Architecture</text>
+  <text x="673.6" y="1212.4" font-size="16" fill="#1a1a1a"> </text>
+  <text x="48" y="1236.4" font-size="16" fill="#1a1a1a"> Vector Calculus</text>
 </svg>

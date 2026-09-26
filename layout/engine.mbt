@@ -14,6 +14,7 @@ priv struct TableCellFlow {
   mut x : Double
   mut y : Double
   mut bottom : Double
+  mut line_bottom : Double
   line_h : Double
   mut line_start : Int
   align : @core.TableAlignment
@@ -509,6 +510,7 @@ fn LayoutEngine::layout_table(
         x: cell_x + padding,
         y: row_y + padding,
         bottom: row_y + padding + self.ctx.font_size,
+        line_bottom: row_y + padding + self.ctx.font_size,
         line_h: self.ctx.font_size * self.ctx.line_height,
         line_start: self.boxes.length(),
         align: table.alignments[col_idx],
@@ -581,7 +583,16 @@ fn LayoutEngine::next_table_line(
 ) -> Unit {
   self.align_table_line(flow)
   flow.x = flow.x0
-  flow.y = flow.y + flow.line_h
+  let next_y = flow.line_bottom + flow.line_h - self.ctx.font_size
+  if next_y > flow.y + flow.line_h {
+    flow.y = next_y
+  } else {
+    flow.y = flow.y + flow.line_h
+  }
+  flow.line_bottom = flow.y + self.ctx.font_size
+  if flow.line_bottom > flow.bottom {
+    flow.bottom = flow.line_bottom
+  }
   flow.line_start = self.boxes.length()
 }
 
@@ -607,6 +618,9 @@ fn LayoutEngine::add_table_text(
   flow.x = flow.x + width
   if flow.y + size > flow.bottom {
     flow.bottom = flow.y + size
+  }
+  if flow.y + size > flow.line_bottom {
+    flow.line_bottom = flow.y + size
   }
 }
 
@@ -767,6 +781,9 @@ fn LayoutEngine::layout_table_math(
   if max_y + dy > flow.bottom {
     flow.bottom = max_y + dy
   }
+  if max_y + dy > flow.line_bottom {
+    flow.line_bottom = max_y + dy
+  }
 }
 
 ///|
@@ -797,7 +814,23 @@ fn table_math_text(expr : @core.MathExpr) -> String {
       }
       builder.to_string()
     }
-    @core.MathExpr::Matrix(_, _, elems) | @core.MathExpr::Vec(elems) => {
+    @core.MathExpr::Matrix(rows, cols, elems) => {
+      let builder = StringBuilder()
+      builder.write_string("matrix(\{rows}x\{cols}: [[")
+      for i, elem in elems {
+        if i > 0 {
+          if cols > 0 && i % cols == 0 {
+            builder.write_string("], [")
+          } else {
+            builder.write_string(", ")
+          }
+        }
+        builder.write_string(table_math_text(elem))
+      }
+      builder.write_string("]])")
+      builder.to_string()
+    }
+    @core.MathExpr::Vec(elems) => {
       let builder = StringBuilder()
       builder.write_string("[")
       for i, elem in elems {

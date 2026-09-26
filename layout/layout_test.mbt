@@ -58,11 +58,11 @@ test "table columns are equal and wrapped rows contain their text" {
   )
   let page = LayoutEngine::new(ctx).layout_doc(doc)
   let borders : Array[Rect] = []
-  let texts : Array[Rect] = []
+  let texts : Array[LayoutBox] = []
   for box in page.boxes {
     match box.kind {
       BoxKind::RectStroke(_, _, _, _) => borders.push(box.rect)
-      BoxKind::Text(_, _, _, _) => texts.push(box.rect)
+      BoxKind::Text(_, _, _, _) => texts.push(box)
       _ => ()
     }
   }
@@ -72,17 +72,26 @@ test "table columns are equal and wrapped rows contain their text" {
   assert_eq(borders[0].h > ctx.font_size * 2.2, true)
   assert_eq(borders[2].y, borders[0].y + borders[0].h)
   assert_eq(borders[3].y, borders[2].y)
-  for rect in texts {
-    let mut inside = false
-    for cell in borders {
-      if rect.x >= cell.x + 8.0 &&
-        rect.x + rect.w <= cell.x + cell.w - 8.0 &&
-        rect.y >= cell.y + 8.0 &&
-        rect.y + rect.h <= cell.y + cell.h - 8.0 {
-        inside = true
+  for box in texts {
+    match box.kind {
+      BoxKind::Text(text, _, _, _) => {
+        let cell = if text == "short" {
+          borders[1]
+        } else if text == "next" {
+          borders[2]
+        } else if text == "row" {
+          borders[3]
+        } else {
+          borders[0]
+        }
+        let rect = box.rect
+        assert_eq(rect.x >= cell.x + 8.0, true)
+        assert_eq(rect.x + rect.w <= cell.x + cell.w - 8.0, true)
+        assert_eq(rect.y >= cell.y + 8.0, true)
+        assert_eq(rect.y + rect.h <= cell.y + cell.h - 8.0, true)
       }
+      _ => ()
     }
-    assert_eq(inside, true)
   }
   assert_eq(texts.length() > 4, true)
 }
@@ -276,4 +285,152 @@ test "fitting table fraction retains numerator bar and denominator" {
     bar.x >= cell.x + 8.0 && bar.x + bar.w <= cell.x + cell.w - 8.0,
     true,
   )
+}
+
+///|
+test "table wrap follows tall glyph without changing neighboring cell flow" {
+  let doc = @core.Doc::new()
+  doc.add_block(
+    @core.Block::Table({
+      rows: [
+        [
+          [
+            @core.Inline::StyledSpan(
+              [@core.Inline::Text("W")],
+              None,
+              Some(80.0),
+            ),
+            @core.Inline::Text("mmmmmmmmmmmmmmmmmmmmmmmm"),
+          ],
+          [@core.Inline::Text("neighbor")],
+        ],
+        [[@core.Inline::Text("next")], [@core.Inline::Text("row")]],
+      ],
+      header_rows: 0,
+      alignments: [@core.TableAlignment::Left, @core.TableAlignment::Left],
+    }),
+  )
+  let page = LayoutEngine::new(@core.StyleContext::default()).layout_doc(doc)
+  let borders : Array[Rect] = []
+  let mut tall = Rect::new(0.0, 0.0, 0.0, 0.0)
+  let mut after = tall
+  let mut neighbor = tall
+  for box in page.boxes {
+    match box.kind {
+      BoxKind::RectStroke(_, _, _, _) => borders.push(box.rect)
+      BoxKind::Text(text, _, _, _) => {
+        if text == "W" {
+          tall = box.rect
+        }
+        if text == "mmmmmmmmmmmmmmmmmmmmmmmm" {
+          after = box.rect
+        }
+        if text == "neighbor" {
+          neighbor = box.rect
+        }
+      }
+      _ => ()
+    }
+  }
+  assert_eq(tall.h > 0.0 && after.h > 0.0 && neighbor.h > 0.0, true)
+  assert_eq(after.y >= tall.y + tall.h, true)
+  assert_eq(neighbor.y < after.y, true)
+  assert_eq(after.y + after.h <= borders[0].y + borders[0].h - 8.0, true)
+  assert_eq(borders[2].y, borders[0].y + borders[0].h)
+}
+
+///|
+test "table line break follows full matrix height" {
+  let doc = @core.Doc::new()
+  doc.add_block(
+    @core.Block::Table({
+      rows: [
+        [
+          [
+            @core.Inline::InlineMath(
+              @core.MathExpr::Matrix(2, 2, [
+                @core.MathExpr::Sym("a"),
+                @core.MathExpr::Sym("b"),
+                @core.MathExpr::Sym("c"),
+                @core.MathExpr::Sym("d"),
+              ]),
+            ),
+            @core.Inline::LineBreak,
+            @core.Inline::Text("after"),
+          ],
+          [@core.Inline::Text("neighbor")],
+        ],
+      ],
+      header_rows: 0,
+      alignments: [@core.TableAlignment::Left, @core.TableAlignment::Left],
+    }),
+  )
+  let page = LayoutEngine::new(@core.StyleContext::default()).layout_doc(doc)
+  let mut math_bottom = 0.0
+  let mut after = Rect::new(0.0, 0.0, 0.0, 0.0)
+  for box in page.boxes {
+    match box.kind {
+      BoxKind::Line(_, _, _, _, _, _) =>
+        if box.rect.y + box.rect.h > math_bottom {
+          math_bottom = box.rect.y + box.rect.h
+        }
+      BoxKind::Text(text, _, _, _) => {
+        if text == "a" || text == "b" || text == "c" || text == "d" {
+          if box.rect.y + box.rect.h > math_bottom {
+            math_bottom = box.rect.y + box.rect.h
+          }
+        }
+        if text == "after" {
+          after = box.rect
+        }
+      }
+      _ => ()
+    }
+  }
+  assert_eq(math_bottom > 0.0 && after.h > 0.0, true)
+  assert_eq(after.y >= math_bottom, true)
+}
+
+///|
+test "overwide matrix fallback retains rows unlike vector fallback" {
+  let values = [
+    @core.MathExpr::Sym("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"),
+    @core.MathExpr::Sym("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"),
+    @core.MathExpr::Sym("cccccccccccccccccccccccccccccccccccccccccccccccccc"),
+    @core.MathExpr::Sym("dddddddddddddddddddddddddddddddddddddddddddddddddd"),
+  ]
+  let matrix = @core.MathExpr::Matrix(2, 2, values)
+  let vector = @core.MathExpr::Vec(values)
+  let ctx = @core.StyleContext::default()
+  let doc = @core.Doc::new()
+  doc.add_block(
+    @core.Block::Table({
+      rows: [
+        [[@core.Inline::InlineMath(matrix)], [@core.Inline::InlineMath(vector)]],
+      ],
+      header_rows: 0,
+      alignments: [@core.TableAlignment::Left, @core.TableAlignment::Left],
+    }),
+  )
+  let page = LayoutEngine::new(ctx).layout_doc(doc)
+  let split_x = ctx.margin_x + ctx.content_width() / 2.0
+  let matrix_builder = StringBuilder()
+  let vector_builder = StringBuilder()
+  for box in page.boxes {
+    match box.kind {
+      BoxKind::Text(text, _, _, _) =>
+        if box.rect.x < split_x {
+          matrix_builder.write_string(text)
+        } else {
+          vector_builder.write_string(text)
+        }
+      _ => ()
+    }
+  }
+  let matrix_text = matrix_builder.to_string()
+  let vector_text = vector_builder.to_string()
+  assert_eq(matrix_text.contains("matrix(2x2:"), true)
+  assert_eq(matrix_text != vector_text, true)
+  assert_eq(matrix_text.contains("], ["), true)
+  assert_eq(vector_text.contains("], ["), false)
 }

@@ -30,17 +30,17 @@
 </head>
 <body>
   <div class="typst-doc">
-    <h1>Benchmark Protocol  moon-typst</h1>
+    <h1>Benchmark Protocol: moon-typst</h1>
     <h2>Document Metadata</h2>
-    <p>Author  Infrastructure &amp; Tooling Working Group Date  September 2026 Version  1.0.0</p>
+    <p>Author: Infrastructure &amp; Tooling Working Group Date: September 2026 Version: 1.0.0</p>
     <hr/>
     <h2>Executive Summary</h2>
-    <p>This report describes how to measure parsing  layout  and rendering for a fixed sample document. Results depend on the selected backend  host  and toolchain.</p>
-    <p>The benchmark entry point is <code>benchmarks/pipeline_test.mbt</code>. It measures each pipeline stage separately and does not measure file I/O  CLI startup  or an end-to-end compilation.</p>
+    <p>This report describes how to measure parsing, layout, and rendering for a fixed sample document. Results depend on the selected backend, host, and toolchain.</p>
+    <p>The benchmark entry point is <code>benchmarks/pipeline_test.mbt</code>. It measures each pipeline stage separately and does not measure file I/O, CLI startup, or an end-to-end compilation.</p>
     <h2>Implementation Architecture</h2>
-    <p>The core pipeline is written in 100% pure MoonBit without external C FFI bindings </p>
+    <p>The core pipeline is written in 100% pure MoonBit without external C FFI bindings:</p>
     <p>Run <code>moon bench benchmarks --target native --release --deny-warn</code> from the module root to collect native results.</p>
-    <p>Key features of this pipeline include </p>
+    <p>Key features of this pipeline include:</p>
     <ol>
       <li>A fixed source string for the parse stage</li>
       <li>A parsed document prepared before layout and HTML measurements</li>
@@ -48,7 +48,7 @@
     </ol>
     <hr/>
     <h2>Measurement Worksheet</h2>
-    <p>Record the full command  target  MoonBit version  operating system  CPU  and raw benchmark output before reporting results. Each stage measures one operation on the checked-in sample input.</p>
+    <p>Record the full command, target, MoonBit version, operating system, CPU, and raw benchmark output before reporting results. Each stage measures one operation on the checked-in sample input.</p>
     <table>
       <thead>
       <tr>
@@ -93,7 +93,7 @@
     </table>
     <hr/>
     <h2>Conclusion &amp; Recommendations</h2>
-    <p>Use the same input  target  toolchain  and host conditions when comparing runs. The stage timings cannot be added to claim CLI latency because setup and serialization differ from an end-to-end run.</p>
+    <p>Use the same input, target, toolchain, and host conditions when comparing runs. The stage timings cannot be added to claim CLI latency because setup and serialization differ from an end-to-end run.</p>
   </div>
 </body>
 </html>

@@ -274,6 +274,22 @@ fn Parser::parse_single_inline(self : Parser) -> @core.Inline {
       let _ = self.advance()
       @core.Inline::Text("/")
     }
+    Token::Colon => {
+      let _ = self.advance()
+      @core.Inline::Text(":")
+    }
+    Token::Comma => {
+      let _ = self.advance()
+      @core.Inline::Text(",")
+    }
+    Token::Semicolon => {
+      let _ = self.advance()
+      @core.Inline::Text(";")
+    }
+    Token::Equal => {
+      let _ = self.advance()
+      @core.Inline::Text("=")
+    }
     Token::Bar => {
       let _ = self.advance()
       @core.Inline::Text("|")

@@ -32,17 +32,17 @@
   <div class="typst-doc">
     <h1>Deep Typographical Layout and Vector Generation in MoonBit</h1>
     <h2>Abstract</h2>
-    <p>This paper presents the design and implementation of <strong>moon-typst</strong>  a zero-dependency typographical layout engine and multi-format vector compiler implemented in MoonBit. We demonstrate advanced geometric box allocation  two-dimensional mathematical layout including matrices  vectors  and limits  and high-fidelity output serialization to SVG  HTML5  and Adobe PDF 1.4.</p>
+    <p>This paper presents the design and implementation of <strong>moon-typst</strong>, a zero-dependency typographical layout engine and multi-format vector compiler implemented in MoonBit. We demonstrate advanced geometric box allocation, two-dimensional mathematical layout including matrices, vectors, and limits, and high-fidelity output serialization to SVG, HTML5, and Adobe PDF 1.4.</p>
     <h2>1. Mathematical Kinetics and Tensor Formulation</h2>
-    <p>Modern computational typesetting requires rigorous spatial bounding algorithms for complex mathematical formulas. Consider the linear transformation defined by the matrix operator </p>
+    <p>Modern computational typesetting requires rigorous spatial bounding algorithms for complex mathematical formulas. Consider the linear transformation defined by the matrix operator:</p>
     <div class="math-block"><span class="matrix-wrapper" style="display: inline-flex; align-items: center; border-left: 2px solid #1f2328; border-right: 2px solid #1f2328; padding: 0 4px; margin: 0 4px;"><table style="border-collapse: collapse; margin: 0;"><tr><td style="border: none; padding: 2px 6px; text-align: center;">a</td><td style="border: none; padding: 2px 6px; text-align: center;">b</td></tr><tr><td style="border: none; padding: 2px 6px; text-align: center;">c</td><td style="border: none; padding: 2px 6px; text-align: center;">d</td></tr></table></span></div>
-    <p>When projected into high-dimensional vector spaces  state vectors satisfy the continuity condition </p>
+    <p>When projected into high-dimensional vector spaces, state vectors satisfy the continuity condition:</p>
     <div class="math-block"><span class="matrix-wrapper" style="display: inline-flex; align-items: center; border-left: 2px solid #1f2328; border-right: 2px solid #1f2328; padding: 0 4px; margin: 0 4px;"><table style="border-collapse: collapse; margin: 0;"><tr><td style="border: none; padding: 2px 6px; text-align: center;">x</td></tr><tr><td style="border: none; padding: 2px 6px; text-align: center;"></td></tr><tr><td style="border: none; padding: 2px 6px; text-align: center;">1</td></tr><tr><td style="border: none; padding: 2px 6px; text-align: center;">x</td></tr><tr><td style="border: none; padding: 2px 6px; text-align: center;"></td></tr><tr><td style="border: none; padding: 2px 6px; text-align: center;">2</td></tr><tr><td style="border: none; padding: 2px 6px; text-align: center;">x</td></tr><tr><td style="border: none; padding: 2px 6px; text-align: center;"></td></tr><tr><td style="border: none; padding: 2px 6px; text-align: center;">3</td></tr></table></span></div>
-    <p>The asymptotic energy dispersion across frequency bands is evaluated via the limit series </p>
+    <p>The asymptotic energy dispersion across frequency bands is evaluated via the limit series:</p>
     <div class="math-block">sum</div>
-    <p>With localized spectral estimation modulated by the accented field estimators <span class="math-inline"><span style="position: relative; display: inline-block;">theta<span style="position: absolute; top: -0.6em; left: 50%; transform: translateX(-50%); font-size: 0.8em;">^</span></span></span> and <span class="math-inline"><span style="position: relative; display: inline-block;">omega<span style="position: absolute; top: -0.6em; left: 50%; transform: translateX(-50%); font-size: 0.8em;">~</span></span></span>  baseline coherence is strictly maintained.</p>
+    <p>With localized spectral estimation modulated by the accented field estimators <span class="math-inline"><span style="position: relative; display: inline-block;">theta<span style="position: absolute; top: -0.6em; left: 50%; transform: translateX(-50%); font-size: 0.8em;">^</span></span></span> and <span class="math-inline"><span style="position: relative; display: inline-block;">omega<span style="position: absolute; top: -0.6em; left: 50%; transform: translateX(-50%); font-size: 0.8em;">~</span></span></span>, baseline coherence is strictly maintained.</p>
     <h2>2. Implementation in Pure MoonBit</h2>
-    <p>The compiler architecture is built upon deterministic recursive descent with zero dynamic FFI calls </p>
+    <p>The compiler architecture is built upon deterministic recursive descent with zero dynamic FFI calls:</p>
     <pre><code class="language-moonbit">// Geometric layout box dispatch in MoonBit
 fn layout_element(ctx : StyleContext, box : LayoutBox) -&gt; Unit {
   let x = box.rect.x
@@ -53,14 +53,14 @@ fn layout_element(ctx : StyleContext, box : LayoutBox) -&gt; Unit {
 }
 </code></pre>
     <h2>3. Multi-Target Rendering Pipelines</h2>
-    <p>The compilation pipeline provides deterministic generation across three distinct vector targets </p>
+    <p>The compilation pipeline provides deterministic generation across three distinct vector targets:</p>
     <ul>
-      <li><strong>SVG 1.1 Vector Graphics</strong>  Scalable XML graphics with font family definitions and path outlines</li>
-      <li><strong>Adobe PDF 1.4 Binary Document</strong>  Self-contained indirect objects  xref tables  and binary font dictionaries</li>
-      <li><strong>Semantic HTML5</strong>  Clean document hierarchy with responsive styling and CSS grid compatibility</li>
+      <li><strong>SVG 1.1 Vector Graphics</strong>: Scalable XML graphics with font family definitions and path outlines</li>
+      <li><strong>Adobe PDF 1.4 Binary Document</strong>: Self-contained indirect objects, xref tables, and binary font dictionaries</li>
+      <li><strong>Semantic HTML5</strong>: Clean document hierarchy with responsive styling and CSS grid compatibility</li>
     </ul>
     <h2>4. Benchmark and Evaluation</h2>
-    <p>The benchmark in <code>benchmarks/pipeline_test.mbt</code> measures parse  layout  HTML  SVG  and PDF stages on a fixed input. Run it for each target under recorded host and toolchain conditions before comparing results. It does not measure cold start latency.</p>
+    <p>The benchmark in <code>benchmarks/pipeline_test.mbt</code> measures parse, layout, HTML, SVG, and PDF stages on a fixed input. Run it for each target under recorded host and toolchain conditions before comparing results. It does not measure cold start latency.</p>
   </div>
 </body>
 </html>

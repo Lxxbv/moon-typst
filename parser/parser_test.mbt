@@ -293,6 +293,42 @@ test "one-row unbordered pipe content remains prose" {
 }
 
 ///|
+test "colon remains intact in paragraph URLs" {
+  let doc = parse_typst("https://github.com/alexchen")
+  match doc.blocks[0] {
+    @core.Block::Paragraph(inlines) => {
+      let mut text = ""
+      for inline in inlines {
+        match inline {
+          @core.Inline::Text(part) => text = text + part
+          _ => ()
+        }
+      }
+      assert_eq(text, "https://github.com/alexchen")
+    }
+    _ => abort("expected a URL paragraph")
+  }
+}
+
+///|
+test "comma semicolon and equals remain in paragraph text" {
+  let doc = parse_typst("Labels: MoonBit, Rust; version=1")
+  match doc.blocks[0] {
+    @core.Block::Paragraph(inlines) => {
+      let mut text = ""
+      for inline in inlines {
+        match inline {
+          @core.Inline::Text(part) => text = text + part
+          _ => ()
+        }
+      }
+      assert_eq(text, "Labels: MoonBit, Rust; version=1")
+    }
+    _ => abort("expected a paragraph with punctuation")
+  }
+}
+
+///|
 test "table separator records header and column alignment" {
   let doc = parse_typst(
     "| Left | Middle | Right | Plain |\n| :--- | :---: | ---: | --- |\n| a | b | c | d |",

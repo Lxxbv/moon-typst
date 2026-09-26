@@ -30,34 +30,34 @@
 </head>
 <body>
   <div class="typst-doc">
-    <h1>MoonBit Typographical Compiler  Architecture &amp; Features</h1>
-    <h2>Slide 1  Introduction to moon-typst</h2>
+    <h1>MoonBit Typographical Compiler: Architecture &amp; Features</h1>
+    <h2>Slide 1: Introduction to moon-typst</h2>
     <p><strong>moon-typst</strong> brings modern typographical typesetting to the MoonBit ecosystem.</p>
     <ul>
-      <li><strong>Zero-FFI Pure MoonBit</strong>  100% portable across Native  JS  and WebAssembly targets</li>
-      <li><strong>Composable Pipeline</strong>  Separate MoonBit modules handle parsing  layout  and rendering</li>
-      <li><strong>Multi-Target Rendering</strong>  Seamless output to SVG  semantic HTML5  and standard PDF 1.4</li>
-      <li><strong>Rich Mathematical Layout</strong>  First-class support for fractions  square roots  matrices  and limits</li>
+      <li><strong>Zero-FFI Pure MoonBit</strong>: 100% portable across Native, JS, and WebAssembly targets</li>
+      <li><strong>Composable Pipeline</strong>: Separate MoonBit modules handle parsing, layout, and rendering</li>
+      <li><strong>Multi-Target Rendering</strong>: Seamless output to SVG, semantic HTML5, and standard PDF 1.4</li>
+      <li><strong>Rich Mathematical Layout</strong>: First-class support for fractions, square roots, matrices, and limits</li>
     </ul>
-    <h2>Slide 2  Mathematical Capabilities</h2>
-    <p>Typesetting complex scientific formulas with pixel-perfect alignment </p>
+    <h2>Slide 2: Mathematical Capabilities</h2>
+    <p>Typesetting complex scientific formulas with pixel-perfect alignment:</p>
     <div class="math-block">fracalpha + beta , gamma + delta</div>
-    <p>Multivariate transformations with matrix layouts </p>
+    <p>Multivariate transformations with matrix layouts:</p>
     <div class="math-block"><span class="matrix-wrapper" style="display: inline-flex; align-items: center; border-left: 2px solid #1f2328; border-right: 2px solid #1f2328; padding: 0 4px; margin: 0 4px;"><table style="border-collapse: collapse; margin: 0;"><tr><td style="border: none; padding: 2px 6px; text-align: center;">1</td><td style="border: none; padding: 2px 6px; text-align: center;">0</td><td style="border: none; padding: 2px 6px; text-align: center;">0</td></tr><tr><td style="border: none; padding: 2px 6px; text-align: center;">0</td><td style="border: none; padding: 2px 6px; text-align: center;">1</td><td style="border: none; padding: 2px 6px; text-align: center;">0</td></tr><tr><td style="border: none; padding: 2px 6px; text-align: center;">0</td><td style="border: none; padding: 2px 6px; text-align: center;">0</td><td style="border: none; padding: 2px 6px; text-align: center;">1</td></tr></table></span></div>
-    <p>State vectors in 3D projection </p>
+    <p>State vectors in 3D projection:</p>
     <div class="math-block"><span class="matrix-wrapper" style="display: inline-flex; align-items: center; border-left: 2px solid #1f2328; border-right: 2px solid #1f2328; padding: 0 4px; margin: 0 4px;"><table style="border-collapse: collapse; margin: 0;"><tr><td style="border: none; padding: 2px 6px; text-align: center;">u</td></tr><tr><td style="border: none; padding: 2px 6px; text-align: center;">v</td></tr><tr><td style="border: none; padding: 2px 6px; text-align: center;">w</td></tr></table></span></div>
-    <h2>Slide 3  Architectural Pipeline</h2>
-    <p>The internal pipeline consists of four modular packages </p>
+    <h2>Slide 3: Architectural Pipeline</h2>
+    <p>The internal pipeline consists of four modular packages:</p>
     <ul>
-      <li><strong>core</strong>  Abstract syntax tree  color representations  and length unit conversions</li>
-      <li><strong>diag</strong>  Source span tracking  diagnostic error collection  and colorized terminal reports</li>
-      <li><strong>eval</strong>  Lexical scoping  variable environments  and cascading style rules</li>
-      <li><strong>parser</strong>  Fast recursive descent lexer and token stream analyzer</li>
-      <li><strong>layout</strong>  Spatial bounding box calculations  text measurement  and table layout</li>
-      <li><strong>render</strong>  SVG vector emitter  HTML5 document generator  and PDF 1.4 binary serializer</li>
+      <li><strong>core</strong>: Abstract syntax tree, color representations, and length unit conversions</li>
+      <li><strong>diag</strong>: Source span tracking, diagnostic error collection, and colorized terminal reports</li>
+      <li><strong>eval</strong>: Lexical scoping, variable environments, and cascading style rules</li>
+      <li><strong>parser</strong>: Fast recursive descent lexer and token stream analyzer</li>
+      <li><strong>layout</strong>: Spatial bounding box calculations, text measurement, and table layout</li>
+      <li><strong>render</strong>: SVG vector emitter, HTML5 document generator, and PDF 1.4 binary serializer</li>
     </ul>
-    <h2>Slide 4  Getting Started</h2>
-    <p>Compile any Typst document directly using the CLI </p>
+    <h2>Slide 4: Getting Started</h2>
+    <p>Compile any Typst document directly using the CLI:</p>
     <pre><code class="language-bash"># Render to vector SVG
 typst-render presentation.typ -o presentation.svg
 

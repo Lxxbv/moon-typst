@@ -32,23 +32,23 @@
   <div class="typst-doc">
     <h1>Markup Typography on WebAssembly</h1>
     <h2>Abstract</h2>
-    <p>Modern document preparation systems demand both instant feedback and high typographical precision. While traditional systems like LaTeX provide rich typesetting capabilities  their compilation latency and complex dependencies hinder cloud-native interactive workflows. Typst introduced a modern syntax and incremental layout model.</p>
-    <p>In this work  we present <strong>moon-typst</strong>  a typographical compiler implemented in MoonBit. Its parser  box layout  and vector renderers can be measured separately with the checked-in benchmark.</p>
+    <p>Modern document preparation systems demand both instant feedback and high typographical precision. While traditional systems like LaTeX provide rich typesetting capabilities, their compilation latency and complex dependencies hinder cloud-native interactive workflows. Typst introduced a modern syntax and incremental layout model.</p>
+    <p>In this work, we present <strong>moon-typst</strong>, a typographical compiler implemented in MoonBit. Its parser, box layout, and vector renderers can be measured separately with the checked-in benchmark.</p>
     <h2>Mathematical Foundation</h2>
-    <p>The vertical spacing distribution model follows standard typographical baseline kinetics </p>
+    <p>The vertical spacing distribution model follows standard typographical baseline kinetics:</p>
     <div class="math-block">E = mc ^ 2</div>
-    <p>Furthermore  inline formulations such as <span class="math-inline">fx = &radic;<span style="border-top: 1px solid #1f2328; padding-top: 1px;">x ^ 2 + 1</span></span> and fraction derivations </p>
+    <p>Furthermore, inline formulations such as <span class="math-inline">fx = &radic;<span style="border-top: 1px solid #1f2328; padding-top: 1px;">x ^ 2 + 1</span></span> and fraction derivations:</p>
     <div class="math-block">fraca + b , c + d</div>
     <p>maintain harmonic font metrics and balanced baseline alignments across heterogeneous output devices.</p>
     <h2>Architecture Overview</h2>
-    <p>The system pipeline consists of three decoupled phases </p>
+    <p>The system pipeline consists of three decoupled phases:</p>
     <ul>
-      <li>Lexical Tokenization &amp; Parsing  Recursive descent parser yielding lossless AST nodes</li>
-      <li>Geometric Layout Engine  Bounding box calculation  font metric estimation  and page break partitioning</li>
-      <li>Dual-Target Vector Renderer  SVG 1.1 vector paths and semantic HTML5 DOM structures</li>
+      <li>Lexical Tokenization &amp; Parsing: Recursive descent parser yielding lossless AST nodes</li>
+      <li>Geometric Layout Engine: Bounding box calculation, font metric estimation, and page break partitioning</li>
+      <li>Dual-Target Vector Renderer: SVG 1.1 vector paths and semantic HTML5 DOM structures</li>
     </ul>
     <h2>Empirical Results</h2>
-    <p>Run <code>moon bench benchmarks --target wasm-gc --release --deny-warn</code> and record the host  MoonBit version  and raw results before making WebAssembly performance comparisons.</p>
+    <p>Run <code>moon bench benchmarks --target wasm-gc --release --deny-warn</code> and record the host, MoonBit version, and raw results before making WebAssembly performance comparisons.</p>
   </div>
 </body>
 </html>

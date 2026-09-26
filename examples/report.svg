@@ -5,30 +5,30 @@
   </style>
   <rect width="100%" height="100%" fill="#ffffff"/>
   <text x="48" y="96.48" font-size="28.8" fill="#1a1a1a" font-weight="bold">Benchmark Protocol</text>
-  <text x="321.6" y="96.48" font-size="28.8" fill="#1a1a1a" font-weight="bold"> </text>
-  <text x="330.24" y="96.48" font-size="28.8" fill="#1a1a1a" font-weight="bold"> moon-typst</text>
+  <text x="321.6" y="96.48" font-size="28.8" fill="#1a1a1a" font-weight="bold">:</text>
+  <text x="337.44" y="96.48" font-size="28.8" fill="#1a1a1a" font-weight="bold"> moon-typst</text>
   <text x="48" y="146.48" font-size="22.4" fill="#1a1a1a" font-weight="bold">Document Metadata</text>
   <text x="48" y="170.16" font-size="16" fill="#1a1a1a">Author</text>
-  <text x="97.6" y="170.16" font-size="16" fill="#1a1a1a"> </text>
-  <text x="102.39999999999999" y="170.16" font-size="16" fill="#1a1a1a"> Infrastructure &amp; Tooling Working Group</text>
-  <text x="413.60000000000014" y="170.16" font-size="16" fill="#1a1a1a"> </text>
-  <text x="418.40000000000015" y="170.16" font-size="16" fill="#1a1a1a">Date</text>
-  <text x="450.40000000000015" y="170.16" font-size="16" fill="#1a1a1a"> </text>
-  <text x="455.20000000000016" y="170.16" font-size="16" fill="#1a1a1a"> September 2026</text>
-  <text x="580.0000000000001" y="170.16" font-size="16" fill="#1a1a1a"> </text>
-  <text x="584.8000000000001" y="170.16" font-size="16" fill="#1a1a1a">Version</text>
-  <text x="643.2" y="170.16" font-size="16" fill="#1a1a1a"> </text>
-  <text x="648" y="170.16" font-size="16" fill="#1a1a1a"> 1.0.0</text>
+  <text x="97.6" y="170.16" font-size="16" fill="#1a1a1a">:</text>
+  <text x="106.39999999999999" y="170.16" font-size="16" fill="#1a1a1a"> Infrastructure &amp; Tooling Working Group</text>
+  <text x="417.60000000000014" y="170.16" font-size="16" fill="#1a1a1a"> </text>
+  <text x="422.40000000000015" y="170.16" font-size="16" fill="#1a1a1a">Date</text>
+  <text x="454.40000000000015" y="170.16" font-size="16" fill="#1a1a1a">:</text>
+  <text x="463.20000000000016" y="170.16" font-size="16" fill="#1a1a1a"> September 2026</text>
+  <text x="588.0000000000001" y="170.16" font-size="16" fill="#1a1a1a"> </text>
+  <text x="592.8000000000001" y="170.16" font-size="16" fill="#1a1a1a">Version</text>
+  <text x="651.2" y="170.16" font-size="16" fill="#1a1a1a">:</text>
+  <text x="660" y="170.16" font-size="16" fill="#1a1a1a"> 1.0.0</text>
   <line x1="48" y1="200.56" x2="752" y2="200.56" stroke="#d0d7de" stroke-width="1"/>
   <text x="48" y="253.6" font-size="22.4" fill="#1a1a1a" font-weight="bold">Executive Summary</text>
   <text x="48" y="277.28000000000003" font-size="16" fill="#1a1a1a">This report describes how to measure parsing</text>
-  <text x="403.2000000000002" y="277.28000000000003" font-size="16" fill="#1a1a1a"> </text>
-  <text x="408.0000000000002" y="277.28000000000003" font-size="16" fill="#1a1a1a"> layout</text>
-  <text x="459.2000000000002" y="277.28000000000003" font-size="16" fill="#1a1a1a"> </text>
+  <text x="403.2000000000002" y="277.28000000000003" font-size="16" fill="#1a1a1a">,</text>
+  <text x="408.80000000000024" y="277.28000000000003" font-size="16" fill="#1a1a1a"> layout</text>
+  <text x="460.0000000000002" y="277.28000000000003" font-size="16" fill="#1a1a1a">,</text>
   <text x="48" y="301.28000000000003" font-size="16" fill="#1a1a1a"> and rendering for a fixed sample document. Results depend on the selected backend</text>
-  <text x="693.5999999999999" y="301.28000000000003" font-size="16" fill="#1a1a1a"> </text>
-  <text x="698.3999999999999" y="301.28000000000003" font-size="16" fill="#1a1a1a"> host</text>
-  <text x="735.1999999999998" y="301.28000000000003" font-size="16" fill="#1a1a1a"> </text>
+  <text x="693.5999999999999" y="301.28000000000003" font-size="16" fill="#1a1a1a">,</text>
+  <text x="699.1999999999999" y="301.28000000000003" font-size="16" fill="#1a1a1a"> host</text>
+  <text x="735.9999999999999" y="301.28000000000003" font-size="16" fill="#1a1a1a">,</text>
   <text x="48" y="325.28000000000003" font-size="16" fill="#1a1a1a"> and toolchain.</text>
   <text x="48" y="357.28000000000003" font-size="16" fill="#1a1a1a">The benchmark entry point is </text>
   <rect x="272.4000000000001" y="341.68" width="212.79999999999993" height="20" fill="#f4f4f6" rx="3"/>
@@ -36,19 +36,19 @@
   <text x="48" y="381.28000000000003" font-size="16" fill="#1a1a1a">. It measures each pipeline stage separately and does not measure file I</text>
   <text x="606.4000000000003" y="381.28000000000003" font-size="16" fill="#1a1a1a">/</text>
   <text x="615.2000000000003" y="381.28000000000003" font-size="16" fill="#1a1a1a">O</text>
-  <text x="624.0000000000002" y="381.28000000000003" font-size="16" fill="#1a1a1a"> </text>
-  <text x="628.8000000000002" y="381.28000000000003" font-size="16" fill="#1a1a1a"> CLI startup</text>
-  <text x="720.0000000000002" y="381.28000000000003" font-size="16" fill="#1a1a1a"> </text>
+  <text x="624.0000000000002" y="381.28000000000003" font-size="16" fill="#1a1a1a">,</text>
+  <text x="629.6000000000003" y="381.28000000000003" font-size="16" fill="#1a1a1a"> CLI startup</text>
+  <text x="720.8000000000002" y="381.28000000000003" font-size="16" fill="#1a1a1a">,</text>
   <text x="48" y="405.28000000000003" font-size="16" fill="#1a1a1a"> or an end-to-end compilation.</text>
   <text x="48" y="460.72" font-size="22.4" fill="#1a1a1a" font-weight="bold">Implementation Architecture</text>
   <text x="48" y="484.40000000000003" font-size="16" fill="#1a1a1a">The core pipeline is written in 100% pure MoonBit without external C FFI bindings</text>
-  <text x="666.4000000000001" y="484.40000000000003" font-size="16" fill="#1a1a1a"> </text>
+  <text x="666.4000000000001" y="484.40000000000003" font-size="16" fill="#1a1a1a">:</text>
   <text x="48" y="516.4" font-size="16" fill="#1a1a1a">Run </text>
   <rect x="77.2" y="500.8" width="446.08000000000015" height="20" fill="#f4f4f6" rx="3"/>
   <text x="79.2" y="515.04" font-size="14.4" fill="#d73a49" class="mono">moon bench benchmarks --target native --release --deny-warn</text>
   <text x="48" y="540.4" font-size="16" fill="#1a1a1a"> from the module root to collect native results.</text>
   <text x="48" y="572.4" font-size="16" fill="#1a1a1a">Key features of this pipeline include</text>
-  <text x="328.0000000000001" y="572.4" font-size="16" fill="#1a1a1a"> </text>
+  <text x="328.0000000000001" y="572.4" font-size="16" fill="#1a1a1a">:</text>
   <text x="64" y="608.4" font-size="16" fill="#0969da" font-weight="bold">1. </text>
   <text x="87.2" y="608.4" font-size="16" fill="#1a1a1a">A fixed source string for the parse stage</text>
   <text x="64" y="636.4" font-size="16" fill="#0969da" font-weight="bold">2. </text>
@@ -58,15 +58,15 @@
   <line x1="48" y1="698.8" x2="752" y2="698.8" stroke="#d0d7de" stroke-width="1"/>
   <text x="48" y="751.8399999999999" font-size="22.4" fill="#1a1a1a" font-weight="bold">Measurement Worksheet</text>
   <text x="48" y="775.52" font-size="16" fill="#1a1a1a">Record the full command</text>
-  <text x="236.80000000000004" y="775.52" font-size="16" fill="#1a1a1a"> </text>
-  <text x="241.60000000000005" y="775.52" font-size="16" fill="#1a1a1a"> target</text>
-  <text x="292.80000000000007" y="775.52" font-size="16" fill="#1a1a1a"> </text>
-  <text x="297.6000000000001" y="775.52" font-size="16" fill="#1a1a1a"> MoonBit version</text>
-  <text x="424.80000000000007" y="775.52" font-size="16" fill="#1a1a1a"> </text>
-  <text x="429.6000000000001" y="775.52" font-size="16" fill="#1a1a1a"> operating system</text>
-  <text x="565.6" y="775.52" font-size="16" fill="#1a1a1a"> </text>
-  <text x="570.4" y="775.52" font-size="16" fill="#1a1a1a"> CPU</text>
-  <text x="601.6" y="775.52" font-size="16" fill="#1a1a1a"> </text>
+  <text x="236.80000000000004" y="775.52" font-size="16" fill="#1a1a1a">,</text>
+  <text x="242.40000000000003" y="775.52" font-size="16" fill="#1a1a1a"> target</text>
+  <text x="293.6" y="775.52" font-size="16" fill="#1a1a1a">,</text>
+  <text x="299.20000000000005" y="775.52" font-size="16" fill="#1a1a1a"> MoonBit version</text>
+  <text x="426.40000000000003" y="775.52" font-size="16" fill="#1a1a1a">,</text>
+  <text x="432.00000000000006" y="775.52" font-size="16" fill="#1a1a1a"> operating system</text>
+  <text x="568" y="775.52" font-size="16" fill="#1a1a1a">,</text>
+  <text x="573.6" y="775.52" font-size="16" fill="#1a1a1a"> CPU</text>
+  <text x="604.8000000000001" y="775.52" font-size="16" fill="#1a1a1a">,</text>
   <text x="48" y="799.52" font-size="16" fill="#1a1a1a"> and raw benchmark output before reporting results. Each stage measures one operation on the checked-in sample input.</text>
   <text x="56" y="851.52" font-size="16" fill="#1a1a1a" font-weight="bold">Stage</text>
   <text x="232" y="851.52" font-size="16" fill="#1a1a1a" font-weight="bold">Input</text>
@@ -141,10 +141,10 @@
   <line x1="48" y1="1069.1200000000001" x2="752" y2="1069.1200000000001" stroke="#d0d7de" stroke-width="1"/>
   <text x="48" y="1122.16" font-size="22.4" fill="#1a1a1a" font-weight="bold">Conclusion &amp; Recommendations</text>
   <text x="48" y="1145.84" font-size="16" fill="#1a1a1a">Use the same input</text>
-  <text x="188.79999999999998" y="1145.84" font-size="16" fill="#1a1a1a"> </text>
-  <text x="193.6" y="1145.84" font-size="16" fill="#1a1a1a"> target</text>
-  <text x="244.79999999999998" y="1145.84" font-size="16" fill="#1a1a1a"> </text>
-  <text x="249.6" y="1145.84" font-size="16" fill="#1a1a1a"> toolchain</text>
-  <text x="324" y="1145.84" font-size="16" fill="#1a1a1a"> </text>
+  <text x="188.79999999999998" y="1145.84" font-size="16" fill="#1a1a1a">,</text>
+  <text x="194.39999999999998" y="1145.84" font-size="16" fill="#1a1a1a"> target</text>
+  <text x="245.59999999999997" y="1145.84" font-size="16" fill="#1a1a1a">,</text>
+  <text x="251.19999999999996" y="1145.84" font-size="16" fill="#1a1a1a"> toolchain</text>
+  <text x="325.59999999999997" y="1145.84" font-size="16" fill="#1a1a1a">,</text>
   <text x="48" y="1169.84" font-size="16" fill="#1a1a1a"> and host conditions when comparing runs. The stage timings cannot be added to claim CLI latency because setup and serialization differ from an end-to-end run.</text>
 </svg>

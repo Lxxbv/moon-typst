@@ -8,6 +8,18 @@ pub struct LayoutEngine {
 }
 
 ///|
+priv struct TableCellFlow {
+  x0 : Double
+  max_x : Double
+  mut x : Double
+  mut y : Double
+  mut bottom : Double
+  line_h : Double
+  mut line_start : Int
+  align : @core.TableAlignment
+}
+
+///|
 pub fn LayoutEngine::new(ctx : @core.StyleContext) -> LayoutEngine {
   { ctx, cur_x: ctx.margin_x, cur_y: ctx.margin_y, boxes: [], }
 }
@@ -484,39 +496,265 @@ fn LayoutEngine::layout_table(
     return
   }
   let col_w = table_w / cols.to_double()
-  let cell_h = self.ctx.font_size * 2.2
-
+  let padding = 8.0
+  let min_h = self.ctx.font_size * 2.2
   for row_idx, row in table.rows {
-    for col_idx, cell in row {
+    let row_y = self.cur_y
+    let mut row_h = min_h
+    for col_idx = 0; col_idx < cols; col_idx = col_idx + 1 {
       let cell_x = self.ctx.margin_x + col_idx.to_double() * col_w
-      let cell_y = self.cur_y + row_idx.to_double() * cell_h
-
-      // Cell border
-      let stroke = LayoutBox::new(
-        Rect::new(cell_x, cell_y, col_w, cell_h),
-        BoxKind::RectStroke(col_w, cell_h, "#e1e4e8", 1.0),
-      )
-      self.boxes.push(stroke)
-
-      // Cell content
-      self.cur_x = cell_x + 8.0
-      let orig_y = self.cur_y
-      self.cur_y = cell_y + 8.0
-      for inline in cell {
-        self.layout_inline_styled(
-          inline,
-          self.ctx.font_size,
-          self.ctx.text_color,
-          "normal",
-        )
+      let flow : TableCellFlow = {
+        x0: cell_x + padding,
+        max_x: cell_x + col_w - padding,
+        x: cell_x + padding,
+        y: row_y + padding,
+        bottom: row_y + padding + self.ctx.font_size,
+        line_h: self.ctx.font_size * self.ctx.line_height,
+        line_start: self.boxes.length(),
+        align: table.alignments[col_idx],
       }
-      self.cur_y = orig_y
+      if col_idx < row.length() {
+        let weight = if row_idx < table.header_rows { "bold" } else { "normal" }
+        for inline in row[col_idx] {
+          self.layout_table_inline(
+            flow,
+            inline,
+            self.ctx.font_size,
+            self.ctx.text_color,
+            weight,
+          )
+        }
+      }
+      self.align_table_line(flow)
+      let needed_h = flow.bottom - row_y + padding
+      if needed_h > row_h {
+        row_h = needed_h
+      }
+    }
+    for col_idx = 0; col_idx < cols; col_idx = col_idx + 1 {
+      let cell_x = self.ctx.margin_x + col_idx.to_double() * col_w
+      self.boxes.push(
+        LayoutBox::new(
+          Rect::new(cell_x, row_y, col_w, row_h),
+          BoxKind::RectStroke(col_w, row_h, "#e1e4e8", 1.0),
+        ),
+      )
+    }
+    self.cur_y = self.cur_y + row_h
+  }
+  self.cur_y = self.cur_y + 16.0
+  self.cur_x = self.ctx.margin_x
+}
+
+///|
+fn LayoutEngine::align_table_line(
+  self : LayoutEngine,
+  flow : TableCellFlow,
+) -> Unit {
+  let line_w = flow.x - flow.x0
+  let available = flow.max_x - flow.x0
+  let shift = match flow.align {
+    @core.TableAlignment::Left => 0.0
+    @core.TableAlignment::Center => (available - line_w) / 2.0
+    @core.TableAlignment::Right => available - line_w
+  }
+  for i = flow.line_start; i < self.boxes.length(); i = i + 1 {
+    let box = self.boxes[i]
+    let rect = box.rect
+    self.boxes[i] = LayoutBox::new(
+      Rect::new(rect.x + shift, rect.y, rect.w, rect.h),
+      box.kind,
+    )
+  }
+}
+
+///|
+fn LayoutEngine::next_table_line(
+  self : LayoutEngine,
+  flow : TableCellFlow,
+) -> Unit {
+  self.align_table_line(flow)
+  flow.x = flow.x0
+  flow.y = flow.y + flow.line_h
+  flow.line_start = self.boxes.length()
+}
+
+///|
+fn LayoutEngine::add_table_text(
+  self : LayoutEngine,
+  flow : TableCellFlow,
+  text : String,
+  size : Double,
+  color : String,
+  weight : String,
+) -> Unit {
+  if text.length() == 0 {
+    return
+  }
+  let width = measure_text_width(text, size)
+  self.boxes.push(
+    LayoutBox::new(
+      Rect::new(flow.x, flow.y, width, size),
+      BoxKind::Text(text, size, color, weight),
+    ),
+  )
+  flow.x = flow.x + width
+  if flow.y + size > flow.bottom {
+    flow.bottom = flow.y + size
+  }
+}
+
+///|
+fn LayoutEngine::layout_table_word(
+  self : LayoutEngine,
+  flow : TableCellFlow,
+  word : String,
+  size : Double,
+  color : String,
+  weight : String,
+) -> Unit {
+  if word.length() == 0 {
+    return
+  }
+  let width = measure_text_width(word, size)
+  if flow.x + width > flow.max_x && flow.x > flow.x0 {
+    self.next_table_line(flow)
+  }
+  if width <= flow.max_x - flow.x0 {
+    self.add_table_text(flow, word, size, color, weight)
+  } else {
+    for character in word.split("") {
+      let piece = character.to_owned()
+      let piece_w = measure_text_width(piece, size)
+      if flow.x + piece_w > flow.max_x && flow.x > flow.x0 {
+        self.next_table_line(flow)
+      }
+      self.add_table_text(flow, piece, size, color, weight)
     }
   }
+}
 
-  let total_rows = table.rows.length()
-  self.cur_y = self.cur_y + total_rows.to_double() * cell_h + 16.0
-  self.cur_x = self.ctx.margin_x
+///|
+fn LayoutEngine::layout_table_inline(
+  self : LayoutEngine,
+  flow : TableCellFlow,
+  inline : @core.Inline,
+  size : Double,
+  color : String,
+  weight : String,
+) -> Unit {
+  match inline {
+    @core.Inline::Text(text) => {
+      let mut first = true
+      for word in text.split(" ") {
+        if !first && flow.x > flow.x0 {
+          let space_w = measure_text_width(" ", size)
+          if flow.x + space_w <= flow.max_x {
+            self.add_table_text(flow, " ", size, color, weight)
+          } else {
+            self.next_table_line(flow)
+          }
+        }
+        self.layout_table_word(flow, word.to_owned(), size, color, weight)
+        first = false
+      }
+    }
+    @core.Inline::Bold(inners) =>
+      for inner in inners {
+        self.layout_table_inline(flow, inner, size, color, "bold")
+      }
+    @core.Inline::Italic(inners) =>
+      for inner in inners {
+        self.layout_table_inline(flow, inner, size, color, "italic")
+      }
+    @core.Inline::Code(code) =>
+      self.layout_table_word(flow, code, size * 0.9, "#d73a49", "monospace")
+    @core.Inline::Link(url, text) => {
+      let display = if text.length() > 0 { text } else { url }
+      self.layout_table_word(flow, display, size, "#0969da", weight)
+    }
+    @core.Inline::FootnoteRef(idx) =>
+      self.layout_table_word(flow, "[\{idx}]", size * 0.75, "#0969da", "bold")
+    @core.Inline::StyledSpan(inners, custom_color, custom_size) => {
+      let use_color = match custom_color {
+        Some(c) => c.to_hex()
+        None => color
+      }
+      let use_size = match custom_size {
+        Some(s) => s
+        None => size
+      }
+      for inner in inners {
+        self.layout_table_inline(flow, inner, use_size, use_color, weight)
+      }
+    }
+    @core.Inline::LineBreak => self.next_table_line(flow)
+    @core.Inline::InlineMath(expr) =>
+      self.layout_table_inline(
+        flow,
+        @core.Inline::Text(table_math_text(expr)),
+        size,
+        color,
+        "italic",
+      )
+  }
+}
+
+///|
+fn table_math_text(expr : @core.MathExpr) -> String {
+  match expr {
+    @core.MathExpr::Sym(s) => s
+    @core.MathExpr::Op(op) => " \{op} "
+    @core.MathExpr::Frac(num, den) =>
+      "(\{table_math_text(num)})/(\{table_math_text(den)})"
+    @core.MathExpr::Sqrt(inner) => "√(\{table_math_text(inner)})"
+    @core.MathExpr::Group(items) => {
+      let builder = StringBuilder()
+      for item in items {
+        builder.write_string(table_math_text(item))
+      }
+      builder.to_string()
+    }
+    @core.MathExpr::SubSup(base, sub, sup) => {
+      let builder = StringBuilder()
+      builder.write_string(table_math_text(base))
+      match sub {
+        Some(value) => builder.write_string("_\{table_math_text(value)}")
+        None => ()
+      }
+      match sup {
+        Some(value) => builder.write_string("^\{table_math_text(value)}")
+        None => ()
+      }
+      builder.to_string()
+    }
+    @core.MathExpr::Matrix(_, _, elems) | @core.MathExpr::Vec(elems) => {
+      let builder = StringBuilder()
+      builder.write_string("[")
+      for i, elem in elems {
+        if i > 0 {
+          builder.write_string(", ")
+        }
+        builder.write_string(table_math_text(elem))
+      }
+      builder.write_string("]")
+      builder.to_string()
+    }
+    @core.MathExpr::Accent(inner, acc) => "\{acc}(\{table_math_text(inner)})"
+    @core.MathExpr::Limits(op, lower, upper) => {
+      let builder = StringBuilder()
+      builder.write_string(table_math_text(op))
+      match lower {
+        Some(value) => builder.write_string("_\{table_math_text(value)}")
+        None => ()
+      }
+      match upper {
+        Some(value) => builder.write_string("^\{table_math_text(value)}")
+        None => ()
+      }
+      builder.to_string()
+    }
+  }
 }
 
 ///|

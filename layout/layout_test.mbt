@@ -190,3 +190,38 @@ test "table inline math text stays within its cell" {
     assert_eq(inside, true)
   }
 }
+
+///|
+test "oversized table glyph fits the padded cell width" {
+  let doc = @core.Doc::new()
+  doc.add_block(
+    @core.Block::Table({
+      rows: [
+        [
+          [
+            @core.Inline::StyledSpan(
+              [@core.Inline::Text("W")],
+              None,
+              Some(500.0),
+            ),
+          ],
+          [@core.Inline::Text("other")],
+        ],
+      ],
+      header_rows: 0,
+      alignments: [@core.TableAlignment::Left, @core.TableAlignment::Left],
+    }),
+  )
+  let page = LayoutEngine::new(@core.StyleContext::default()).layout_doc(doc)
+  let mut cell = Rect::new(0.0, 0.0, 0.0, 0.0)
+  let mut glyph = Rect::new(0.0, 0.0, 0.0, 0.0)
+  for box in page.boxes {
+    match box.kind {
+      BoxKind::RectStroke(_, _, _, _) => if cell.w == 0.0 { cell = box.rect }
+      BoxKind::Text(text, _, _, _) => if text == "W" { glyph = box.rect }
+      _ => ()
+    }
+  }
+  assert_eq(glyph.w > 0.0, true)
+  assert_eq(glyph.x + glyph.w <= cell.x + cell.w - 8.0, true)
+}

@@ -496,7 +496,7 @@ fn LayoutEngine::layout_table(
     return
   }
   let col_w = table_w / cols.to_double()
-  let padding = 8.0
+  let padding = if col_w < 32.0 { col_w / 4.0 } else { 8.0 }
   let min_h = self.ctx.font_size * 2.2
   for row_idx, row in table.rows {
     let row_y = self.cur_y
@@ -629,7 +629,13 @@ fn LayoutEngine::layout_table_word(
       if flow.x + piece_w > flow.max_x && flow.x > flow.x0 {
         self.next_table_line(flow)
       }
-      self.add_table_text(flow, piece, size, color, weight)
+      let available = flow.max_x - flow.x0
+      let fitted_size = if piece_w > available {
+        size * available / piece_w * 0.999
+      } else {
+        size
+      }
+      self.add_table_text(flow, piece, fitted_size, color, weight)
     }
   }
 }

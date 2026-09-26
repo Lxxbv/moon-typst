@@ -5,7 +5,7 @@
 *moon-typst* brings modern typographical typesetting to the MoonBit ecosystem.
 
 - *Zero-FFI Pure MoonBit*: 100% portable across Native, JS, and WebAssembly targets
-- *Multi-Target Rendering*: MoonBit implementation emits SVG, semantic HTML5, and PDF 1.4 documents
+- *Composable Pipeline*: Separate MoonBit modules handle parsing, layout, and rendering
 - *Multi-Target Rendering*: Seamless output to SVG, semantic HTML5, and standard PDF 1.4
 - *Rich Mathematical Layout*: First-class support for fractions, square roots, matrices, and limits
 

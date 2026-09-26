@@ -327,3 +327,85 @@ test "render_pdf_document multi-page structure" {
   assert_eq(pdf.contains("(Page Two Content) Tj"), true)
   assert_eq(pdf.contains("%%EOF"), true)
 }
+
+///|
+fn find_bytes(haystack : Bytes, needle : Bytes) -> Int {
+  for i = 0; i + needle.length() <= haystack.length(); i = i + 1 {
+    let mut matches = true
+    for j = 0; j < needle.length(); j = j + 1 {
+      if haystack[i + j] != needle[j] {
+        matches = false
+      }
+    }
+    if matches {
+      return i
+    }
+  }
+  -1
+}
+
+///|
+fn unicode_test_page() -> @layout.PageLayout {
+  {
+    width: 595.0,
+    height: 842.0,
+    boxes: [
+      @layout.LayoutBox::new(
+        @layout.Rect::new(50.0, 50.0, 200.0, 20.0),
+        @layout.BoxKind::Text("café", 14.0, "#000000", "normal"),
+      ),
+    ],
+  }
+}
+
+///|
+test "PDF startxref offset counts UTF-8 bytes" {
+  let doc : @layout.DocumentLayout = {
+    pages: [unicode_test_page(), unicode_test_page()],
+  }
+  let pdf = render_pdf_document(doc)
+  let bytes = @unicode.to_utf8_bytes(pdf)
+  let xref_marker = find_bytes(bytes, b"\nxref\n")
+  let startxref_marker = find_bytes(bytes, b"startxref\n")
+  assert_eq(xref_marker >= 0, true)
+  assert_eq(startxref_marker >= 0, true)
+
+  let mut declared_offset = 0
+  let mut cursor = startxref_marker + b"startxref\n".length()
+  while cursor < bytes.length() && bytes[cursor] != b'\n' {
+    declared_offset = declared_offset * 10 + bytes[cursor].to_int() - 48
+    cursor = cursor + 1
+  }
+  assert_eq(declared_offset, xref_marker + 1)
+
+  let object_count = 7 + doc.pages.length() * 2
+  for object_id = 1; object_id <= object_count; object_id = object_id + 1 {
+    let object_offset = find_bytes(
+      bytes,
+      @unicode.to_utf8_bytes(object_id.to_string() + " 0 obj\n"),
+    )
+    assert_eq(object_offset >= 0, true)
+    let mut object_offset_text = object_offset.to_string()
+    while object_offset_text.length() < 10 {
+      object_offset_text = "0" + object_offset_text
+    }
+    assert_eq(pdf.contains(object_offset_text + " 00000 n \n"), true)
+  }
+}
+
+///|
+test "PDF content stream length counts UTF-8 bytes" {
+  let bytes = @unicode.to_utf8_bytes(render_pdf(unicode_test_page()))
+  let stream_marker = find_bytes(bytes, b"stream\n")
+  let endstream_marker = find_bytes(bytes, b"\nendstream")
+  assert_eq(stream_marker >= 0, true)
+  assert_eq(endstream_marker > stream_marker, true)
+  let stream_start = stream_marker + b"stream\n".length()
+  let stream_length = endstream_marker - stream_start
+  assert_eq(
+    @unicode.to_utf8_string(bytes).contains(
+      "<< /Length \{stream_length} >>\nstream\n",
+    ),
+    true,
+  )
+}

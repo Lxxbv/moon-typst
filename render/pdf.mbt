@@ -37,7 +37,7 @@ pub fn PdfWriter::new() -> PdfWriter {
 ///|
 fn PdfWriter::write_bytes(self : PdfWriter, s : String) -> Unit {
   self.buf.write_string(s)
-  self.byte_count = self.byte_count + s.length()
+  self.byte_count = self.byte_count + @unicode.to_utf8_bytes(s).length()
 }
 
 ///|
@@ -148,7 +148,7 @@ pub fn render_pdf_document(doc : @layout.DocumentLayout) -> String {
     writer.start_obj(content_obj_id)
     writer.write_bytes(
       "<< /Length " +
-      stream_str.length().to_string() +
+      @unicode.to_utf8_bytes(stream_str).length().to_string() +
       " >>\nstream\n" +
       stream_str +
       "\nendstream\n",

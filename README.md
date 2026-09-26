@@ -100,6 +100,21 @@ flowchart LR
 
 ---
 
+### 管道表格语法
+
+每行用竖线分隔单元格。首行后紧跟分隔行时，首行作为表头；冒号控制列对齐（`:---` 左对齐，`:---:` 居中，`---:` 右对齐）。行首和行尾的竖线可省略，短行会补为空单元格。
+
+```typst
+| Target | Status | Notes |
+| :--- | :---: | ---: |
+| native | supported | SVG/PDF/HTML |
+| js | supported | HTML |
+```
+
+这是有限的管道表格语法，并非完整 Typst 表格实现；目前不支持转义竖线、合并单元格、嵌套表格或分页。
+
+---
+
 ### 📦 快速上手与使用指南
 
 #### 1. 作为库引入项目
@@ -224,6 +239,7 @@ moon bench benchmarks --target js --release --deny-warn
   - Fractions, square roots, sub/superscript.
   - Multi-dimensional matrices (`mat(1, 2; 3, 4)`), column vectors (`vec(x, y)`).
   - Accented characters (`hat(x)`, `tilde(y)`, `dot`, `bar`) and limit operators (`sum`, `int`).
+- **Pipe Tables**: Pipe-delimited rows with optional outer pipes; a separator after the first row marks the header, and colons select left/center/right alignment. Short rows are padded. Escaped pipes, merged cells, nested tables, and pagination are not supported.
 - **Scripting & Evaluation Engine (`eval`)**:
   - Variable scopes, constant evaluation, and cascading `#set` rules (`text`, `page`).
 - **Rich Terminal Diagnostics (`diag`)**:

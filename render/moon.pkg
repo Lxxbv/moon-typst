@@ -1,4 +1,9 @@
 import {
+  "moonbitlang/x/unicode",
   "Lxxbv/moon_typst/core",
   "Lxxbv/moon_typst/layout",
 }
+
+import {
+  "moonbitlang/x/unicode",
+} for "test"

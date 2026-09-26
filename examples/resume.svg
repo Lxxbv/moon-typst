@@ -92,9 +92,7 @@
   <text x="632.0000000000005" y="731.3600000000001" font-size="16" fill="#1a1a1a"> </text>
   <text x="48" y="755.3600000000001" font-size="16" fill="#1a1a1a"> and multi-format rendering stages.</text>
   <text x="64" y="783.3600000000001" font-size="16" fill="#0969da" font-weight="bold">• </text>
-  <text x="88.8" y="783.3600000000001" font-size="16" fill="#1a1a1a">Designed zero-copy AST serialization protocol reducing memory overhead by </text>
-  <text x="683.1999999999999" y="783.3600000000001" font-size="16" fill="#1a1a1a" font-weight="bold">45%</text>
-  <text x="709.5999999999999" y="783.3600000000001" font-size="16" fill="#1a1a1a">.</text>
+  <text x="88.8" y="783.3600000000001" font-size="16" fill="#1a1a1a">Designed AST data structures and interfaces linking parsing and rendering modules.</text>
   <text x="64" y="811.3600000000001" font-size="16" fill="#0969da" font-weight="bold">• </text>
   <text x="48" y="835.3600000000001" font-size="16" fill="#1a1a1a">Implemented high-fidelity SVG path generation for complex mathematical formulas and tables.</text>
   <text x="48" y="888.0800000000002" font-size="19.2" fill="#1a1a1a" font-weight="bold">Systems Software Engineer - WasmCore Technologies</text>

@@ -24,7 +24,7 @@ Systems software engineer focused on programming language runtimes, WebAssembly 
 2024 - Present
 
 - Architected a document engine in MoonBit with separate parsing, layout, and multi-format rendering stages.
-- Designed zero-copy AST serialization protocol reducing memory overhead by *45%*.
+- Designed AST data structures and interfaces linking parsing and rendering modules.
 - Implemented high-fidelity SVG path generation for complex mathematical formulas and tables.
 
 === Systems Software Engineer - WasmCore Technologies

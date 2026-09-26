@@ -236,6 +236,22 @@ test "pipe table groups physical rows and complete cells" {
 }
 
 ///|
+test "trailing outside pipe followed by whitespace adds no table cell" {
+  let doc = parse_typst("| a | b | ")
+  assert_eq(doc.blocks.length(), 1)
+  match doc.blocks[0] {
+    @core.Block::Table(table) => {
+      assert_eq(table.alignments.length(), 2)
+      assert_eq(table.rows.length(), 1)
+      assert_eq(table.rows[0].length(), 2)
+      assert_eq(table.rows[0][0], [@core.Inline::Text("a")])
+      assert_eq(table.rows[0][1], [@core.Inline::Text("b")])
+    }
+    _ => abort("expected two-cell table")
+  }
+}
+
+///|
 test "unbordered pipe table leaves following prose as paragraph" {
   let doc = parse_typst("Alpha | Beta\nOne | Two\nFollowing prose")
   assert_eq(doc.blocks.length(), 2)

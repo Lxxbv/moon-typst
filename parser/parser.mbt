@@ -723,6 +723,11 @@ fn Parser::parse_table_row(self : Parser) -> Array[Array[@core.Inline]] {
         first = false
         ended_with_bar = false
       }
+      Token::Text(s) if ended_with_bar &&
+        s.trim().length() == 0 &&
+        (self.peek_at(1) == Token::Newline || self.peek_at(1) == Token::Eof) => {
+        let _ = self.advance()
+      }
       _ => {
         cell.push(self.parse_single_inline())
         first = false

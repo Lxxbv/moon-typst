@@ -60,7 +60,7 @@ fn layout_element(ctx : StyleContext, box : LayoutBox) -&gt; Unit {
       <li><strong>Semantic HTML5</strong>  Clean document hierarchy with responsive styling and CSS grid compatibility</li>
     </ul>
     <h2>4. Benchmark and Evaluation</h2>
-    <p>Micro-benchmarks executed across native  JavaScript  and WebAssembly backends show layout throughput exceeding 50 000 words per second with sub-millisecond cold start latencies.</p>
+    <p>The benchmark in <code>benchmarks/pipeline_test.mbt</code> measures parse  layout  HTML  SVG  and PDF stages on a fixed input. Run it for each target under recorded host and toolchain conditions before comparing results. It does not measure cold start latency.</p>
   </div>
 </body>
 </html>

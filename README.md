@@ -2,14 +2,13 @@
 
 <div align="center">
 
-**A High-Performance Typst Markup Parser, Layout Engine, and SVG/PDF/HTML Multi-Target Vector Renderer in Pure MoonBit.**
+**A Typst Markup Parser, Layout Engine, and SVG/PDF/HTML Multi-Target Vector Renderer in Pure MoonBit.**
 
-基于纯 MoonBit 语言实现的工业级、零 C-FFI 依赖的 Typst 核心解析、流式盒模型排版与多后端（SVG / PDF 1.4 / HTML5）矢量渲染引擎。
+基于 MoonBit 实现的 Typst 风格标记解析、盒模型排版与多后端（SVG / PDF 1.4 / HTML5）渲染引擎。
 
 [![CI](https://github.com/Lxxbv/moon-typst/actions/workflows/ci.yml/badge.svg)](https://github.com/Lxxbv/moon-typst/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Target](https://img.shields.io/badge/Target-Wasm--GC%20%7C%20Native%20%7C%20JS-success.svg)](https://www.moonbitlang.com/)
-[![Lines of Code](https://img.shields.io/badge/Pure%20MoonBit-5200%2B%20LOC-brightgreen.svg)](https://github.com/Lxxbv/moon-typst)
 [![Mooncakes](https://img.shields.io/badge/Mooncakes-Lxxbv%2Fmoon__typst-orange.svg)](https://mooncakes.io/)
 
 [English](#english) | [中文说明](#中文说明)
@@ -22,14 +21,12 @@
 
 ### 🌟 项目背景与生态价值
 
-[Typst](https://github.com/typst/typst) 作为新一代现代排版系统，以其直观优雅的标记语法、灵活的脚本演算和极致的编译速度正在迅速成为科研论文与技术文档的新一代工业标准。MoonBit 凭借紧凑微小的 WebAssembly 产物、亚毫秒级冷启动与卓越的执行性能，是构建下一代云原生与端侧轻量工具链的理想语言。
+[Typst](https://github.com/typst/typst) 是现代排版系统。MoonBit 支持将同一代码编译到 Native、JavaScript 和 WebAssembly GC 目标；本项目在这些目标上实现解析、排版与渲染功能。
 
-在参加 **2026 9月 MoonBit 黑客松** 时，我们对 `mooncakes.io` 注册的全部 2,493 个模块及 GitHub 社区进行了全站深度检索与查重，确认 MoonBit 生态在**排版系统、PDF 矢量生成器与富文本渲染引擎领域存在显著空白**。
-
-`moon-typst` 填补了这一关键基础设施缺口：
-- **100% 纯 MoonBit (Pure MoonBit, 5,200+ 行原生代码)**：全工程无任何外部 C/C++ 动态链接库或 Node.js 运行时依赖，原生支持无缝编译到 `wasm-gc`、`js` 以及 `native` 平台。
-- **端到端完整工业级编译管线**：涵盖从源码位置跟踪（Span）、词法状态机、无回溯递归下降语法树构建、Typst 脚本运行时求值环境、流式盒模型几何排版，到三目标格式导出（SVG 1.1、Adobe PDF 1.4 二进制、语义化响应式 HTML5）。
-- **极速轻量**：端到端解析加排版整体耗时在亚毫秒级（< 1ms），相较于重型排版编译器具备 10x~50x 的启动优势，非常适合嵌入 IDE 实时预览插件、Web 编辑器与边缘轻量报表服务。
+`moon-typst` 提供以下功能：
+- **MoonBit 源码实现**：解析、排版与渲染模块以 MoonBit 编写，可构建到 `wasm-gc`、`js` 以及 `native` 目标。
+- **文档处理管线**：涵盖源码位置跟踪（Span）、词法分析、递归下降解析、脚本求值、盒模型排版，以及 SVG 1.1、PDF 1.4 和 HTML5 输出。
+- **可复现实验入口**：`benchmarks/pipeline_test.mbt` 分别测量解析、排版与渲染阶段；下文列出运行命令和记录环境的方法。
 
 ---
 
@@ -52,14 +49,14 @@ flowchart LR
     K --> N["响应式网页 (.html)"]
 ```
 
-#### 核心包模块职责（共 25 个 `.mbt` 源码文件，5,200+ 行）：
+#### 核心包模块职责：
 1. **`core` (核心领域模型与 AST)**：
    - 定义不可变文档抽象语法树（`Doc`、`Block`、`Inline`、`MathExpr`）。
-   - 完备的度量单位系统 `Length`（支持 `pt`、`mm`、`cm`、`in`、`em`、`fr` 弹性比例与百分比 `%`）。
+   - 度量单位系统 `Length`（支持 `pt`、`mm`、`cm`、`in`、`em`、`fr` 弹性比例与百分比 `%`）。
    - 颜色系统 `Color`（支持 `#RRGGBB` 十六进制、RGB、HSL 与标准颜色名称）。
    - 图形节点（`Rect`、`Circle`、`Line`）、网格布局（`Grid`）、脚注（`Footnote`）与图表（`Figure`）。
 2. **`diag` (源码诊断与高亮报错)**：
-   - 精确源码位置跨度（`Pos`、`Span`）。
+   - 源码位置跨度（`Pos`、`Span`）。
    - 多级别诊断系统（`Error`、`Warning`、`Hint`、`Info`）。
    - 类似 Rustc/Clang 的 ANSI 彩色终端诊断报告器，带有代码切片、行号、下划波浪线及智能修复提示。
 3. **`eval` (Typst 脚本演算与运行时环境)**：
@@ -76,11 +73,11 @@ flowchart LR
    - 二维数学基准线平衡算法（根式延长线、分式上下对齐、矩阵格子行列对齐）。
    - 几何盒抽象（`LayoutBox`、`PageLayout`、`DocumentLayout`）。
 6. **`render` (多格式矢量后端)**：
-   - `pdf.mbt`：**100% 纯 MoonBit 实现的 Adobe PDF 1.4 二进制生成器**，支持间接对象序列化、xref 交叉引用表、Catalog/Pages 树结构、嵌入式标准 Type1 字体（Helvetica, Helvetica-Bold, Times-Italic, Courier）及 PDF 绘制操作流。
+   - `pdf.mbt`：MoonBit 实现的 PDF 1.4 生成器，支持间接对象序列化、xref 交叉引用表、Catalog/Pages 树结构、标准 Type1 字体引用（Helvetica, Helvetica-Bold, Times-Italic, Courier）及 PDF 绘制操作流。
    - `svg.mbt`：生成符合 W3C 标准、支持自包含字体样式与平滑线条的 SVG 1.1 矢量图。
    - `html.mbt`：生成语义化现代科技风响应式 HTML5 网页，内置自适应排版 CSS。
 7. **`cmd/main` (跨平台命令行编译工具)**：
-   - 提供工业级命令行工具 `typst-render`，支持参数解析、格式自适应推导与彩色错误诊断输出。
+   - 提供命令行工具，支持参数解析、格式推导与彩色错误诊断输出。
 
 ---
 
@@ -88,18 +85,18 @@ flowchart LR
 
 | 语法特性 | Typst 标记写法 | 支持状态 | 渲染输出表现 |
 | :--- | :--- | :---: | :--- |
-| **多级标题** | `= 一级标题`, `== 二级标题`, `=== 三级标题` | ✅ 完整支持 | 层级字体缩放、下划线隔断、自动排版间距 |
-| **行内样式** | `*粗体*`, `_斜体_`, `` `行内代码` `` | ✅ 完整支持 | 字体加粗/倾斜、等宽字符盒、HTML 语义化映射 |
-| **超链接** | `[文字](https://...)` | ✅ 完整支持 | 可点击链接、高亮样式与悬停下划线 |
-| **代码块** | ` ```moonbit ... ``` ` | ✅ 完整支持 | 等宽字体盒、代码底色块、保留缩进与换行 |
-| **列表排版** | `- 无序项`, `+ 有序项` | ✅ 完整支持 | 自动排布项目圆点、自动编号递增（1., 2., ...） |
-| **高等数学** | `$ frac(a, b) $`, `$ sqrt(x) $`, `$ x^2_i $` | ✅ 完整支持 | 居中公式块、公式斜体、分数线对齐、根号上横线 |
-| **矩阵与向量** | `$ mat(1, 2; 3, 4) $`, `$ vec(x, y, z) $` | ✅ 完整支持 | 动态行列间距计算、数学括号包络与网格排列 |
-| **算子与重音** | `$ sum $, $ int $, $ hat(x) $, $ tilde(y) $` | ✅ 完整支持 | 大型上下标基准线定位、字母顶置符号修饰 |
-| **几何图形** | `#rect(...)`, `#circle(...)` | ✅ 完整支持 | 自定义填充色、边框宽度、圆角半径矢量绘制 |
-| **网格布局** | `#grid(columns: (1fr, 1fr), ...)` | ✅ 完整支持 | 弹性比例与固定尺寸分栏排版 |
-| **级联样式** | `#set text(size: 12pt)`, `#set page(...)` | ✅ 完整支持 | 动态修改上下文默认字号、颜色、多栏列数 |
-| **多目标输出** | `PDF 1.4`, `SVG 1.1`, `HTML5` | ✅ 完整支持 | 矢量无损清晰、原生二进制直出 |
+| **多级标题** | `= 一级标题`, `== 二级标题`, `=== 三级标题` | 已实现 | 层级字体缩放、下划线隔断、自动排版间距 |
+| **行内样式** | `*粗体*`, `_斜体_`, `` `行内代码` `` | 已实现 | 字体加粗/倾斜、等宽字符盒、HTML 语义化映射 |
+| **超链接** | `[文字](https://...)` | 已实现 | 可点击链接、高亮样式与悬停下划线 |
+| **代码块** | ` ```moonbit ... ``` ` | 已实现 | 等宽字体盒、代码底色块、保留缩进与换行 |
+| **列表排版** | `- 无序项`, `+ 有序项` | 已实现 | 自动排布项目圆点、自动编号递增（1., 2., ...） |
+| **高等数学** | `$ frac(a, b) $`, `$ sqrt(x) $`, `$ x^2_i $` | 已实现 | 居中公式块、公式斜体、分数线对齐、根号上横线 |
+| **矩阵与向量** | `$ mat(1, 2; 3, 4) $`, `$ vec(x, y, z) $` | 已实现 | 动态行列间距计算、数学括号包络与网格排列 |
+| **算子与重音** | `$ sum $, $ int $, $ hat(x) $, $ tilde(y) $` | 已实现 | 大型上下标基准线定位、字母顶置符号修饰 |
+| **几何图形** | `#rect(...)`, `#circle(...)` | 已实现 | 自定义填充色、边框宽度、圆角半径矢量绘制 |
+| **网格布局** | `#grid(columns: (1fr, 1fr), ...)` | 已实现 | 弹性比例与固定尺寸分栏排版 |
+| **级联样式** | `#set text(size: 12pt)`, `#set page(...)` | 已实现 | 动态修改上下文默认字号、颜色、多栏列数 |
+| **多目标输出** | `PDF 1.4`, `SVG 1.1`, `HTML5` | 已实现 | 对应格式的文档输出 |
 
 ---
 
@@ -177,7 +174,7 @@ moon run cmd/main -- --help
 
 ### 🔬 官方真实用例套件
 
-本项目在 `examples/` 目录下提供了覆盖学术论文、幻灯片演讲、简历与工业报告的完整用例套件：
+本项目在 `examples/` 目录下提供学术论文、幻灯片演讲、简历与报告示例：
 
 1. **学术论文 (`examples/paper.typ`)**：
    - 包含多级标题、数学公式推导（$E=mc^2$、分式、根式）、系统架构列表。
@@ -194,16 +191,16 @@ moon run cmd/main -- --help
 
 ### ⚡ 性能基准测试 (Micro-benchmarks)
 
-在标准测试环境（AMD Ryzen 7, 32GB RAM）下，对包含 20+ 块级元素、复杂矩阵及数学公式的文档进行 1,000 次连续编译测得的单次耗时：
+从模块根目录运行以下命令；每个目标单独运行并保存完整原始输出：
 
-| 运行目标 (Target) | 解析耗时 (Parse) | 排版耗时 (Layout) | PDF 渲染耗时 | SVG 渲染耗时 | 总编译延迟 (Total) |
-| :--- | :---: | :---: | :---: | :---: | :---: |
-| **Native x86_64** | **0.31 ms** | **0.42 ms** | **0.22 ms** | **0.18 ms** | **0.95 ms** |
-| **Wasm-GC (Wasmtime)** | **0.45 ms** | **0.58 ms** | **0.29 ms** | **0.25 ms** | **1.32 ms** |
-| **Wasm-GC (Node.js/V8)** | **0.52 ms** | **0.65 ms** | **0.34 ms** | **0.29 ms** | **1.51 ms** |
-| **JavaScript Target** | **0.88 ms** | **1.12 ms** | **0.49 ms** | **0.41 ms** | **2.49 ms** |
+```bash
+moon version --all
+moon bench benchmarks --target native --release --deny-warn
+moon bench benchmarks --target wasm-gc --release --deny-warn
+moon bench benchmarks --target js --release --deny-warn
+```
 
-> **结论**：全流程编译延迟始终控制在 1ms 左右，相较传统基于 C/C++ 动态链接库的重量级排版引擎，拥有数十倍的启动速度优势与极致的 WebAssembly 便捷性。
+`benchmarks/pipeline_test.mbt` 使用固定源文本，分别测量 `parse_typst`、`layout_doc`、`render_html`、`render_svg` 和 `render_pdf`。排版和 HTML 的 AST、SVG 和 PDF 的页面布局在计时前准备；因此这些分段结果不是 CLI 冷启动或端到端编译延迟。根据 [MoonBit benchmark 文档](https://docs.moonbitlang.com/en/latest/language/benchmarks.html)，`@bench.T::bench` 自动校准每组迭代次数，默认显示 10 组测量及均值、离散度和范围；文档未单独保证预热阶段。报告数值时请同时记录 Git 提交、完整命令、目标、`moon version --all`、操作系统与版本、CPU 型号、运行环境、原始输出和测量日期。跨目标比较应使用相同输入与可比环境。
 
 ---
 
@@ -213,12 +210,12 @@ moon run cmd/main -- --help
 
 ### 🌟 Project Overview & Ecosystem Value
 
-[Typst](https://github.com/typst/typst) is a modern typesetting system providing the typographical power of LaTeX with clean syntax and instant compilation. MoonBit offers unmatched compilation speed, ultra-compact WebAssembly output, and strict memory safety.
+[Typst](https://github.com/typst/typst) is a modern typesetting system. MoonBit lets this project compile its parser, layout engine, and renderers for Native, JavaScript, and WebAssembly GC targets.
 
-`moon-typst` delivers a **100% pure MoonBit** implementation of a complete Typst compilation pipeline: lexical scanner, error-recovering recursive descent parser, runtime evaluation environment, spatial box-model layout engine, and triple-target vector emitter (SVG 1.1, Adobe PDF 1.4 binary, and semantic HTML5). With **5,200+ lines of pure MoonBit code** and **zero C FFI dependencies**, it runs natively on Native, JavaScript, and WebAssembly (Wasm-GC) targets.
+`moon-typst` provides a MoonBit implementation of a Typst-style document pipeline: lexical scanner, recursive descent parser, runtime evaluation environment, spatial box-model layout engine, and SVG 1.1, PDF 1.4, and HTML5 renderers. The module builds for Native, JavaScript, and WebAssembly GC targets.
 
 ### 📐 Features
-- **Zero-FFI Pure MoonBit**: 5,200+ LOC of pure, type-safe MoonBit code.
+- **MoonBit Implementation**: Parser, layout, and renderer source is written in MoonBit.
 - **Triple Vector Targets**:
   - **Adobe PDF 1.4**: Direct binary serializer with xref tables, Type1 fonts, and vector drawing operators.
   - **Scalable Vector Graphics (SVG 1.1)**: Clean vector elements and font metrics.
@@ -231,14 +228,14 @@ moon run cmd/main -- --help
   - Variable scopes, constant evaluation, and cascading `#set` rules (`text`, `page`).
 - **Rich Terminal Diagnostics (`diag`)**:
   - Source span tracking, Rustc-style colorized diagnostic reporting with line numbers, code snippets, and hints.
-- **Sub-millisecond Performance**: Complete compilation pass runs in under 1ms.
+- **Reproducible Benchmarks**: The [benchmark entry point](benchmarks/pipeline_test.mbt) measures parser, layout, and renderer stages on a fixed input. Run `moon bench benchmarks --target native --release --deny-warn` from the module root; use `wasm-gc` or `js` as the target to measure those backends. Record the full command, Git commit, `moon version --all`, OS, CPU, runtime, date, and raw output with any reported result. [MoonBit's benchmark API](https://docs.moonbitlang.com/en/latest/language/benchmarks.html) automatically calibrates iterations and reports 10 measured samples by default; the docs give no separate warmup guarantee. It excludes CLI startup and file I/O.
 
 ---
 
 ### 🧪 Test & CI Coverage
-- 30 comprehensive unit tests across `core`, `diag`, `eval`, `parser`, `layout`, and `render`.
+- Unit tests across `core`, `diag`, `eval`, `parser`, `layout`, and `render`.
 - GitHub Actions CI matrix testing on **Ubuntu**, **macOS**, and **Windows**.
-- Strict formatting and warning denials (`moon fmt --check`, `moon check --deny-warn`).
+- Strict formatting and all-target warning checks (`moon fmt --check`, `moon check --target all --deny-warn`, `moon test --target all --deny-warn`).
 
 ---
 

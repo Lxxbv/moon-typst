@@ -30,70 +30,70 @@
 </head>
 <body>
   <div class="typst-doc">
-    <h1>Benchmark &amp; Performance Analysis: moon-typst</h1>
+    <h1>Benchmark Protocol  moon-typst</h1>
     <h2>Document Metadata</h2>
-    <p>Author: Infrastructure &amp; Tooling Working Group Date: September 2026 Version: 1.0.0</p>
+    <p>Author  Infrastructure &amp; Tooling Working Group Date  September 2026 Version  1.0.0</p>
     <hr/>
     <h2>Executive Summary</h2>
-    <p>This report evaluates the parsing and rendering throughput of the <strong>moon-typst</strong> typesetting engine across multiple execution targets: Native <code>x86_64</code>, WebAssembly GC, and JavaScript.</p>
-    <p>The design goal of moon-typst is to eliminate heavy C/C++ runtimes and provide an embeddable, zero-dependency typesetting engine capable of sub-millisecond document compilation.</p>
+    <p>This report describes how to measure parsing  layout  and rendering for a fixed sample document. Results depend on the selected backend  host  and toolchain.</p>
+    <p>The benchmark entry point is <code>benchmarks/pipeline_test.mbt</code>. It measures each pipeline stage separately and does not measure file I/O  CLI startup  or an end-to-end compilation.</p>
     <h2>Implementation Architecture</h2>
-    <p>The core pipeline is written in 100% pure MoonBit without external C FFI bindings:</p>
-    <pre><code class="language-moonbit">pub fn render_typst_to_svg(source : String) -&gt; String {
-  let doc = @parser.parse_typst(source)
-  let layout = @layout.compute_layout(doc, ctx)
-  @render.render_to_svg(layout)
-}
-</code></pre>
-    <p>Key features of this pipeline include:</p>
+    <p>The core pipeline is written in 100% pure MoonBit without external C FFI bindings </p>
+    <p>Run <code>moon bench benchmarks --target native --release --deny-warn</code> from the module root to collect native results.</p>
+    <p>Key features of this pipeline include </p>
     <ol>
-      <li>Deterministic memory allocation via MoonBit&apos;s compact heap layout</li>
-      <li>Pure functional AST node representation with structural pattern matching</li>
-      <li>Vectorized bounding box accumulation avoiding redundant traversal</li>
+      <li>A fixed source string for the parse stage</li>
+      <li>A parsed document prepared before layout and HTML measurements</li>
+      <li>A laid-out page prepared before SVG and PDF measurements</li>
     </ol>
     <hr/>
-    <h2>Benchmark Results</h2>
-    <p>The following table summarizes throughput metrics across 1,000 continuous compilation runs on standard hardware:</p>
+    <h2>Measurement Worksheet</h2>
+    <p>Record the full command  target  MoonBit version  operating system  CPU  and raw benchmark output before reporting results. Each stage measures one operation on the checked-in sample input.</p>
     <table>
+      <thead>
       <tr>
-        <td> Target Runtime </td>
-        <td> Parse Time </td>
-        <td> Layout Time </td>
-        <td> Total Latency </td>
-        <td> Native </td>
-        <td><code>x86_64</code></td>
-        <td>  </td>
-        <td> 0.32 ms    </td>
+        <th style="text-align: left;">Stage</th>
+        <th style="text-align: left;">Input</th>
+        <th style="text-align: center;">Timed operation</th>
+        <th style="text-align: right;">Output</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td style="text-align: left;">Parse</td>
+        <td style="text-align: left;">Fixed source</td>
+        <td style="text-align: center;"><code>parse_typst</code></td>
+        <td style="text-align: right;">Document AST</td>
       </tr>
       <tr>
-        <td> 0.48 ms     </td>
-        <td> 0.80 ms       </td>
-        <td> Wasm-GC </td>
-        <td>(</td>
-        <td>V8</td>
-        <td>)</td>
-        <td>   </td>
-        <td> 0.54 ms    </td>
+        <td style="text-align: left;">Layout</td>
+        <td style="text-align: left;">Prepared AST</td>
+        <td style="text-align: center;"><code>layout_doc</code></td>
+        <td style="text-align: right;">Page layout</td>
       </tr>
       <tr>
-        <td> 0.72 ms     </td>
-        <td> 1.26 ms       </td>
-        <td> Wasm-GC </td>
-        <td>(</td>
-        <td>Wasmtime</td>
-        <td>)</td>
-        <td> </td>
-        <td> 0.49 ms </td>
+        <td style="text-align: left;">HTML</td>
+        <td style="text-align: left;">Prepared AST</td>
+        <td style="text-align: center;"><code>render_html</code></td>
+        <td style="text-align: right;">HTML string</td>
       </tr>
       <tr>
-        <td> 0.68 ms   </td>
-        <td> 1.17 ms       </td>
+        <td style="text-align: left;">SVG</td>
+        <td style="text-align: left;">Prepared page</td>
+        <td style="text-align: center;"><code>render_svg</code></td>
+        <td style="text-align: right;">SVG string</td>
       </tr>
+      <tr>
+        <td style="text-align: left;">PDF</td>
+        <td style="text-align: left;">Prepared page</td>
+        <td style="text-align: center;"><code>render_pdf</code></td>
+        <td style="text-align: right;">PDF string</td>
+      </tr>
+      </tbody>
     </table>
     <hr/>
     <h2>Conclusion &amp; Recommendations</h2>
-    <p>The benchmark numbers confirm that moon-typst achieves industry-grade performance suitable for real-time collaborative editing and serverless document generation.</p>
-    <p>We recommend standardizing on <code>Lxxbv/moon_typst</code> for web-based previewers and IDE extensions.</p>
+    <p>Use the same input  target  toolchain  and host conditions when comparing runs. The stage timings cannot be added to claim CLI latency because setup and serialization differ from an end-to-end run.</p>
   </div>
 </body>
 </html>

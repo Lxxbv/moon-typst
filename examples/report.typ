@@ -1,4 +1,4 @@
-= Benchmark & Performance Analysis: moon-typst
+= Benchmark Protocol: moon-typst
 
 == Document Metadata
 
@@ -10,43 +10,38 @@ Version: 1.0.0
 
 == Executive Summary
 
-This report evaluates the parsing and rendering throughput of the *moon-typst* typesetting engine across multiple execution targets: Native `x86_64`, WebAssembly GC, and JavaScript.
+This report describes how to measure parsing, layout, and rendering for a fixed sample document. Results depend on the selected backend, host, and toolchain.
 
-The design goal of moon-typst is to eliminate heavy C/C++ runtimes and provide an embeddable, zero-dependency typesetting engine capable of sub-millisecond document compilation.
+The benchmark entry point is `benchmarks/pipeline_test.mbt`. It measures each pipeline stage separately and does not measure file I/O, CLI startup, or an end-to-end compilation.
 
 == Implementation Architecture
 
 The core pipeline is written in 100% pure MoonBit without external C FFI bindings:
 
-```moonbit
-pub fn render_typst_to_svg(source : String) -> String {
-  let doc = @parser.parse_typst(source)
-  let layout = @layout.compute_layout(doc, ctx)
-  @render.render_to_svg(layout)
-}
-```
+Run `moon bench benchmarks --target native --release --deny-warn` from the module root to collect native results.
 
 Key features of this pipeline include:
 
-+ Deterministic memory allocation via MoonBit's compact heap layout
-+ Pure functional AST node representation with structural pattern matching
-+ Vectorized bounding box accumulation avoiding redundant traversal
++ A fixed source string for the parse stage
++ A parsed document prepared before layout and HTML measurements
++ A laid-out page prepared before SVG and PDF measurements
 
 ---
 
-== Benchmark Results
+== Measurement Worksheet
 
-The following table summarizes throughput metrics across 1,000 continuous compilation runs on standard hardware:
+Record the full command, target, MoonBit version, operating system, CPU, and raw benchmark output before reporting results. Each stage measures one operation on the checked-in sample input.
 
-| Target Runtime | Parse Time | Layout Time | Total Latency |
-| Native `x86_64`  | 0.32 ms    | 0.48 ms     | 0.80 ms       |
-| Wasm-GC (V8)   | 0.54 ms    | 0.72 ms     | 1.26 ms       |
-| Wasm-GC (Wasmtime) | 0.49 ms | 0.68 ms   | 1.17 ms       |
+| Stage | Input | Timed operation | Output |
+| :--- | :--- | :---: | ---: |
+| Parse | Fixed source | `parse_typst` | Document AST |
+| Layout | Prepared AST | `layout_doc` | Page layout |
+| HTML | Prepared AST | `render_html` | HTML string |
+| SVG | Prepared page | `render_svg` | SVG string |
+| PDF | Prepared page | `render_pdf` | PDF string |
 
 ---
 
 == Conclusion & Recommendations
 
-The benchmark numbers confirm that moon-typst achieves industry-grade performance suitable for real-time collaborative editing and serverless document generation.
-
-We recommend standardizing on `Lxxbv/moon_typst` for web-based previewers and IDE extensions.
+Use the same input, target, toolchain, and host conditions when comparing runs. The stage timings cannot be added to claim CLI latency because setup and serialization differ from an end-to-end run.

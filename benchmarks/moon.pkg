@@ -1,0 +1,7 @@
+import {
+  "moonbitlang/core/bench",
+  "Lxxbv/moon_typst/core",
+  "Lxxbv/moon_typst/parser",
+  "Lxxbv/moon_typst/layout",
+  "Lxxbv/moon_typst/render",
+} for "test"

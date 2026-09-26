@@ -2,7 +2,7 @@
 /// Command Line Interface for moon-typst compiler and multi-target renderer
 fn print_help() -> Unit {
   let help_text =
-    #|moon-typst: High-performance Typst markup parser, layout engine, and multi-format renderer in MoonBit
+    #|moon-typst: Typst-style markup parser, layout engine, and multi-format renderer in MoonBit
     #|
     #|Usage:
     #|  typst-render [OPTIONS] <input.typ>

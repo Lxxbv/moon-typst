@@ -21,9 +21,13 @@
   <text x="512.8000000000001" y="249.36" font-size="16" fill="#1a1a1a"> </text>
   <text x="517.6" y="249.36" font-size="16" fill="#1a1a1a"> and WebAssembly targets</text>
   <text x="64" y="277.36" font-size="16" fill="#0969da" font-weight="bold">• </text>
-  <text x="88.8" y="277.36" font-size="16" fill="#1a1a1a" font-weight="bold">Sub-millisecond Compilation</text>
-  <text x="304.8" y="277.36" font-size="16" fill="#1a1a1a"> </text>
-  <text x="48" y="301.36" font-size="16" fill="#1a1a1a"> Incremental layout engine built for interactive documents</text>
+  <text x="88.8" y="277.36" font-size="16" fill="#1a1a1a" font-weight="bold">Multi-Target Rendering</text>
+  <text x="266.40000000000003" y="277.36" font-size="16" fill="#1a1a1a"> </text>
+  <text x="271.20000000000005" y="277.36" font-size="16" fill="#1a1a1a"> MoonBit implementation emits SVG</text>
+  <text x="532.8000000000002" y="277.36" font-size="16" fill="#1a1a1a"> </text>
+  <text x="537.6000000000001" y="277.36" font-size="16" fill="#1a1a1a"> semantic HTML5</text>
+  <text x="663.2000000000002" y="277.36" font-size="16" fill="#1a1a1a"> </text>
+  <text x="48" y="301.36" font-size="16" fill="#1a1a1a"> and PDF 1.4 documents</text>
   <text x="64" y="329.36" font-size="16" fill="#0969da" font-weight="bold">• </text>
   <text x="88.8" y="329.36" font-size="16" fill="#1a1a1a" font-weight="bold">Multi-Target Rendering</text>
   <text x="266.40000000000003" y="329.36" font-size="16" fill="#1a1a1a"> </text>

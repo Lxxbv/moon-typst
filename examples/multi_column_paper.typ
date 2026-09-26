@@ -45,4 +45,4 @@ The compilation pipeline provides deterministic generation across three distinct
 
 == 4. Benchmark and Evaluation
 
-Micro-benchmarks executed across native, JavaScript, and WebAssembly backends show layout throughput exceeding 50,000 words per second with sub-millisecond cold start latencies.
+The benchmark in `benchmarks/pipeline_test.mbt` measures parse, layout, HTML, SVG, and PDF stages on a fixed input. Run it for each target under recorded host and toolchain conditions before comparing results. It does not measure cold start latency.

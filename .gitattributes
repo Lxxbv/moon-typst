@@ -1,0 +1,2 @@
+# PDF cross-reference offsets are byte-based, and entries end with a required space.
+*.pdf -text whitespace=-blank-at-eol

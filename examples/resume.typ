@@ -6,7 +6,7 @@ Systems & Compiler Engineer | chen.alex@example.com | [GitHub](https://github.co
 
 == Summary
 
-Experienced systems software engineer specializing in programming language runtimes, WebAssembly toolchains, and typography compilation. Proven track record of delivering memory-safe, zero-dependency tools with microsecond latency.
+Systems software engineer focused on programming language runtimes, WebAssembly toolchains, and document layout. Experienced building MoonBit tools for parsing, layout, and vector output.
 
 ---
 
@@ -23,7 +23,7 @@ Experienced systems software engineer specializing in programming language runti
 === Senior Compiler Engineer - TypeStack Labs
 2024 - Present
 
-- Architected a next-generation document engine in MoonBit delivering *10x faster* layout passes compared to JavaScript implementations.
+- Architected a document engine in MoonBit with separate parsing, layout, and multi-format rendering stages.
 - Designed zero-copy AST serialization protocol reducing memory overhead by *45%*.
 - Implemented high-fidelity SVG path generation for complex mathematical formulas and tables.
 

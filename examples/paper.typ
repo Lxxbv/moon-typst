@@ -1,10 +1,10 @@
-= High-Performance Markup Typography on WebAssembly
+= Markup Typography on WebAssembly
 
 == Abstract
 
 Modern document preparation systems demand both instant feedback and high typographical precision. While traditional systems like LaTeX provide rich typesetting capabilities, their compilation latency and complex dependencies hinder cloud-native interactive workflows. Typst introduced a modern syntax and incremental layout model.
 
-In this work, we present *moon-typst*, an end-to-end typographical compiler implemented entirely in the MoonBit programming language. We demonstrate sub-millisecond AST construction, streaming box layout, and dual-target vector generation.
+In this work, we present *moon-typst*, a typographical compiler implemented in MoonBit. Its parser, box layout, and vector renderers can be measured separately with the checked-in benchmark.
 
 == Mathematical Foundation
 
@@ -28,4 +28,4 @@ The system pipeline consists of three decoupled phases:
 
 == Empirical Results
 
-Initial micro-benchmarks indicate an order-of-magnitude throughput improvement over legacy scripting environments when targeting WebAssembly runtimes.
+Run `moon bench benchmarks --target wasm-gc --release --deny-warn` and record the host, MoonBit version, and raw results before making WebAssembly performance comparisons.

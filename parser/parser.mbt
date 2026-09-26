@@ -134,21 +134,25 @@ pub fn Parser::parse(self : Parser) -> @core.Doc {
         self.skip_newlines()
       }
       // Check for standalone math block on line: $ math $
-      Token::Dollar => {
-        // If it looks like a block formula
-        let block_opt = self.try_parse_math_block()
-        match block_opt {
-          Some(block) => {
-            doc.add_block(block)
-            self.skip_newlines()
-          }
-          None => {
-            let p = self.parse_paragraph()
-            doc.add_block(p)
-            self.skip_newlines()
+      Token::Dollar =>
+        if self.line_has_pipe(self.pos) {
+          doc.add_block(self.parse_table())
+          self.skip_newlines()
+        } else {
+          // If it looks like a block formula
+          let block_opt = self.try_parse_math_block()
+          match block_opt {
+            Some(block) => {
+              doc.add_block(block)
+              self.skip_newlines()
+            }
+            None => {
+              let p = self.parse_paragraph()
+              doc.add_block(p)
+              self.skip_newlines()
+            }
           }
         }
-      }
       Token::HashIdent(name) => {
         let _ = self.advance()
         if name == "pagebreak" {

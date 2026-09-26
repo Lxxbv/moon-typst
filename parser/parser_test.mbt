@@ -423,3 +423,23 @@ test "pipe after inline span remains a table delimiter" {
     _ => abort("expected unbordered table")
   }
 }
+
+///|
+test "line starting with inline math can be an unbordered table" {
+  let doc = parse_typst("$a$ | b\nc | d")
+  assert_eq(doc.blocks.length(), 1)
+  match doc.blocks[0] {
+    @core.Block::Table(table) => {
+      assert_eq(table.rows.length(), 2)
+      assert_eq(table.rows[0].length(), 2)
+      match table.rows[0][0] {
+        [@core.Inline::InlineMath(_)] => ()
+        _ => abort("expected inline math in first cell")
+      }
+      assert_eq(table.rows[0][1], [@core.Inline::Text("b")])
+      assert_eq(table.rows[1][0], [@core.Inline::Text("c")])
+      assert_eq(table.rows[1][1], [@core.Inline::Text("d")])
+    }
+    _ => abort("expected unbordered table starting with inline math")
+  }
+}

@@ -57,6 +57,149 @@ test "render_html output structure" {
 }
 
 ///|
+test "render_html table preserves four columns and semantic header" {
+  let doc = @core.Doc::new()
+  doc.add_block(
+    @core.Block::Table({
+      rows: [
+        [
+          [@core.Inline::Text("Target")],
+          [@core.Inline::Text("Parse")],
+          [@core.Inline::Text("Layout")],
+          [@core.Inline::Text("Total")],
+        ],
+        [
+          [@core.Inline::Text("Native")],
+          [@core.Inline::Text("0.32")],
+          [@core.Inline::Text("0.48")],
+          [@core.Inline::Text("0.80")],
+        ],
+      ],
+      header_rows: 1,
+      alignments: [
+        @core.TableAlignment::Left,
+        @core.TableAlignment::Center,
+        @core.TableAlignment::Right,
+        @core.TableAlignment::Left,
+      ],
+    }),
+  )
+  let html = render_html(doc)
+  assert_eq(html.contains("<thead>"), true)
+  assert_eq(html.contains("</thead>"), true)
+  assert_eq(html.contains("<tbody>"), true)
+  assert_eq(html.contains("</tbody>"), true)
+  assert_eq(html.contains("<th style=\"text-align: left;\">Target</th>"), true)
+  assert_eq(html.contains("<th style=\"text-align: center;\">Parse</th>"), true)
+  assert_eq(html.contains("<th style=\"text-align: right;\">Layout</th>"), true)
+  assert_eq(html.contains("<th style=\"text-align: left;\">Total</th>"), true)
+  assert_eq(html.contains("<td style=\"text-align: left;\">Native</td>"), true)
+  assert_eq(html.contains("<td style=\"text-align: center;\">0.32</td>"), true)
+  assert_eq(html.contains("<td style=\"text-align: right;\">0.48</td>"), true)
+  assert_eq(html.contains("<td style=\"text-align: left;\">0.80</td>"), true)
+}
+
+///|
+test "render_html body-only table retains inline escaping" {
+  let doc = @core.Doc::new()
+  doc.add_block(
+    @core.Block::Table({
+      rows: [
+        [
+          [@core.Inline::Bold([@core.Inline::Text("A&B")])],
+          [@core.Inline::Text("<next>")],
+        ],
+      ],
+      header_rows: 0,
+      alignments: [@core.TableAlignment::Left, @core.TableAlignment::Right],
+    }),
+  )
+  let html = render_html(doc)
+  assert_eq(html.contains("<thead>"), false)
+  assert_eq(html.contains("<th"), false)
+  assert_eq(html.contains("<tbody>"), true)
+  assert_eq(
+    html.contains(
+      "<td style=\"text-align: left;\"><strong>A&amp;B</strong></td>",
+    ),
+    true,
+  )
+  assert_eq(
+    html.contains("<td style=\"text-align: right;\">&lt;next&gt;</td>"),
+    true,
+  )
+}
+
+///|
+test "table layout geometry serializes in SVG and PDF" {
+  let doc = @core.Doc::new()
+  doc.add_block(
+    @core.Block::Table({
+      rows: [
+        [
+          [@core.Inline::Text("Target")],
+          [@core.Inline::Text("Parse")],
+          [@core.Inline::Text("Layout")],
+          [@core.Inline::Text("Total")],
+        ],
+        [
+          [@core.Inline::Text("Native")],
+          [@core.Inline::Text("0.32")],
+          [@core.Inline::Text("0.48")],
+          [@core.Inline::Text("0.80")],
+        ],
+      ],
+      header_rows: 1,
+      alignments: [
+        @core.TableAlignment::Left,
+        @core.TableAlignment::Center,
+        @core.TableAlignment::Right,
+        @core.TableAlignment::Left,
+      ],
+    }),
+  )
+  let page = @layout.LayoutEngine::new(@core.StyleContext::default()).layout_doc(
+    doc,
+  )
+  let svg = render_svg(page)
+  let pdf = render_pdf(page)
+  let mut text_count = 0
+  let mut border_count = 0
+  let mut bold_count = 0
+  for box in page.boxes {
+    match box.kind {
+      @layout.BoxKind::Text(label, _, _, weight) => {
+        text_count = text_count + 1
+        assert_eq(svg.contains(">\{escape_xml(label)}</text>"), true)
+        assert_eq(pdf.contains("(\{escape_pdf_string(label)}) Tj"), true)
+        if weight == "bold" {
+          bold_count = bold_count + 1
+          assert_eq(
+            svg.contains("font-weight=\"bold\">\{escape_xml(label)}</text>"),
+            true,
+          )
+        }
+      }
+      @layout.BoxKind::RectStroke(w, h, _, _) => {
+        border_count = border_count + 1
+        let pdf_y = page.height - box.rect.y - h
+        assert_eq(
+          svg.contains(
+            "<rect x=\"\{box.rect.x}\" y=\"\{box.rect.y}\" width=\"\{w}\" height=\"\{h}\" fill=\"none\"",
+          ),
+          true,
+        )
+        assert_eq(pdf.contains("\{box.rect.x} \{pdf_y} \{w} \{h} re s"), true)
+      }
+      _ => ()
+    }
+  }
+  assert_eq(text_count, 8)
+  assert_eq(border_count, 8)
+  assert_eq(bold_count, 4)
+}
+
+///|
 test "escape_pdf_string special chars" {
   let raw = "Hello (World) \\ Special \r\n"
   let escaped = escape_pdf_string(raw)

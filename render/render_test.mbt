@@ -89,6 +89,17 @@ test "render_html table preserves four columns and semantic header" {
   assert_eq(html.contains("</thead>"), true)
   assert_eq(html.contains("<tbody>"), true)
   assert_eq(html.contains("</tbody>"), true)
+  assert_eq(html.split("<thead>").count() - 1, 1)
+  assert_eq(html.split("<tbody>").count() - 1, 1)
+  assert_eq(html.split("<tr>").count() - 1, 2)
+  assert_eq(html.split("<th ").count() - 1, 4)
+  assert_eq(html.split("<td ").count() - 1, 4)
+  assert_eq(
+    html.contains(
+      "</th>\n      </tr>\n      </thead>\n      <tbody>\n      <tr>\n        <td",
+    ),
+    true,
+  )
   assert_eq(html.contains("<th style=\"text-align: left;\">Target</th>"), true)
   assert_eq(html.contains("<th style=\"text-align: center;\">Parse</th>"), true)
   assert_eq(html.contains("<th style=\"text-align: right;\">Layout</th>"), true)
@@ -118,6 +129,9 @@ test "render_html body-only table retains inline escaping" {
   assert_eq(html.contains("<thead>"), false)
   assert_eq(html.contains("<th"), false)
   assert_eq(html.contains("<tbody>"), true)
+  assert_eq(html.split("<tr>").count() - 1, 1)
+  assert_eq(html.split("<th ").count() - 1, 0)
+  assert_eq(html.split("<td ").count() - 1, 2)
   assert_eq(
     html.contains(
       "<td style=\"text-align: left;\"><strong>A&amp;B</strong></td>",
@@ -126,6 +140,34 @@ test "render_html body-only table retains inline escaping" {
   )
   assert_eq(
     html.contains("<td style=\"text-align: right;\">&lt;next&gt;</td>"),
+    true,
+  )
+}
+
+///|
+test "render_html keeps two header rows inside thead" {
+  let doc = @core.Doc::new()
+  doc.add_block(
+    @core.Block::Table({
+      rows: [
+        [[@core.Inline::Text("Group")], [@core.Inline::Text("Metric")]],
+        [[@core.Inline::Text("Region")], [@core.Inline::Text("Sales")]],
+        [[@core.Inline::Text("West")], [@core.Inline::Text("42")]],
+      ],
+      header_rows: 2,
+      alignments: [@core.TableAlignment::Left, @core.TableAlignment::Right],
+    }),
+  )
+  let html = render_html(doc)
+  assert_eq(html.split("<thead>").count() - 1, 1)
+  assert_eq(html.split("<tbody>").count() - 1, 1)
+  assert_eq(html.split("<tr>").count() - 1, 3)
+  assert_eq(html.split("<th ").count() - 1, 4)
+  assert_eq(html.split("<td ").count() - 1, 2)
+  assert_eq(
+    html.contains(
+      "<thead>\n      <tr>\n        <th style=\"text-align: left;\">Group</th>\n        <th style=\"text-align: right;\">Metric</th>\n      </tr>\n      <tr>\n        <th style=\"text-align: left;\">Region</th>\n        <th style=\"text-align: right;\">Sales</th>\n      </tr>\n      </thead>\n      <tbody>\n      <tr>\n        <td style=\"text-align: left;\">West</td>\n        <td style=\"text-align: right;\">42</td>\n      </tr>\n      </tbody>",
+    ),
     true,
   )
 }
@@ -168,16 +210,30 @@ test "table layout geometry serializes in SVG and PDF" {
   let mut bold_count = 0
   for box in page.boxes {
     match box.kind {
-      @layout.BoxKind::Text(label, _, _, weight) => {
+      @layout.BoxKind::Text(label, font_size, color, weight) => {
         text_count = text_count + 1
-        assert_eq(svg.contains(">\{escape_xml(label)}</text>"), true)
-        assert_eq(pdf.contains("(\{escape_pdf_string(label)}) Tj"), true)
+        let svg_y = box.rect.y + font_size * 0.85
+        let svg_weight = if weight == "bold" {
+          " font-weight=\"bold\""
+        } else {
+          ""
+        }
+        assert_eq(
+          svg.contains(
+            "<text x=\"\{box.rect.x}\" y=\"\{svg_y}\" font-size=\"\{font_size}\" fill=\"\{color}\"\{svg_weight}>\{escape_xml(label)}</text>",
+          ),
+          true,
+        )
+        let pdf_y = page.height - box.rect.y - font_size * 0.85
+        let pdf_font = if weight == "bold" { "/F2" } else { "/F1" }
+        assert_eq(
+          pdf.contains(
+            "\{pdf_font} \{font_size} Tf\n\{box.rect.x} \{pdf_y} Td\n(\{escape_pdf_string(label)}) Tj",
+          ),
+          true,
+        )
         if weight == "bold" {
           bold_count = bold_count + 1
-          assert_eq(
-            svg.contains("font-weight=\"bold\">\{escape_xml(label)}</text>"),
-            true,
-          )
         }
       }
       @layout.BoxKind::RectStroke(w, h, _, _) => {

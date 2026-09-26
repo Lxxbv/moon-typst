@@ -119,14 +119,14 @@ fn render_html_block(buf : StringBuilder, block : @core.Block) -> Unit {
     }
     @core.Block::Table(table) => {
       buf.write_string("    <table>\n")
-      let has_header = table.header_rows == 1 && table.rows.length() > 0
+      let has_header = table.header_rows > 0 && table.rows.length() > 0
       if has_header {
         buf.write_string("      <thead>\n")
       } else {
         buf.write_string("      <tbody>\n")
       }
       for row_idx, row in table.rows {
-        if row_idx == 1 && has_header {
+        if row_idx == table.header_rows && has_header {
           buf.write_string("      </thead>\n")
           buf.write_string("      <tbody>\n")
         }
@@ -141,14 +141,18 @@ fn render_html_block(buf : StringBuilder, block : @core.Block) -> Unit {
           } else {
             "left"
           }
-          let tag = if row_idx == 0 && has_header { "th" } else { "td" }
+          let tag = if row_idx < table.header_rows && has_header {
+            "th"
+          } else {
+            "td"
+          }
           buf.write_string("        <\{tag} style=\"text-align: \{align};\">")
           render_html_inlines(buf, cell)
           buf.write_string("</\{tag}>\n")
         }
         buf.write_string("      </tr>\n")
       }
-      if has_header && table.rows.length() == 1 {
+      if has_header && table.rows.length() <= table.header_rows {
         buf.write_string("      </thead>\n")
       } else {
         buf.write_string("      </tbody>\n")

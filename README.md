@@ -223,15 +223,15 @@ moon bench benchmarks --target js --release --deny-warn
 
 `benchmarks/pipeline_test.mbt` 同时包含分阶段基准和端到端内存编译基准。端到端样例包含两段中文长文本、Latin/重音字符和表格；每次计时包括诊断器与样式上下文初始化、解析，以及对应输出路径。SVG/PDF 还包括排版，HTML 直接从 AST 生成语义化输出。测试排除了 CLI 冷启动、参数解析、磁盘读取、终端日志和文件写入。
 
-2026-09-27 在 Windows 11（build 26200）、13th Gen Intel Core i7-13620H、MoonBit `moon 0.1.20260915` / `moonc v0.10.13+cbb11c36f` 上运行，基准源码修订：091ade8。
+2026-09-27 在 Windows 11（build 26200）、13th Gen Intel Core i7-13620H、MoonBit `moon 0.1.20260915` / `moonc v0.10.13+cbb11c36f` 上运行，基准源码修订：d8b04aa。
 
 10 个测量样本的均值如下：
 
 | 目标 | HTML | SVG | PDF |
 | --- | ---: | ---: | ---: |
-| native | 48.36 µs | 132.91 µs | 283.00 µs |
-| wasm-gc | 15.13 µs | 49.63 µs | 140.18 µs |
-| js | 16.28 µs | 48.59 µs | 291.81 µs |
+| native | 48.68 µs | 136.06 µs | 287.46 µs |
+| wasm-gc | 15.36 µs | 51.49 µs | 146.15 µs |
+| js | 16.13 µs | 49.29 µs | 305.30 µs |
 
 这组固定输入与环境下的内存编译均值低于 1 ms；它不代表其他文档、设备或包含进程启动和文件 I/O 的 CLI 用时。`@bench.T::bench` 自动校准每组迭代次数；根据 [MoonBit benchmark 文档](https://docs.moonbitlang.com/en/latest/language/benchmarks.html)，默认展示 10 组测量，但没有单独保证预热阶段。引用基准结果时，请同时记录 Git 提交、完整命令、工具链、操作系统、CPU、运行环境、日期和原始输出。分阶段结果仍由同一文件中的 `parse`、`layout`、`html`、`svg` 和 `pdf` 项提供。
 

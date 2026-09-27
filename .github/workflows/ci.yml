@@ -10,6 +10,8 @@ jobs:
   build-and-test:
     name: Build & Test (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
+    env:
+      MOONBIT_INSTALL_VERSION: 0.10.13+cbb11c36f
     strategy:
       fail-fast: false
       matrix:
@@ -21,19 +23,38 @@ jobs:
       - name: Install MoonBit (Unix)
         if: runner.os != 'Windows'
         run: |
-          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s -- "$MOONBIT_INSTALL_VERSION"
           echo "$HOME/.moon/bin" >> $GITHUB_PATH
 
       - name: Install MoonBit (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
+          if ([string]::IsNullOrWhiteSpace($env:MOONBIT_INSTALL_VERSION)) {
+            throw "MOONBIT_INSTALL_VERSION must be set before installing MoonBit"
+          }
+          Write-Host "Installing MoonBit compiler $env:MOONBIT_INSTALL_VERSION"
           irm https://cli.moonbitlang.com/install/powershell.ps1 | iex
           echo "$HOME\.moon\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
-      - name: Check Toolchain Version
+      - name: Check Toolchain Version (Unix)
+        if: runner.os != 'Windows'
+        shell: bash
         run: |
-          moon version --all
+          version_output="$(moon version --all)"
+          printf '%s\n' "$version_output"
+          grep -F "moonc v${MOONBIT_INSTALL_VERSION}" <<< "$version_output"
+
+      - name: Check Toolchain Version (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $versionOutput = moon version --all
+          $versionOutput
+          $expected = 'moonc v' + $env:MOONBIT_INSTALL_VERSION
+          if (-not ($versionOutput -like "*$expected*")) {
+            throw "Expected MoonBit compiler version $expected"
+          }
 
       - name: Update Registry and Install Dependencies
         run: |
@@ -71,6 +92,8 @@ jobs:
       - name: Verify CLI Rendering Examples
         run: |
           moon run cmd/main --target native -- examples/paper.typ -o test_paper.svg
+          moon run cmd/main --target native -- examples/paper.typ -p -o test_paper.pdf
+          moon run cmd/main --target native -- examples/chinese.typ -p -o test_chinese.pdf
           moon run cmd/main --target native -- examples/paper.typ --html -o test_paper.html
           moon run cmd/main --target native -- examples/resume.typ -o test_resume.svg
           moon run cmd/main --target native -- examples/report.typ -o test_report.svg

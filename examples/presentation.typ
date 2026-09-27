@@ -36,7 +36,7 @@ The internal pipeline consists of four modular packages:
 
 == Slide 4: Getting Started
 
-Compile any Typst document directly using the CLI:
+Compile a document in the supported Typst-style subset with the CLI:
 
 ```bash
 # Render to vector SVG

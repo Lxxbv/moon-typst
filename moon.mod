@@ -22,7 +22,7 @@ description = "A lightweight Typst markup parser, layout engine, and SVG/HTML re
 
 preferred_target = "wasm-gc"
 
-warnings = "-implicit_impl_as_method"
+warnings = "-implicit_impl_as_method-test_unqualified_package"
 
 import {
   "moonbitlang/x@0.5.5",

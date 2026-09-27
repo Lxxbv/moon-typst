@@ -238,6 +238,11 @@ fn LayoutEngine::layout_inline_text(
       color,
       weight,
     )
+    pending_spaces = StringBuilder()
+  }
+  let trailing_spaces = pending_spaces.to_string()
+  if trailing_spaces.length() > 0 && self.cur_x > self.ctx.margin_x {
+    self.cur_x = self.cur_x + measure_text_width(trailing_spaces, font_size)
   }
 }
 

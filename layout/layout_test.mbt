@@ -512,3 +512,30 @@ test "overwide matrix fallback retains rows unlike vector fallback" {
   assert_eq(matrix_text.contains("], ["), true)
   assert_eq(vector_text.contains("], ["), false)
 }
+
+///|
+test "preserve whitespace at styled inline boundaries" {
+  let doc = @core.Doc::new()
+  doc.add_block(
+    @core.Block::Paragraph([
+      @core.Inline::Text("left "),
+      @core.Inline::Bold([@core.Inline::Text("bold")]),
+    ]),
+  )
+  let page = LayoutEngine::new(@core.StyleContext::default()).layout_doc(doc)
+  let mut left = Rect::new(0.0, 0.0, 0.0, 0.0)
+  let mut bold = Rect::new(0.0, 0.0, 0.0, 0.0)
+  for box in page.boxes {
+    match box.kind {
+      BoxKind::Text(text, _, _, _) =>
+        if text == "left" {
+          left = box.rect
+        } else if text == "bold" {
+          bold = box.rect
+        }
+      _ => ()
+    }
+  }
+  assert_eq(left.w > 0.0 && bold.w > 0.0, true)
+  assert_eq(bold.x > left.x + left.w, true)
+}

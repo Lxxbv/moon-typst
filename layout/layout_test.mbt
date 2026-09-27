@@ -539,3 +539,42 @@ test "preserve whitespace at styled inline boundaries" {
   assert_eq(left.w > 0.0 && bold.w > 0.0, true)
   assert_eq(bold.x > left.x + left.w, true)
 }
+
+///|
+test "wrap inline links, math, and footnote refs after trailing spaces" {
+  let prefix = StringBuilder()
+  for _ in 0..<79 {
+    prefix.write_char('a')
+  }
+  let text = prefix.to_string() + " "
+  let doc = @core.Doc::new()
+  doc.add_block(
+    @core.Block::Paragraph([
+      @core.Inline::Text(text),
+      @core.Inline::Link("https://example.com", "link"),
+    ]),
+  )
+  doc.add_block(
+    @core.Block::Paragraph([
+      @core.Inline::Text(text),
+      @core.Inline::InlineMath(@core.MathExpr::Sym("x")),
+    ]),
+  )
+  doc.add_block(
+    @core.Block::Paragraph([
+      @core.Inline::Text(text),
+      @core.Inline::FootnoteRef(1),
+    ]),
+  )
+
+  let ctx = @core.StyleContext::default()
+  let page = LayoutEngine::new(ctx).layout_doc(doc)
+  let max_x = ctx.page_width - ctx.margin_x
+  for box in page.boxes {
+    match box.kind {
+      BoxKind::Text(_, _, _, _) =>
+        assert_eq(box.rect.x + box.rect.w <= max_x + 0.01, true)
+      _ => ()
+    }
+  }
+}

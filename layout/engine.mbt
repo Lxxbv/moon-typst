@@ -376,21 +376,19 @@ fn LayoutEngine::layout_inline_styled(
       self.boxes.push(b)
       self.cur_x = self.cur_x + w + 4.0
     }
-    @core.Inline::InlineMath(expr) => self.layout_inline_math(expr, font_size)
+    @core.Inline::InlineMath(expr) => {
+      self.ensure_inline_width(measure_math_width(expr, font_size), font_size)
+      self.layout_inline_math(expr, font_size)
+    }
     @core.Inline::Link(url, text) => {
       let display = if text.length() > 0 { text } else { url }
-      let w = measure_text_width(display, font_size)
-      let b = LayoutBox::new(
-        Rect::new(self.cur_x, self.cur_y, w, font_size),
-        BoxKind::Text(display, font_size, "#0969da", "normal"),
-      )
-      self.boxes.push(b)
-      self.cur_x = self.cur_x + w
+      self.layout_inline_text(display, font_size, "#0969da", "normal")
     }
     @core.Inline::FootnoteRef(idx) => {
       let num_str = "[\{idx}]"
       let small_size = font_size * 0.75
       let w = measure_text_width(num_str, small_size)
+      self.ensure_inline_width(w, font_size)
       let b = LayoutBox::new(
         Rect::new(self.cur_x, self.cur_y - font_size * 0.25, w, small_size),
         BoxKind::Text(num_str, small_size, "#0969da", "bold"),
@@ -415,6 +413,99 @@ fn LayoutEngine::layout_inline_styled(
       self.cur_y = self.cur_y + line_h
       self.cur_x = self.ctx.margin_x
     }
+  }
+}
+
+///|
+fn measure_math_width(expr : @core.MathExpr, font_size : Double) -> Double {
+  match expr {
+    @core.MathExpr::Sym(text) => measure_text_width(text, font_size)
+    @core.MathExpr::Op(op) => measure_text_width(" " + op + " ", font_size)
+    @core.MathExpr::Frac(num, den) => {
+      let numerator = match num {
+        @core.MathExpr::Sym(text) => text
+        _ => "n"
+      }
+      let denominator = match den {
+        @core.MathExpr::Sym(text) => text
+        _ => "d"
+      }
+      let numerator_width = measure_text_width(numerator, font_size * 0.8)
+      let denominator_width = measure_text_width(denominator, font_size * 0.8)
+      (if numerator_width > denominator_width {
+        numerator_width
+      } else {
+        denominator_width
+      }) +
+      12.0
+    }
+    @core.MathExpr::Sqrt(inner) =>
+      measure_text_width("√", font_size) +
+      measure_math_width(inner, font_size)
+    @core.MathExpr::Group(items) => {
+      let mut width = 0.0
+      for item in items {
+        width = width + measure_math_width(item, font_size)
+      }
+      width
+    }
+    @core.MathExpr::SubSup(base, sub, sup) => {
+      let mut width = measure_math_width(base, font_size)
+      match sub {
+        Some(value) =>
+          width = width + measure_math_width(value, font_size * 0.7)
+        None => ()
+      }
+      match sup {
+        Some(value) =>
+          width = width + measure_math_width(value, font_size * 0.7)
+        None => ()
+      }
+      width
+    }
+    @core.MathExpr::Matrix(_, cols, elems) => {
+      let cell_width = font_size * 1.8
+      let mut width = cols.to_double() * cell_width + 20.0
+      if cols > 0 {
+        for i = 0; i < elems.length(); i = i + 1 {
+          let column = i % cols
+          let content_right = 6.0 +
+            column.to_double() * cell_width +
+            measure_math_width(elems[i], font_size * 0.9)
+          if content_right > width {
+            width = content_right
+          }
+        }
+      }
+      width
+    }
+    @core.MathExpr::Vec(elems) => {
+      let cell_width = font_size * 1.8
+      let mut width = cell_width + 20.0
+      for element in elems {
+        let content_right = 6.0 + measure_math_width(element, font_size * 0.9)
+        if content_right > width {
+          width = content_right
+        }
+      }
+      width
+    }
+    @core.MathExpr::Accent(inner, _) => measure_math_width(inner, font_size)
+    @core.MathExpr::Limits(op, _, _) => measure_math_width(op, font_size * 1.1)
+  }
+}
+
+///|
+fn LayoutEngine::ensure_inline_width(
+  self : LayoutEngine,
+  width : Double,
+  font_size : Double,
+) -> Unit {
+  let max_x = self.ctx.page_width - self.ctx.margin_x
+  let line_h = font_size * self.ctx.line_height
+  if self.cur_x > self.ctx.margin_x && self.cur_x + width > max_x {
+    self.cur_y = self.cur_y + line_h
+    self.cur_x = self.ctx.margin_x
   }
 }
 

@@ -642,3 +642,35 @@ test "wrap accent using the mark's rendered width" {
     }
   }
 }
+
+///|
+test "wrap lower formula limit using its rendered width" {
+  let prefix = StringBuilder()
+  for _ in 0..<77 {
+    prefix.write_char('a')
+  }
+  let doc = @core.Doc::new()
+  doc.add_block(
+    @core.Block::Paragraph([
+      @core.Inline::Text(prefix.to_string() + " "),
+      @core.Inline::InlineMath(
+        @core.MathExpr::Limits(
+          @core.MathExpr::Sym("∑"),
+          Some(@core.MathExpr::Sym("abcde")),
+          None,
+        ),
+      ),
+    ]),
+  )
+
+  let ctx = @core.StyleContext::default()
+  let page = LayoutEngine::new(ctx).layout_doc(doc)
+  let max_x = ctx.page_width - ctx.margin_x
+  for box in page.boxes {
+    match box.kind {
+      BoxKind::Text(_, _, _, _) =>
+        assert_eq(box.rect.x + box.rect.w <= max_x + 0.01, true)
+      _ => ()
+    }
+  }
+}

@@ -223,17 +223,17 @@ moon bench benchmarks --target js --release --deny-warn
 
 `benchmarks/pipeline_test.mbt` 同时包含分阶段基准和端到端内存编译基准。端到端样例包含两段中文长文本、Latin/重音字符和表格；每次计时包括诊断器与样式上下文初始化、解析，以及对应输出路径。SVG/PDF 还包括排版，HTML 直接从 AST 生成语义化输出。测试排除了 CLI 冷启动、参数解析、磁盘读取、终端日志和文件写入。
 
-2026-09-27 在 Windows 11（build 26200）、13th Gen Intel Core i7-13620H、MoonBit `moon 0.1.20260915` / `moonc v0.10.13+cbb11c36f` 上运行，基准源码修订：d8b04aa。
+2026-09-27 在 Windows 11（build 26200）、13th Gen Intel Core i7-13620H、MoonBit `moon 0.1.20260915` / `moonc v0.10.13+cbb11c36f` 上运行，基准源码修订：9b0c883。
 
-10 个测量样本的均值如下：
+10 个测量样本的均值 ± 标准差如下；括号中为最小值–最大值：
 
 | 目标 | HTML | SVG | PDF |
 | --- | ---: | ---: | ---: |
-| native | 48.68 µs | 136.06 µs | 287.46 µs |
-| wasm-gc | 15.36 µs | 51.49 µs | 146.15 µs |
-| js | 16.13 µs | 49.29 µs | 305.30 µs |
+| native | 46.22 ± 0.53 µs (45.52–46.99 µs) | 130.85 ± 2.85 µs (127.21–134.71 µs) | 1.03 ± 0.29 ms (0.57–1.58 ms) |
+| wasm-gc | 14.09 ± 0.32 µs (13.75–14.79 µs) | 46.58 ± 0.56 µs (45.86–47.42 µs) | 544.24 ± 98.58 µs (318.18–661.11 µs) |
+| js | 15.92 ± 0.59 µs (15.06–17.09 µs) | 47.25 ± 1.28 µs (46.00–49.70 µs) | 1.06 ± 0.39 ms (0.38–1.73 ms) |
 
-这组固定输入与环境下的内存编译均值低于 1 ms；它不代表其他文档、设备或包含进程启动和文件 I/O 的 CLI 用时。`@bench.T::bench` 自动校准每组迭代次数；根据 [MoonBit benchmark 文档](https://docs.moonbitlang.com/en/latest/language/benchmarks.html)，默认展示 10 组测量，但没有单独保证预热阶段。引用基准结果时，请同时记录 Git 提交、完整命令、工具链、操作系统、CPU、运行环境、日期和原始输出。分阶段结果仍由同一文件中的 `parse`、`layout`、`html`、`svg` 和 `pdf` 项提供。
+本次固定样例的 HTML 和 SVG 在三个目标上均值低于 1 ms；PDF 仅 wasm-gc 均值低于 1 ms，native 与 js 分别约为 1.03 ms 和 1.06 ms。PDF 的测量范围也较宽，因此这些数字只描述该样例、机器和这次运行，不是通用性能保证；计时不含 CLI 启动和文件 I/O。`@bench.T::bench` 自动校准每组迭代次数；根据 [MoonBit benchmark 文档](https://docs.moonbitlang.com/en/latest/language/benchmarks.html)，默认展示 10 组测量，但没有单独保证预热阶段。引用基准结果时，请同时记录 Git 提交、完整命令、工具链、操作系统、CPU、运行环境、日期和原始输出。分阶段结果仍由同一文件中的 `parse`、`layout`、`html`、`svg` 和 `pdf` 项提供。
 
 ---
 
@@ -262,7 +262,7 @@ moon bench benchmarks --target js --release --deny-warn
   - Variable scopes, constant evaluation, and cascading `#set` rules (`text`, `page`).
 - **Rich Terminal Diagnostics (`diag`)**:
   - Source span tracking, Rustc-style colorized diagnostic reporting with line numbers, code snippets, and hints.
-- **Reproducible Benchmarks**: The [benchmark entry point](benchmarks/pipeline_test.mbt) measures individual stages and an in-memory parse/layout/render path for HTML, SVG, and PDF. The fixed Chinese-text sample measured below 1 ms on the documented Windows and MoonBit toolchain; this is a result for that fixture and machine, not a general performance guarantee. Measurements exclude CLI startup and file I/O. See the Chinese benchmark section for commands, exact means, and environment details.
+- **Reproducible Benchmarks**: The [benchmark entry point](benchmarks/pipeline_test.mbt) measures individual stages and an in-memory parse/layout/render path for HTML, SVG, and PDF. On the documented Windows and MoonBit toolchain, HTML and SVG averaged below 1 ms on all three targets; PDF averaged 544 µs on wasm-gc, 1.03 ms on native, and 1.06 ms on JS in the recorded run. These are fixture- and machine-specific measurements, not a general latency guarantee; CLI startup and file I/O are excluded. See the Chinese benchmark section for the exact means, ranges, and environment details.
 
 ---
 

@@ -2,9 +2,9 @@
 
 <div align="center">
 
-**A Typst Markup Parser, Layout Engine, and SVG/PDF/HTML Multi-Target Vector Renderer in Pure MoonBit.**
+**A Pure MoonBit Parser, Layout Engine, and SVG/PDF/HTML Renderer for a Typst-Style Markup Subset.**
 
-基于 MoonBit 实现的 Typst 风格标记解析、盒模型排版与多后端（SVG / PDF 1.4 / HTML5）渲染引擎。
+基于 MoonBit 实现的 Typst 风格语法子集解析、盒模型排版与多后端（SVG / PDF 1.4 / HTML5）渲染引擎。
 
 [![CI](https://github.com/Lxxbv/moon-typst/actions/workflows/ci.yml/badge.svg)](https://github.com/Lxxbv/moon-typst/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
@@ -22,6 +22,8 @@
 ### 🌟 项目背景与生态价值
 
 [Typst](https://github.com/typst/typst) 是现代排版系统。MoonBit 支持将同一代码编译到 Native、JavaScript 和 WebAssembly GC 目标；本项目在这些目标上实现解析、排版与渲染功能。
+
+本项目参考 Typst 公开的标记语法与文档工具链思路，解析器、MoonBit AST、求值、排版和渲染实现均由本仓库独立编写。它实现的是 README 所列的 Typst 风格语法子集，并非完整 Typst 编译器；上游 Typst 仓库使用 Apache-2.0 许可证，本项目也以 Apache-2.0 发布。
 
 `moon-typst` 提供以下功能：
 - **MoonBit 源码实现**：解析、排版与渲染模块以 MoonBit 编写，可构建到 `wasm-gc`、`js` 以及 `native` 目标。
@@ -73,7 +75,7 @@ flowchart LR
    - 二维数学基准线平衡算法（根式延长线、分式上下对齐、矩阵格子行列对齐）。
    - 几何盒抽象（`LayoutBox`、`PageLayout`、`DocumentLayout`）。
 6. **`render` (多格式矢量后端)**：
-   - `pdf.mbt`：MoonBit 实现的 PDF 1.4 生成器，支持间接对象序列化、xref 交叉引用表、Catalog/Pages 树结构、标准 Type1 字体引用（Helvetica, Helvetica-Bold, Times-Italic, Courier）及 PDF 绘制操作流。
+   - `pdf.mbt`：MoonBit 实现的 PDF 1.4 生成器，支持间接对象序列化、xref 交叉引用表、Catalog/Pages 树结构、标准 Type1 字体及 PDF 绘制操作流。WinAnsi 可编码的拉丁字符（包括常见重音字母）使用对应 Type1 字体；BMP 非 ASCII 文本其余部分按 Adobe-GB1 的 `UniGB-UCS2-H` CMap 编码，简体中文仅在该字符集覆盖范围内保证字形，其他未覆盖字符可能显示为空白。混排文本按字体分段，中文使用常规字重。字体不内嵌，显示依赖阅读器的字体资源或替代字体。补充平面字符在 PDF 输出中以 `?` 代替。
    - `svg.mbt`：生成符合 W3C 标准、支持自包含字体样式与平滑线条的 SVG 1.1 矢量图。
    - `html.mbt`：生成语义化现代科技风响应式 HTML5 网页，内置自适应排版 CSS。
 7. **`cmd/main` (跨平台命令行编译工具)**：
@@ -175,6 +177,9 @@ moon build
 # 1. 编译为标准 PDF 1.4 二进制文件
 moon run cmd/main -- examples/paper.typ -p -o examples/paper.pdf
 
+# 生成包含中文文本的 PDF 示例
+moon run cmd/main -- examples/chinese.typ -p -o examples/chinese.pdf
+
 # 2. 编译为矢量 SVG 图形
 moon run cmd/main -- examples/paper.typ --svg -o examples/paper.svg
 
@@ -201,6 +206,7 @@ moon run cmd/main -- --help
    - 包含分页演讲卡片、彩色横幅、三列式架构分解与命令行快速指引。
    - 产物输出：[`presentation.pdf`](examples/presentation.pdf), [`presentation.svg`](examples/presentation.svg), [`presentation.html`](examples/presentation.html)。
 4. **技术评估报告 (`examples/report.typ`)** 与 **专业简历 (`examples/resume.typ`)**。
+5. **中文 PDF 示例 (`examples/chinese.typ`)**：展示简体中文 CID 字体路径及其字体替代边界。
 
 ---
 
@@ -227,12 +233,12 @@ moon bench benchmarks --target js --release --deny-warn
 
 [Typst](https://github.com/typst/typst) is a modern typesetting system. MoonBit lets this project compile its parser, layout engine, and renderers for Native, JavaScript, and WebAssembly GC targets.
 
-`moon-typst` provides a MoonBit implementation of a Typst-style document pipeline: lexical scanner, recursive descent parser, runtime evaluation environment, spatial box-model layout engine, and SVG 1.1, PDF 1.4, and HTML5 renderers. The module builds for Native, JavaScript, and WebAssembly GC targets.
+`moon-typst` independently implements a supported subset of Typst-style markup in MoonBit: lexical scanner, recursive descent parser, runtime evaluation environment, spatial box-model layout engine, and SVG 1.1, PDF 1.4, and HTML5 renderers. It is not a full Typst compiler. The module builds for Native, JavaScript, and WebAssembly GC targets. The implementation is inspired by Typst's public syntax and toolchain design; the upstream Typst repository uses Apache-2.0, and this project is also released under Apache-2.0.
 
 ### 📐 Features
 - **MoonBit Implementation**: Parser, layout, and renderer source is written in MoonBit.
 - **Triple Vector Targets**:
-  - **Adobe PDF 1.4**: Direct binary serializer with xref tables, Type1 fonts, and vector drawing operators.
+  - **Adobe PDF 1.4**: Direct binary serializer with xref tables, Type1 fonts, and vector drawing operators. WinAnsi-encodable Latin characters, including common accented letters, use the matching Type1 font. Other BMP non-ASCII text uses Adobe-GB1's `UniGB-UCS2-H` CMap; Simplified Chinese is guaranteed only within that collection's glyph coverage, and other uncovered characters may render blank. Mixed text is split by font; CJK uses a regular `STSong-Light` face. The font is not embedded, so rendering depends on reader font resources or substitution; supplementary Unicode characters become `?`.
   - **Scalable Vector Graphics (SVG 1.1)**: Clean vector elements and font metrics.
   - **Semantic HTML5**: Responsive CSS styling for web publishing.
 - **Advanced Mathematical Typesetting**:

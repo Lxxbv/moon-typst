@@ -329,6 +329,76 @@ test "render_pdf_document multi-page structure" {
 }
 
 ///|
+test "render_pdf encodes Chinese text with a Unicode CID font" {
+  let page : @layout.PageLayout = {
+    width: 595.0,
+    height: 842.0,
+    boxes: [
+      @layout.LayoutBox::new(
+        @layout.Rect::new(50.0, 50.0, 200.0, 20.0),
+        @layout.BoxKind::Text("中文排版", 14.0, "#000000", "normal"),
+      ),
+    ],
+  }
+  let pdf = render_pdf(page)
+
+  assert_eq(pdf.contains("/Subtype /Type0"), true)
+  assert_eq(pdf.contains("/BaseFont /STSong-Light"), true)
+  assert_eq(pdf.contains("/Encoding /UniGB-UCS2-H"), true)
+  assert_eq(pdf.contains("/ToUnicode"), true)
+  assert_eq(pdf.contains("<4E2D658763927248> Tj"), true)
+  assert_eq(pdf.contains("<0000> <D7FF> <0000>"), true)
+  assert_eq(pdf.contains("<E000> <FFFF> <E000>"), true)
+
+  let mixed_page : @layout.PageLayout = {
+    width: 595.0,
+    height: 842.0,
+    boxes: [
+      @layout.LayoutBox::new(
+        @layout.Rect::new(50.0, 50.0, 200.0, 20.0),
+        @layout.BoxKind::Text("AB中文CD", 14.0, "#000000", "bold"),
+      ),
+    ],
+  }
+  let mixed_pdf = render_pdf(mixed_page)
+  assert_eq(
+    mixed_pdf.contains(
+      "/F2 14 Tf\n50 780.1 Td\n(AB) Tj\n/F5 14 Tf\n<4E2D6587> Tj\n/F2 14 Tf\n(CD) Tj",
+    ),
+    true,
+  )
+
+  let accented_page : @layout.PageLayout = {
+    width: 595.0,
+    height: 842.0,
+    boxes: [
+      @layout.LayoutBox::new(
+        @layout.Rect::new(50.0, 50.0, 200.0, 20.0),
+        @layout.BoxKind::Text("café中文", 14.0, "#000000", "normal"),
+      ),
+    ],
+  }
+  assert_eq(
+    render_pdf(accented_page).contains(
+      "/F1 14 Tf\n50 780.1 Td\n<636166E9> Tj\n/F5 14 Tf\n<4E2D6587> Tj",
+    ),
+    true,
+  )
+
+  let supplementary_page : @layout.PageLayout = {
+    width: 595.0,
+    height: 842.0,
+    boxes: [
+      @layout.LayoutBox::new(
+        @layout.Rect::new(50.0, 50.0, 200.0, 20.0),
+        @layout.BoxKind::Text("A😀B", 14.0, "#000000", "normal"),
+      ),
+    ],
+  }
+  assert_eq(render_pdf(supplementary_page).contains("(A?B) Tj"), true)
+}
+
+///|
 fn find_bytes(haystack : Bytes, needle : Bytes) -> Int {
   for i = 0; i + needle.length() <= haystack.length(); i = i + 1 {
     let mut matches = true
@@ -378,7 +448,7 @@ test "PDF startxref offset counts UTF-8 bytes" {
   }
   assert_eq(declared_offset, xref_marker + 1)
 
-  let object_count = 7 + doc.pages.length() * 2
+  let object_count = 11 + doc.pages.length() * 2
   for object_id = 1; object_id <= object_count; object_id = object_id + 1 {
     let object_offset = find_bytes(
       bytes,

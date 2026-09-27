@@ -26,7 +26,7 @@ fn print_help() -> Unit {
 ///|
 fn print_version() -> Unit {
   println(
-    "moon-typst v0.2.0 (MoonBit Typst Compiler & Multi-Target Vector Engine)",
+    "moon-typst v0.2.0 (MoonBit Typst-style Markup Compiler & Multi-Target Renderer)",
   )
 }
 

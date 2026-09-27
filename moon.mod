@@ -1,6 +1,6 @@
 name = "Lxxbv/moon_typst"
 
-version = "0.1.0"
+version = "0.2.0"
 
 readme = "README.md"
 
@@ -15,10 +15,11 @@ keywords = [
   "layout",
   "svg",
   "html",
+  "pdf",
   "renderer",
 ]
 
-description = "A lightweight Typst markup parser, layout engine, and SVG/HTML renderer written in pure MoonBit."
+description = "A lightweight MoonBit implementation of a supported Typst-style markup subset with parser, layout engine, and SVG/PDF/HTML renderers."
 
 preferred_target = "wasm-gc"
 

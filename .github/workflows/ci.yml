@@ -1,9 +1,5 @@
 name: CI
 
-env:
-  # Keep CI on the toolchain used to validate and publish this package.
-  MOONBIT_INSTALL_VERSION: 0.1.20260915
-
 on:
   push:
     branches: [ main ]
@@ -25,7 +21,7 @@ jobs:
       - name: Install MoonBit (Unix)
         if: runner.os != 'Windows'
         run: |
-          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s "$MOONBIT_INSTALL_VERSION"
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
           echo "$HOME/.moon/bin" >> $GITHUB_PATH
 
       - name: Install MoonBit (Windows)

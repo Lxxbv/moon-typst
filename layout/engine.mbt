@@ -417,6 +417,18 @@ fn LayoutEngine::layout_inline_styled(
 }
 
 ///|
+fn accent_mark(accent : String) -> String {
+  match accent {
+    "hat" => "^"
+    "tilde" => "~"
+    "bar" => "-"
+    "dot" => "."
+    "vec" => "->"
+    _ => "^"
+  }
+}
+
+///|
 fn measure_math_width(expr : @core.MathExpr, font_size : Double) -> Double {
   match expr {
     @core.MathExpr::Sym(text) => measure_text_width(text, font_size)
@@ -490,8 +502,45 @@ fn measure_math_width(expr : @core.MathExpr, font_size : Double) -> Double {
       }
       width
     }
-    @core.MathExpr::Accent(inner, _) => measure_math_width(inner, font_size)
-    @core.MathExpr::Limits(op, _, _) => measure_math_width(op, font_size * 1.1)
+    @core.MathExpr::Accent(inner, accent) => {
+      let mark = accent_mark(accent)
+      let mark_width = measure_text_width(mark, font_size * 0.7)
+      let mark_box_width = font_size * 0.5
+      let rendered_mark_width = if mark_width > mark_box_width {
+        mark_width
+      } else {
+        mark_box_width
+      }
+      let inner_width = measure_math_width(inner, font_size)
+      let mark_right = 2.0 + rendered_mark_width
+      if inner_width > mark_right {
+        inner_width
+      } else {
+        mark_right
+      }
+    }
+    @core.MathExpr::Limits(op, lower, upper) => {
+      let mut width = measure_math_width(op, font_size * 1.1)
+      match lower {
+        Some(value) => {
+          let lower_width = measure_math_width(value, font_size * 0.65)
+          if lower_width > width {
+            width = lower_width
+          }
+        }
+        None => ()
+      }
+      match upper {
+        Some(value) => {
+          let upper_width = measure_math_width(value, font_size * 0.65)
+          if upper_width > width {
+            width = upper_width
+          }
+        }
+        None => ()
+      }
+      width
+    }
   }
 }
 
@@ -1377,14 +1426,7 @@ fn LayoutEngine::layout_accent(
   acc : String,
   font_size : Double,
 ) -> Unit {
-  let mark = match acc {
-    "hat" => "^"
-    "tilde" => "~"
-    "bar" => "-"
-    "dot" => "."
-    "vec" => "->"
-    _ => "^"
-  }
+  let mark = accent_mark(acc)
   let old_y = self.cur_y
   let old_x = self.cur_x
   // Place accent above

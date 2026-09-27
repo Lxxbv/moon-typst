@@ -36,6 +36,84 @@ test "layout document blocks into box tree" {
 }
 
 ///|
+test "wrap long CJK paragraph text within the page content width" {
+  let ctx = @core.StyleContext::default()
+  let doc = @core.Doc::new()
+  doc.add_block(
+    @core.Block::Paragraph([
+      @core.Inline::Text(
+        "这是一段用于验证中文自然折行的长文本，字符之间没有空格，排版引擎也应该逐字换行，不能让文字越过页面右边界。",
+      ),
+    ]),
+  )
+  let page = LayoutEngine::new(ctx).layout_doc(doc)
+  let max_x = ctx.page_width - ctx.margin_x
+  let mut first_line_y = -1.0
+  let mut found_next_line = false
+  for box in page.boxes {
+    match box.kind {
+      BoxKind::Text(_, _, _, _) => {
+        assert_eq(box.rect.x + box.rect.w <= max_x + 0.01, true)
+        if first_line_y < 0.0 {
+          first_line_y = box.rect.y
+        } else if box.rect.y > first_line_y {
+          found_next_line = true
+        }
+      }
+      _ => ()
+    }
+  }
+  assert_eq(found_next_line, true)
+}
+
+///|
+test "measure and preserve supplementary text while laying out a paragraph" {
+  assert_eq(measure_text_width("😀", 16.0), 16.0)
+  let doc = @core.Doc::new()
+  doc.add_block(@core.Block::Paragraph([@core.Inline::Text("A😀B")]))
+  let page = LayoutEngine::new(@core.StyleContext::default()).layout_doc(doc)
+  let text = StringBuilder()
+  for box in page.boxes {
+    match box.kind {
+      BoxKind::Text(value, _, _, _) => text.write_string(value)
+      _ => ()
+    }
+  }
+  assert_eq(text.to_string(), "A😀B")
+}
+
+///|
+test "wrap Latin paragraph words and oversized tokens within page bounds" {
+  let ctx = @core.StyleContext::default()
+  let doc = @core.Doc::new()
+  doc.add_block(
+    @core.Block::Paragraph([
+      @core.Inline::Text(
+        "This paragraph contains enough words to wrap naturally at spaces, followed by an unusuallylongidentifierthatmuststillstayinsidethepageboundary.",
+      ),
+    ]),
+  )
+  let page = LayoutEngine::new(ctx).layout_doc(doc)
+  let max_x = ctx.page_width - ctx.margin_x
+  let mut found_next_line = false
+  let mut first_line_y = -1.0
+  for box in page.boxes {
+    match box.kind {
+      BoxKind::Text(_, _, _, _) => {
+        assert_eq(box.rect.x + box.rect.w <= max_x + 0.01, true)
+        if first_line_y < 0.0 {
+          first_line_y = box.rect.y
+        } else if box.rect.y > first_line_y {
+          found_next_line = true
+        }
+      }
+      _ => ()
+    }
+  }
+  assert_eq(found_next_line, true)
+}
+
+///|
 test "table columns are equal and wrapped rows contain their text" {
   let ctx = @core.StyleContext::default()
   let doc = @core.Doc::new()

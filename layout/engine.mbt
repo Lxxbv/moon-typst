@@ -29,9 +29,8 @@ pub fn LayoutEngine::new(ctx : @core.StyleContext) -> LayoutEngine {
 /// Approximate string display width based on font size and character classification
 pub fn measure_text_width(text : String, font_size : Double) -> Double {
   let mut total = 0.0
-  let len = text.length()
-  for i = 0; i < len; i = i + 1 {
-    let code = text[i].to_int()
+  for character in text {
+    let code = character.to_int()
     if code > 255 {
       total = total + font_size * 1.0 // CJK and wide characters
     } else if code == 32 {
@@ -135,6 +134,203 @@ fn LayoutEngine::layout_paragraph(
 }
 
 ///|
+fn LayoutEngine::layout_inline_text(
+  self : LayoutEngine,
+  text : String,
+  font_size : Double,
+  color : String,
+  weight : String,
+) -> Unit {
+  let mut segment = StringBuilder()
+  let mut pending_spaces = StringBuilder()
+  let mut segment_kind = 0
+  let line_h = font_size * self.ctx.line_height
+  let mut previous_was_cr = false
+  for character in text {
+    if previous_was_cr && character == '\n' {
+      previous_was_cr = false
+    } else {
+      previous_was_cr = character == '\r'
+      let code = character.to_int()
+      if character == '\n' || character == '\r' {
+        if segment_kind != 0 {
+          self.layout_text_segment(
+            segment.to_string(),
+            pending_spaces.to_string(),
+            segment_kind == 2,
+            font_size,
+            line_h,
+            color,
+            weight,
+          )
+          segment_kind = 0
+          segment = StringBuilder()
+        }
+        pending_spaces = StringBuilder()
+        self.cur_y = self.cur_y + line_h
+        self.cur_x = self.ctx.margin_x
+      } else if character == ' ' || character == '\t' {
+        if segment_kind != 0 {
+          self.layout_text_segment(
+            segment.to_string(),
+            pending_spaces.to_string(),
+            segment_kind == 2,
+            font_size,
+            line_h,
+            color,
+            weight,
+          )
+          segment_kind = 0
+          segment = StringBuilder()
+          pending_spaces = StringBuilder()
+        }
+        pending_spaces.write_char(
+          if character == '\t' {
+            ' '
+          } else {
+            character
+          },
+        )
+      } else if code > 255 {
+        if segment_kind != 2 && segment_kind != 0 {
+          self.layout_text_segment(
+            segment.to_string(),
+            pending_spaces.to_string(),
+            false,
+            font_size,
+            line_h,
+            color,
+            weight,
+          )
+          segment_kind = 0
+          segment = StringBuilder()
+          pending_spaces = StringBuilder()
+        }
+        segment_kind = 2
+        segment.write_char(character)
+      } else {
+        if segment_kind != 1 && segment_kind != 0 {
+          self.layout_text_segment(
+            segment.to_string(),
+            pending_spaces.to_string(),
+            true,
+            font_size,
+            line_h,
+            color,
+            weight,
+          )
+          segment_kind = 0
+          segment = StringBuilder()
+          pending_spaces = StringBuilder()
+        }
+        segment_kind = 1
+        segment.write_char(character)
+      }
+    }
+  }
+  if segment_kind != 0 {
+    self.layout_text_segment(
+      segment.to_string(),
+      pending_spaces.to_string(),
+      segment_kind == 2,
+      font_size,
+      line_h,
+      color,
+      weight,
+    )
+  }
+}
+
+///|
+fn LayoutEngine::layout_text_segment(
+  self : LayoutEngine,
+  text : String,
+  pending_spaces : String,
+  is_wide_text : Bool,
+  font_size : Double,
+  line_h : Double,
+  color : String,
+  weight : String,
+) -> Unit {
+  let max_x = self.ctx.page_width - self.ctx.margin_x
+  let available_width = max_x - self.ctx.margin_x
+  let spaces = if self.cur_x > self.ctx.margin_x { pending_spaces } else { "" }
+  let candidate = spaces + text
+  let candidate_width = measure_text_width(candidate, font_size)
+  let mut wrapped_candidate = candidate
+  if self.cur_x > self.ctx.margin_x && self.cur_x + candidate_width > max_x {
+    self.cur_y = self.cur_y + line_h
+    self.cur_x = self.ctx.margin_x
+    wrapped_candidate = text
+  }
+
+  let width = measure_text_width(wrapped_candidate, font_size)
+  if is_wide_text || width > available_width {
+    self.layout_wrappable_characters(
+      wrapped_candidate, font_size, line_h, color, weight, max_x,
+    )
+  } else {
+    self.place_text_box(wrapped_candidate, width, font_size, color, weight)
+  }
+}
+
+///|
+fn LayoutEngine::layout_wrappable_characters(
+  self : LayoutEngine,
+  text : String,
+  font_size : Double,
+  line_h : Double,
+  color : String,
+  weight : String,
+  max_x : Double,
+) -> Unit {
+  let mut line = StringBuilder()
+  let mut line_width = 0.0
+  for character in text {
+    let glyph = StringBuilder()
+    glyph.write_char(character)
+    let glyph_text = glyph.to_string()
+    let glyph_width = measure_text_width(glyph_text, font_size)
+    if line_width > 0.0 && self.cur_x + line_width + glyph_width > max_x {
+      let line_text = line.to_string()
+      self.place_text_box(line_text, line_width, font_size, color, weight)
+      self.cur_y = self.cur_y + line_h
+      self.cur_x = self.ctx.margin_x
+      line_width = 0.0
+      line = StringBuilder()
+    } else if line_width == 0.0 &&
+      self.cur_x > self.ctx.margin_x &&
+      self.cur_x + glyph_width > max_x {
+      self.cur_y = self.cur_y + line_h
+      self.cur_x = self.ctx.margin_x
+    }
+    line.write_char(character)
+    line_width = line_width + glyph_width
+  }
+  if line_width > 0.0 {
+    self.place_text_box(line.to_string(), line_width, font_size, color, weight)
+  }
+}
+
+///|
+fn LayoutEngine::place_text_box(
+  self : LayoutEngine,
+  text : String,
+  width : Double,
+  font_size : Double,
+  color : String,
+  weight : String,
+) -> Unit {
+  self.boxes.push(
+    LayoutBox::new(
+      Rect::new(self.cur_x, self.cur_y, width, font_size),
+      BoxKind::Text(text, font_size, color, weight),
+    ),
+  )
+  self.cur_x = self.cur_x + width
+}
+
+///|
 fn LayoutEngine::layout_inline_styled(
   self : LayoutEngine,
   inline : @core.Inline,
@@ -146,19 +342,8 @@ fn LayoutEngine::layout_inline_styled(
   let line_h = font_size * self.ctx.line_height
 
   match inline {
-    @core.Inline::Text(text) => {
-      let w = measure_text_width(text, font_size)
-      if self.cur_x + w > max_x && self.cur_x > self.ctx.margin_x {
-        self.cur_y = self.cur_y + line_h
-        self.cur_x = self.ctx.margin_x
-      }
-      let b = LayoutBox::new(
-        Rect::new(self.cur_x, self.cur_y, w, font_size),
-        BoxKind::Text(text, font_size, color, weight),
-      )
-      self.boxes.push(b)
-      self.cur_x = self.cur_x + w
-    }
+    @core.Inline::Text(text) =>
+      self.layout_inline_text(text, font_size, color, weight)
     @core.Inline::Bold(inners) =>
       for inner in inners {
         self.layout_inline_styled(inner, font_size, color, "bold")

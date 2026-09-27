@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.1
+
+- Wrap long CJK text, Latin words, and oversized tokens within the available paragraph width.
+- Measure text by Unicode scalar values so supplementary characters do not count as two display glyphs in layout metrics.
+- Add regression coverage for CJK and Latin line wrapping, supplementary text, and reproducible in-memory end-to-end benchmarks.
 ## 0.2.0
 
 - Add PDF 1.4 Adobe-GB1 CID font output for BMP text, including covered Simplified Chinese characters.

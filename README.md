@@ -28,7 +28,7 @@
 `moon-typst` 提供以下功能：
 - **MoonBit 源码实现**：解析、排版与渲染模块以 MoonBit 编写，可构建到 `wasm-gc`、`js` 以及 `native` 目标。
 - **文档处理管线**：涵盖源码位置跟踪（Span）、词法分析、递归下降解析、脚本求值、盒模型排版，以及 SVG 1.1、PDF 1.4 和 HTML5 输出。
-- **可复现实验入口**：`benchmarks/pipeline_test.mbt` 分别测量解析、排版与渲染阶段；下文列出运行命令和记录环境的方法。
+- **可复现实验入口**：`benchmarks/pipeline_test.mbt` 提供分阶段和端到端编译基准，以下列出运行命令、测量口径与实测环境。
 
 ---
 
@@ -221,7 +221,17 @@ moon bench benchmarks --target wasm-gc --release --deny-warn
 moon bench benchmarks --target js --release --deny-warn
 ```
 
-`benchmarks/pipeline_test.mbt` 使用固定源文本，分别测量 `parse_typst`、`layout_doc`、`render_html`、`render_svg` 和 `render_pdf`。排版和 HTML 的 AST、SVG 和 PDF 的页面布局在计时前准备；因此这些分段结果不是 CLI 冷启动或端到端编译延迟。根据 [MoonBit benchmark 文档](https://docs.moonbitlang.com/en/latest/language/benchmarks.html)，`@bench.T::bench` 自动校准每组迭代次数，默认显示 10 组测量及均值、离散度和范围；文档未单独保证预热阶段。报告数值时请同时记录 Git 提交、完整命令、目标、`moon version --all`、操作系统与版本、CPU 型号、运行环境、原始输出和测量日期。跨目标比较应使用相同输入与可比环境。
+`benchmarks/pipeline_test.mbt` 同时包含分阶段基准和端到端内存编译基准。端到端样例包含两段中文长文本、Latin/重音字符和表格；每次计时包括诊断器与样式上下文初始化、解析，以及对应输出路径。SVG/PDF 还包括排版，HTML 直接从 AST 生成语义化输出。测试排除了 CLI 冷启动、参数解析、磁盘读取、终端日志和文件写入。
+
+2026-09-27 在 Windows 11（build 26200）、13th Gen Intel Core i7-13620H、MoonBit `moon 0.1.20260915` / `moonc v0.10.13+cbb11c36f` 上运行，10 个测量样本的均值如下：
+
+| 目标 | HTML | SVG | PDF |
+| --- | ---: | ---: | ---: |
+| native | 48.36 µs | 132.91 µs | 283.00 µs |
+| wasm-gc | 15.13 µs | 49.63 µs | 140.18 µs |
+| js | 16.28 µs | 48.59 µs | 291.81 µs |
+
+这组固定输入与环境下的内存编译均值低于 1 ms；它不代表其他文档、设备或包含进程启动和文件 I/O 的 CLI 用时。`@bench.T::bench` 自动校准每组迭代次数；根据 [MoonBit benchmark 文档](https://docs.moonbitlang.com/en/latest/language/benchmarks.html)，默认展示 10 组测量，但没有单独保证预热阶段。引用基准结果时，请同时记录 Git 提交、完整命令、工具链、操作系统、CPU、运行环境、日期和原始输出。分阶段结果仍由同一文件中的 `parse`、`layout`、`html`、`svg` 和 `pdf` 项提供。
 
 ---
 
@@ -250,7 +260,7 @@ moon bench benchmarks --target js --release --deny-warn
   - Variable scopes, constant evaluation, and cascading `#set` rules (`text`, `page`).
 - **Rich Terminal Diagnostics (`diag`)**:
   - Source span tracking, Rustc-style colorized diagnostic reporting with line numbers, code snippets, and hints.
-- **Reproducible Benchmarks**: The [benchmark entry point](benchmarks/pipeline_test.mbt) measures parser, layout, and renderer stages on a fixed input. Run `moon bench benchmarks --target native --release --deny-warn` from the module root; use `wasm-gc` or `js` as the target to measure those backends. Record the full command, Git commit, `moon version --all`, OS, CPU, runtime, date, and raw output with any reported result. [MoonBit's benchmark API](https://docs.moonbitlang.com/en/latest/language/benchmarks.html) automatically calibrates iterations and reports 10 measured samples by default; the docs give no separate warmup guarantee. It excludes CLI startup and file I/O.
+- **Reproducible Benchmarks**: The [benchmark entry point](benchmarks/pipeline_test.mbt) measures individual stages and an in-memory parse/layout/render path for HTML, SVG, and PDF. The fixed Chinese-text sample measured below 1 ms on the documented Windows and MoonBit toolchain; this is a result for that fixture and machine, not a general performance guarantee. Measurements exclude CLI startup and file I/O. See the Chinese benchmark section for commands, exact means, and environment details.
 
 ---
 

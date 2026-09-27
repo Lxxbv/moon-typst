@@ -223,7 +223,9 @@ moon bench benchmarks --target js --release --deny-warn
 
 `benchmarks/pipeline_test.mbt` 同时包含分阶段基准和端到端内存编译基准。端到端样例包含两段中文长文本、Latin/重音字符和表格；每次计时包括诊断器与样式上下文初始化、解析，以及对应输出路径。SVG/PDF 还包括排版，HTML 直接从 AST 生成语义化输出。测试排除了 CLI 冷启动、参数解析、磁盘读取、终端日志和文件写入。
 
-2026-09-27 在 Windows 11（build 26200）、13th Gen Intel Core i7-13620H、MoonBit `moon 0.1.20260915` / `moonc v0.10.13+cbb11c36f` 上运行，10 个测量样本的均值如下：
+2026-09-27 在 Windows 11（build 26200）、13th Gen Intel Core i7-13620H、MoonBit `moon 0.1.20260915` / `moonc v0.10.13+cbb11c36f` 上运行，基准源码修订：091ade8。
+
+10 个测量样本的均值如下：
 
 | 目标 | HTML | SVG | PDF |
 | --- | ---: | ---: | ---: |
